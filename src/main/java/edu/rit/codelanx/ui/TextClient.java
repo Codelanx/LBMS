@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-public class TextClient implements Client<TextResponse>, AutoCloseable {
+public class TextClient implements Client, AutoCloseable {
 
     private final InputStream input;
     private final PrintStream output;
