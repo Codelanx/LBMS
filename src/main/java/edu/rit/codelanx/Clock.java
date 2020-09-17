@@ -1,6 +1,6 @@
 package edu.rit.codelanx;
 
-import edu.rit.codelanx.data.Library;
+import edu.rit.codelanx.data.types.Library;
 import edu.rit.codelanx.util.Validate;
 
 import java.time.Instant;

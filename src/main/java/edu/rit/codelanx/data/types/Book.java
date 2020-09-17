@@ -1,4 +1,6 @@
-package edu.rit.codelanx.data;
+package edu.rit.codelanx.data.types;
+
+import edu.rit.codelanx.data.State;
 
 public class Book implements State {
     @Override

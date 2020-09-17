@@ -4,7 +4,7 @@ import edu.rit.codelanx.Server;
 import edu.rit.codelanx.cmd.Command;
 import edu.rit.codelanx.cmd.Response;
 import edu.rit.codelanx.cmd.text.TextResponse;
-import edu.rit.codelanx.data.Visitor;
+import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.ui.Client;
 
 public class RegisterCommand implements Command<TextResponse> {
