@@ -9,7 +9,12 @@ import edu.rit.codelanx.ui.Client;
 public class RegisterCommand extends TextCommand {
 
     public RegisterCommand(Server server) {
-        super(server, "register");
+        super(server);
+    }
+
+    @Override
+    public String getName() {
+        return "register";
     }
 
     @Override
