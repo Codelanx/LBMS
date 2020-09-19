@@ -1,7 +1,6 @@
 package edu.rit.codelanx.cmd.text;
 
 import edu.rit.codelanx.Server;
-import edu.rit.codelanx.cmd.CommandMap;
 import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.ui.Client;
 
@@ -11,7 +10,7 @@ public class TextInterpreter implements Interpreter<TextRequest, TextResponse> {
 
     public TextInterpreter(Server server) {
         this.server = server;
-        CommandMap.initialize(server); //Enables commands on this server
+        TextCommandMap.initialize(server); //Enables commands on this server
     }
 
     @Override

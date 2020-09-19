@@ -1,6 +1,5 @@
 package edu.rit.codelanx;
 
-import edu.rit.codelanx.cmd.CommandMap;
 import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.cmd.text.TextRequest;

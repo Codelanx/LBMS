@@ -1,6 +1,9 @@
-package edu.rit.codelanx.cmd;
+package edu.rit.codelanx.cmd.text;
 
 import edu.rit.codelanx.Server;
+import edu.rit.codelanx.cmd.Command;
+import edu.rit.codelanx.cmd.Response;
+import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.cmds.RegisterCommand;
 import edu.rit.codelanx.util.Validate;
 
@@ -13,15 +16,15 @@ import java.util.function.Function;
 /**
  * A static mapping of our command classes
  */
-public enum CommandMap {
+public enum TextCommandMap {
     REGISTER(RegisterCommand::new),
     ;
 
-    private static final CommandMap[] VALUES = CommandMap.values();
+    private static final TextCommandMap[] VALUES = TextCommandMap.values();
     private final Map<Server, Command<? extends Response>> serverCmd = new WeakHashMap<>();
     private final Function<Server, Command<? extends Response>> initializer;
 
-    private CommandMap(Function<Server, Command<? extends Response>> initializer) {
+    private TextCommandMap(Function<Server, Command<? extends Response>> initializer) {
         this.initializer = initializer;
     }
 
@@ -29,7 +32,7 @@ public enum CommandMap {
         return this.serverCmd.computeIfAbsent(server, this.initializer);
     }
 
-    public static Optional<CommandMap> getMappingFor(String name) {
+    public static Optional<TextCommandMap> getMappingFor(String name) {
         Validate.nonNull(name, "Cannot map from null to a Command");
         String fname = name.toLowerCase();
         return Arrays.stream(VALUES)
@@ -41,7 +44,7 @@ public enum CommandMap {
 
     public static Command<? extends Response> getCommand(Server server, String cmdName) {
         Optional<? extends Command<? extends Response>> opt =
-                CommandMap.getMappingFor(cmdName).map(c -> c.toCommand(server));
+                TextCommandMap.getMappingFor(cmdName).map(c -> c.toCommand(server));
         return opt.isPresent() //overcoming the nested type bounding here with `opt` (it gets nasty)
                 ? opt.get()
                 : ResponseFlag.UNKNOWN.toDummyCommand();

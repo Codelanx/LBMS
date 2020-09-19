@@ -6,5 +6,5 @@ import edu.rit.codelanx.ui.Client;
 public interface Command<R extends Response> {
 
     public String getName();
-    public R onExecute(Server ranOn, Client executor, String... arguments);
+    public R onExecute(Client executor, String... arguments);
 }

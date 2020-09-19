@@ -18,7 +18,7 @@ public class RegisterCommand extends TextCommand {
     }
 
     @Override
-    public ResponseFlag onExecute(Server ranOn, Client executor, String... arguments) {
+    public ResponseFlag onExecute(Client executor, String... arguments) {
         //TODO: Register a new Visitor with the DataStorage
         this.server.getDataStorage().add(new Visitor()); //TODO: Fill out visitor's data from args
         return ResponseFlag.SUCCESS;

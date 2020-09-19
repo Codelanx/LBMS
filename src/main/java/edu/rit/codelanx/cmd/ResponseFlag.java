@@ -34,7 +34,7 @@ public enum ResponseFlag implements Response {
         }
 
         @Override
-        public ResponseFlag onExecute(Server ranOn, Client executor, String... arguments) {
+        public ResponseFlag onExecute(Client executor, String... arguments) {
             return ResponseFlag.this;
         }
     }
