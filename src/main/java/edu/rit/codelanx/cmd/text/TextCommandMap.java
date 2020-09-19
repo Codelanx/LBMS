@@ -1,7 +1,7 @@
 package edu.rit.codelanx.cmd;
 
 import edu.rit.codelanx.Server;
-import edu.rit.codelanx.cmd.cmds.RegisterCommand;
+import edu.rit.codelanx.cmd.cmds.*;
 import edu.rit.codelanx.util.Validate;
 
 import java.util.Arrays;
