@@ -14,7 +14,8 @@ import java.util.function.Function;
  * A static mapping of our command classes
  */
 public enum CommandMap {
-    REGISTER(RegisterCommand::new);
+    REGISTER(RegisterCommand::new),
+    ;
 
     private static final CommandMap[] VALUES = CommandMap.values();
     private final Map<Server, Command<? extends Response>> serverCmd = new WeakHashMap<>();

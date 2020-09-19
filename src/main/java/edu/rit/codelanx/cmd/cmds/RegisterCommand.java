@@ -1,22 +1,15 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.Server;
-import edu.rit.codelanx.cmd.Command;
 import edu.rit.codelanx.cmd.ResponseFlag;
+import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.ui.Client;
 
-public class RegisterCommand implements Command<ResponseFlag> {
-
-    private final Server server;
+public class RegisterCommand extends TextCommand {
 
     public RegisterCommand(Server server) {
-        this.server = server;
-    }
-
-    @Override
-    public String getName() {
-        return "register";
+        super(server, "register");
     }
 
     @Override
