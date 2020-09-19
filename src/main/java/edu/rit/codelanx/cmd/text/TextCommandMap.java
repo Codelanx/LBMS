@@ -1,9 +1,6 @@
-package edu.rit.codelanx.cmd.text;
+package edu.rit.codelanx.cmd;
 
 import edu.rit.codelanx.Server;
-import edu.rit.codelanx.cmd.Command;
-import edu.rit.codelanx.cmd.Response;
-import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.cmds.RegisterCommand;
 import edu.rit.codelanx.util.Validate;
 
@@ -18,6 +15,7 @@ import java.util.function.Function;
  */
 public enum TextCommandMap {
     REGISTER(RegisterCommand::new),
+    ARRIVE(ArriveCommand::new),
     ;
 
     private static final TextCommandMap[] VALUES = TextCommandMap.values();

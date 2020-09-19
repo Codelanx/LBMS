@@ -12,7 +12,7 @@ public class ArriveCommand extends TextCommand {
 
     @Override
     public String getName() {
-        return null;
+        return "arrive";
     }
 
     @Override
