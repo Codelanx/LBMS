@@ -6,19 +6,20 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.ui.Client;
 
 /**
- * Begins a new visit by a registered visitor.
+ * Displays the current date and time in the simulation. This should include
+ * any days that have been added to the calendar using the command to advance
+ * time.
  * <p>
- * Request Format: 	arrive,visitor ID;
- * visitor ID is the unique 10-digit ID of the visitor.
+ * Request Format: datetime
  */
-public class ArriveCommand extends TextCommand {
+public class DatetimeCommand extends TextCommand {
 
     /**
-     * Constructor for the ArriveCommand class
+     * Constructor for the DatetimeCommand class
      *
      * @param server the server that the command is to be run on
      */
-    public ArriveCommand(Server server) {
+    public DatetimeCommand(Server server) {
         super(server);
     }
 
@@ -27,15 +28,15 @@ public class ArriveCommand extends TextCommand {
      */
     @Override
     public String getName() {
-        return "arrive";
+        return "datetime";
     }
 
     /**
-     * Whenever this command is called, it will begin a new visit.
+     * Whenever this command is called, it will display the current time and
+     * date that the sim is currently in.
      *
      * @param executor  the client that is calling the command
-     * @param arguments arrive: name of the command to be run
-     *                  visitorID: the unique 10-digit ID of the visitor
+     * @param arguments datetime: name of the command to be run
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */

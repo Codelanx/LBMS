@@ -6,19 +6,19 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.ui.Client;
 
 /**
- * Begins a new visit by a registered visitor.
+ * Queries for a list of books currently borrowed by a specific visitor.
  * <p>
- * Request Format: 	arrive,visitor ID;
+ * Request Format: borrowed,visitor ID
  * visitor ID is the unique 10-digit ID of the visitor.
  */
-public class ArriveCommand extends TextCommand {
+public class BorrowedCommand extends TextCommand {
 
     /**
-     * Constructor for the ArriveCommand class
+     * Constructor for the BorrowedCommand class
      *
      * @param server the server that the command is to be run on
      */
-    public ArriveCommand(Server server) {
+    public BorrowedCommand(Server server) {
         super(server);
     }
 
@@ -27,15 +27,16 @@ public class ArriveCommand extends TextCommand {
      */
     @Override
     public String getName() {
-        return "arrive";
+        return "borrowed";
     }
 
     /**
-     * Whenever this command is called, it will begin a new visit.
+     * Whenever this command is called, it will query the database for books
+     * being currently borrowed by a visitor.
      *
      * @param executor  the client that is calling the command
-     * @param arguments arrive: name of the command to be run
-     *                  visitorID: the unique 10-digit ID of the visitor
+     * @param arguments advance: name of the command to be run
+     *                  visitorID: the id of the visitor to check
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */

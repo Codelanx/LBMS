@@ -6,19 +6,21 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.ui.Client;
 
 /**
- * Begins a new visit by a registered visitor.
+ * Pays all or part of an outstanding fine.
  * <p>
- * Request Format: 	arrive,visitor ID;
+ * Request Format: pay,visitor ID,amount
  * visitor ID is the unique 10-digit ID of the visitor.
+ * amount is the amount that the visitor is paying towards his or her
+ * accumulated fines.
  */
-public class ArriveCommand extends TextCommand {
+public class PayCommand extends TextCommand {
 
     /**
-     * Constructor for the ArriveCommand class
+     * Constructor for the PayCommand class
      *
      * @param server the server that the command is to be run on
      */
-    public ArriveCommand(Server server) {
+    public PayCommand(Server server) {
         super(server);
     }
 
@@ -27,15 +29,18 @@ public class ArriveCommand extends TextCommand {
      */
     @Override
     public String getName() {
-        return "arrive";
+        return "pay";
     }
 
     /**
-     * Whenever this command is called, it will begin a new visit.
+     * Whenever this command is called, it will pay the amount towards the
+     * specific visitor's negative balance.
      *
      * @param executor  the client that is calling the command
-     * @param arguments arrive: name of the command to be run
-     *                  visitorID: the unique 10-digit ID of the visitor
+     * @param arguments pay: name of the command to be run
+     *                  visitorID: unique 10-digit ID of the visitor
+     *                  amount: the amount that the visitor is paying toward
+     *                  their fines
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */

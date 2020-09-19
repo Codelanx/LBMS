@@ -14,8 +14,18 @@ import java.util.function.Function;
  * A static mapping of our command classes
  */
 public enum TextCommandMap {
-    REGISTER(RegisterCommand::new),
+    ADVANCE(AdvanceCommand::new),
     ARRIVE(ArriveCommand::new),
+    BORROW(BorrowCommand::new),
+    BORROWED(BorrowedCommand::new),
+    BUY(BuyCommand::new),
+    DATETIME(DatetimeCommand::new),
+    DEPART(DepartCommand::new),
+    INFO(InfoCommand::new),
+    PAY(PayCommand::new),
+    REGISTER(RegisterCommand::new),
+    REPORT(ReportCommand::new),
+    SEARCH(SearchCommand::new)
     ;
 
     private static final TextCommandMap[] VALUES = TextCommandMap.values();
