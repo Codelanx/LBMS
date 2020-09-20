@@ -7,6 +7,8 @@ import edu.rit.codelanx.cmd.text.TextResponse;
 import edu.rit.codelanx.data.DataFacade;
 import edu.rit.codelanx.data.DataStorage;
 
+import java.io.IOException;
+
 public class LibServer implements Server {
 
     private final DataStorage storage; //stores data

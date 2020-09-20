@@ -1,5 +1,10 @@
 package edu.rit.codelanx.data;
 
+import edu.rit.codelanx.data.state.State;
+import edu.rit.codelanx.data.state.StateBuilder;
+import edu.rit.codelanx.data.types.Library;
+
+import java.io.IOException;
 import java.util.stream.Stream;
 
 public interface DataStorage {
@@ -13,5 +18,27 @@ public interface DataStorage {
      */
     public <R extends State> Stream<? extends R> ofLoaded(Class<R> type);
 
-    public void add(State state);
+    /**
+     * Inserts a new state into the system, built from dynamic input or otherwise
+     *
+     * @param builder A {@link StateBuilder} of the relevant state to insert
+     * @param <R> The type of the {@link State} that results from being inserted
+     * @return The newly inserted {@link State}
+     */
+    public <R extends State> R insert(StateBuilder<R> builder);
+
+    /**
+     * Given current design considerations, we are managing this around a single
+     * "Library" instance per system. Thus, the Library represents more or less
+     * system-wide values, such as the money for the library's account
+     *
+     * @return The relevant {@link Library} for the LBMS system
+     */
+    public Library getLibrary();
+
+    /**
+     * Runs the various preloading
+     */
+    public void initialize() throws IOException;
+
 }

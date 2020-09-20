@@ -1,14 +1,41 @@
 package edu.rit.codelanx.data;
 
+import edu.rit.codelanx.config.ConfigKey;
+import edu.rit.codelanx.data.loader.FFStorageAdapter;
+import edu.rit.codelanx.data.loader.SQLStorageAdapter;
+import edu.rit.codelanx.data.loader.StorageAdapter;
+import edu.rit.codelanx.data.state.State;
+import edu.rit.codelanx.data.state.StateBuilder;
+import edu.rit.codelanx.data.types.*;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class DataFacade implements DataStorage {
 
+    private static final Class<?>[] KNOWN_TYPES = {Book.class, Checkout.class, Library.class, Transaction.class, Visit.class, Visitor.class};
     private final Map<Class<? extends State>, Map<Long, State>> data = new HashMap<>();
+    private final StorageAdapter adapter;
 
     public DataFacade() {
+        String type = ConfigKey.STORAGE_TYPE.as(String.class);
+        this.adapter = type == null || !type.equalsIgnoreCase("sql")
+                ? new FFStorageAdapter(type)
+                : new SQLStorageAdapter();
+    }
+
+    @Override
+    public void initialize() throws IOException {
+        this.adapter.loadAll();
+    }
+
+    @Override
+    public <R extends State> R insert(StateBuilder<R> builder) {
+        R back = this.adapter.insert(builder);
+        this.modStates(back.getClass()).put(back.getID(), back);
+        return back;
     }
 
     //warns you if you try to modify the elements
@@ -28,13 +55,22 @@ public class DataFacade implements DataStorage {
         return this.getStates(type).values().stream();
     }
 
-    @Override
+    /*@Override
     public void add(State state) {
         this.modStates(state.getClass()).put(state.getID(), state);
+    }*/
+
+    @Override
+    public Library getLibrary() {
+        return null; //TODO:
     }
 
-    public <R extends State> R find(long id) {
+    public <R extends State> R query(Class<R> type, long id) {
         //TODO: Querying
         return null;
+    }
+
+    public <R extends State> R queryAll(Class<R> type) {
+        return null; //TODO: Querying
     }
 }

@@ -48,8 +48,22 @@ public class RegisterCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(Client executor, String... arguments) {
-        //TODO: Register a new Visitor with the DataStorage
-        this.server.getDataStorage().add(new Visitor()); //TODO: Fill out visitor's data from args
+        //We use the builder pattern to create a new object in the data storage
+        Visitor.Builder builder;
+        //TODO: Fill out visitor's data from real arguments
+        builder = Visitor.create(this.server.getDataStorage())
+                .firstName("Bob")
+                .lastName("RadicalAndDangerous")
+                .address("242 Electric Avenue")
+                .phone("555-555-BRAD")
+                .money(2.00);
+        //check if it's valid (our example always should be)
+        if (!builder.isValid()) {
+            executor.sendMessage("Invalid number of arguments!");
+            return ResponseFlag.FAILURE;
+        }
+        Visitor registered = builder.build();
+        //TODO: Maybe do something with our new user? It's already managed in DataStorage though
         return ResponseFlag.SUCCESS;
     }
 }

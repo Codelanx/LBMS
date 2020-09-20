@@ -17,6 +17,13 @@ public class LBMS {
 
     private LBMS() {
         this.server = new LibServer();
+        try {
+            this.server.getDataStorage().initialize();
+        } catch (IOException e) {
+            System.err.println("Fatal error while starting LBMS storage");
+            Errors.report(e);
+            return;
+        }
         try (TextClient client = new TextClient(System.in, System.out)) {
             client.sendMessage("Hello world!");
             client.display();

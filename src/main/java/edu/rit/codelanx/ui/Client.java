@@ -1,6 +1,6 @@
 package edu.rit.codelanx.ui;
 
-import edu.rit.codelanx.data.State;
+import edu.rit.codelanx.data.state.State;
 
 public interface Client {
 
