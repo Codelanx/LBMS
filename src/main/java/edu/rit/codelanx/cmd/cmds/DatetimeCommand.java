@@ -24,7 +24,7 @@ public class DatetimeCommand extends TextCommand {
     }
 
     /**
-     * TODO: Figure out linking to Command
+     * @link edu.rit.codelanx.cmd.Command#getName()
      */
     @Override
     public String getName() {
@@ -42,6 +42,6 @@ public class DatetimeCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(Client executor, String... arguments) {
-        return null;
+        return ResponseFlag.NOT_FINISHED;
     }
 }

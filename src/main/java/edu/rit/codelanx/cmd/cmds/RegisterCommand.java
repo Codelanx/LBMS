@@ -26,7 +26,7 @@ public class RegisterCommand extends TextCommand {
     }
 
     /**
-     * TODO: Figure out linking to Command
+     * @link edu.rit.codelanx.cmd.Command#getName()
      */
     @Override
     public String getName() {
