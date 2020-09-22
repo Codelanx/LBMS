@@ -1,0 +1,14 @@
+{
+    "storage-type": "sql",
+    "max-backup-files": 100,
+    "sql": {
+        "keep-alive-ms": 600000,
+        "auth": {
+            "username": "swen-262",
+            "password": "nopermsanyhow",
+            "iaddress": "home.rogue.ninja",
+            "port": 3306,
+            "database": "lbms"
+        }
+    }
+}

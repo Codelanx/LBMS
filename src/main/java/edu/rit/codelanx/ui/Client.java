@@ -2,9 +2,33 @@ package edu.rit.codelanx.ui;
 
 import edu.rit.codelanx.data.state.State;
 
-public interface Client {
+import java.io.BufferedReader;
+import java.io.IOException;
 
-    public void display(); //runs the client, displaying it until the user exits
-    public void renderState(State state);
-    public void sendMessage(String message);
+public abstract class Client implements AutoCloseable{
+    private IDisplay IDisplay;
+    private IReadInput IReadInput;
+    private IMessage IMessage;
+
+    Client (IReadInput readInput, IDisplay display, IMessage message){
+        this.IDisplay= display;
+        this.IReadInput= readInput;
+        this.IMessage= message;
+    }
+
+    public void display(){
+        this.IDisplay.display();
+    }
+
+    public String readInput(BufferedReader buffer) throws IOException {
+        return this.IReadInput.readInput(buffer);
+    }
+
+    public void sendMessage(String message){
+        this.IMessage.send(message);
+    }
+
+    public void renderState(State state) {
+    }
+
 }

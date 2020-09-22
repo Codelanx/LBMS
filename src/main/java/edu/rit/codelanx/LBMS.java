@@ -24,6 +24,7 @@ public class LBMS {
             Errors.report(e);
             return;
         }
+
         try (TextClient client = new TextClient(System.in, System.out)) {
             client.sendMessage("Hello world!");
             client.display();
@@ -38,6 +39,7 @@ public class LBMS {
      * @param args command-line arguments
      */
     public static void main(String... args) {
+
         LBMS system = new LBMS(); //will consume main thread
     }
 }

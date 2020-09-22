@@ -1,41 +1,22 @@
 package edu.rit.codelanx.ui;
 
+import edu.rit.codelanx.cmd.ResponseFlag;
+import edu.rit.codelanx.cmd.text.TextRequest;
 import edu.rit.codelanx.cmd.text.TextResponse;
-import edu.rit.codelanx.data.State;
+//import edu.rit.codelanx.data.State;
+import edu.rit.codelanx.data.state.State;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 
-public class TextClient implements Client, AutoCloseable {
 
-    private final InputStream input;
-    private final PrintStream output;
-    private final BufferedReader buffer;
-    private final InputStreamReader reader;
+public class TextClient extends Client implements AutoCloseable{
+    private InputStreamReader reader;
+    private BufferedReader buffer;
 
     public TextClient(InputStream input, PrintStream output) {
-        this.input = input;
-        this.output = output;
+        super(new ReadTextInput(input, output),new TextDisplay(),new TextMessage());
         this.reader = new InputStreamReader(input);
         this.buffer = new BufferedReader(this.reader);
-    }
-
-    @Override
-    public void display() {
-        //TODO: Read input buffer
-        //TODO: Print out anything which needs to be displayed, e.g. reports
-    }
-
-    @Override
-    public void renderState(State state) {
-
-    }
-
-    @Override
-    public void sendMessage(String message) {
-        this.output.println(message);
     }
 
     @Override
@@ -43,4 +24,27 @@ public class TextClient implements Client, AutoCloseable {
         this.buffer.close();
         this.reader.close();
     }
+
+
+//    @Override
+//    public void close() throws Exception {
+//        this.buffer.close();
+//        this.reader.close();
+//    }
+
+//    @Override
+//    public void display() {
+//        try {
+//            String rq= readInput(buffer);
+//            TextRequest request= new TextRequest(rq);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        //TODO: revise
+//
+//    }
+//
+
+
+
 }
