@@ -2,7 +2,9 @@ package edu.rit.codelanx.data.types;
 
 import com.codelanx.commons.data.FileSerializable;
 import com.codelanx.commons.data.ResultRow;
+import edu.rit.codelanx.data.DataStorage;
 import edu.rit.codelanx.data.state.State;
+import edu.rit.codelanx.data.state.StateBuilder;
 import edu.rit.codelanx.data.state.UpdatableState;
 
 import java.math.BigDecimal;
@@ -34,6 +36,10 @@ public class Library extends UpdatableState implements FileSerializable {
         //TODO: End all visits
     }
 
+    public boolean isOpen() {
+        return this.open.get();
+    }
+
     public Library(ResultRow sql) throws SQLException {
         super(sql.getLong("id"));
         this.money.set(sql.getBigDecimal("money"));
@@ -44,9 +50,43 @@ public class Library extends UpdatableState implements FileSerializable {
         this.money.set(BigDecimal.valueOf((double) file.get("money")));
     }
 
+    public Library(long id, Builder build) {
+        super(id);
+        this.money.set(build.money);
+    }
+
+    public static class Builder extends StateBuilder<Library> {
+
+        private BigDecimal money = BigDecimal.ZERO;
+
+        public Builder(DataStorage storage) {
+            super(storage);
+        }
+
+        public Builder money(BigDecimal money) {
+            this.money = money;
+            return this;
+        }
+
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
+        @Override
+        public Object[] asSQLArguments() {
+            return new Object[] { this.money.doubleValue() };
+        }
+
+        @Override
+        protected Library buildObj(long id) {
+            return new Library(id, this);
+        }
+    }
+
     @Override
     public long getID() {
-        return this.id; //OooooOooo spooky. We only have one library
+        return this.id;
     }
 
     @Override

@@ -6,6 +6,8 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.ui.Client;
 
+import java.math.BigDecimal;
+
 /**
  * Registers a new visitor so that they can access the library.
  * <p>
@@ -56,7 +58,7 @@ public class RegisterCommand extends TextCommand {
                 .lastName("RadicalAndDangerous")
                 .address("242 Electric Avenue")
                 .phone("555-555-BRAD")
-                .money(2.00);
+                .money(BigDecimal.valueOf(2.00));
         //check if it's valid (our example always should be)
         if (!builder.isValid()) {
             executor.sendMessage("Invalid number of arguments!");

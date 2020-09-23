@@ -3,7 +3,10 @@ package edu.rit.codelanx.cmd.cmds;
 import edu.rit.codelanx.Server;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
+import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.ui.Client;
+
+import java.util.Optional;
 
 /**
  * For simulation purposes. This method will advance the simulated date of the
@@ -51,6 +54,11 @@ public class AdvanceCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(Client executor, String... arguments) {
+        long someID = 42;
+        Optional<? extends Visitor> visitor = this.server.getDataStorage()
+                .ofLoaded(Visitor.class)
+                .filter(v -> v.getID() == someID)
+                .findAny();
         return null;
     }
 }

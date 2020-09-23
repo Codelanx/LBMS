@@ -7,21 +7,21 @@ import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.StateBuilder;
 import edu.rit.codelanx.data.state.UpdatableState;
 
-import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Visitor extends UpdatableState implements FileSerializable {
 
-    private final WeakReference<Visit> currentVisit = new WeakReference<>(null);
     private final String first;
     private final String last;
     private final String addr;
     private final String phone;
     private final AtomicReference<BigDecimal> money = new AtomicReference<>();
+    private transient Instant visitStart;
 
     //Behavioral methods here
 
@@ -43,6 +43,22 @@ public class Visitor extends UpdatableState implements FileSerializable {
 
     public BigDecimal getMoney() {
         return this.money.get();
+    }
+
+    public boolean startVisit(Library library) {
+        if (!library.isOpen()) return false;
+        this.visitStart = Instant.now();
+        return true;
+    }
+
+    public boolean isVisiting() {
+        return this.visitStart != null;
+    }
+
+    public boolean endVisit(DataStorage storage, Instant endTime) {
+        if (this.visitStart == null) return false;
+        Visit.create(storage).start(this.visitStart).end(endTime).visitor(this).build();
+        return true;
     }
 
     @Override
@@ -67,7 +83,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
         private String last;
         private String addr;
         private String phone;
-        private double balance;
+        private BigDecimal money = BigDecimal.ZERO;
 
         private Builder(DataStorage storage) {
             super(storage);
@@ -93,8 +109,8 @@ public class Visitor extends UpdatableState implements FileSerializable {
             return this;
         }
 
-        public Builder money(double balance) {
-            this.balance = balance;
+        public Builder money(BigDecimal money) {
+            this.money = money;
             return this;
         }
 
@@ -106,7 +122,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
 
         @Override
         public Object[] asSQLArguments() {
-            return new Object[] { this.first, this.last, this.addr, this.phone, this.balance };
+            return new Object[] { this.first, this.last, this.addr, this.phone, this.money.doubleValue() };
         }
 
         @Override
@@ -123,7 +139,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
         this.last = build.last;
         this.phone = build.phone;
         this.addr = build.addr;
-        this.money.set(BigDecimal.valueOf(build.balance));
+        this.money.set(build.money);
     }
 
     public Visitor(ResultRow sql) throws SQLException {
@@ -132,6 +148,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
         this.last = sql.getString("last");
         this.addr = sql.getString("addr");
         this.phone = sql.getString("phone");
+        this.money.set(sql.getBigDecimal("money"));
     }
 
     public Visitor(Map<String, Object> file) {
@@ -140,6 +157,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
         this.last = (String) file.get("last");
         this.addr = (String) file.get("addr");
         this.phone = (String) file.get("phone");
+        this.money.set(BigDecimal.valueOf((double) file.get("money")));
     }
 
     @Override
