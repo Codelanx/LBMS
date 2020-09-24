@@ -45,10 +45,13 @@ public class ArriveCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(Client executor, String... arguments) {
-        //Checking that the amount of arguments is correct
-        if (arguments.length != 1) {
-            executor.sendMessage("Incorrect Number of Arguments.");
+        //Checking that they have the correct amount of parameters
+        if (arguments.length < 1) {
+            executor.sendMessage(this.getName() + ",missing-parameters," +
+                    "visitorID;");
             return ResponseFlag.SUCCESS;
+        } else if (arguments.length > 2) {
+            return ResponseFlag.FAILURE;
         }
 
         //Checking that the id passed was a number
@@ -56,8 +59,7 @@ public class ArriveCommand extends TextCommand {
         try {
             visitorID = parseLong(arguments[0]);
         } catch (NumberFormatException n) {
-            executor.sendMessage("Visitor ID must be a 10-digit number.");
-            return ResponseFlag.SUCCESS;
+            return ResponseFlag.FAILURE;
         }
 
         //Finding the visitor with the matching ID in the database
@@ -72,7 +74,7 @@ public class ArriveCommand extends TextCommand {
             //TODO: Check if the visitor is currently in a visit, if not,
             // start a visit
         } else {
-            executor.sendMessage("Visitor does not exist.");
+            executor.sendMessage(this.getName() + ",invalid-id");
             return ResponseFlag.SUCCESS;
         }
 

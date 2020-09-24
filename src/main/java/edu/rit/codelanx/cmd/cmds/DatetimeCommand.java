@@ -36,12 +36,21 @@ public class DatetimeCommand extends TextCommand {
      * date that the sim is currently in.
      *
      * @param executor  the client that is calling the command
-     * @param arguments datetime: name of the command to be run
+     * @param arguments none
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
     @Override
     public ResponseFlag onExecute(Client executor, String... arguments) {
+        //Checking that no other arguments were passed in
+        if (arguments.length > 0){
+            return ResponseFlag.FAILURE;
+        }
+
+        // TODO: Use the clock class to display the current time
+        //executor.sendMessage(this.getName() + "," + Clock.currentDate + ","
+        // + Clock.currentTime);
+        
         return ResponseFlag.NOT_FINISHED;
     }
 }

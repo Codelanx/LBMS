@@ -122,7 +122,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
 
         @Override
         public Object[] asSQLArguments() {
-            return new Object[] { this.first, this.last, this.addr, this.phone, this.money.doubleValue() };
+            return new Object[] { this.first, this.last, this.addr, this.phone, this.balance };
         }
 
         @Override

@@ -3,7 +3,15 @@ package edu.rit.codelanx.cmd.cmds;
 import edu.rit.codelanx.Server;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
+import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.ui.Client;
+
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
+
+import static java.lang.Long.parseLong;
 
 /**
  * Queries for a list of books currently borrowed by a specific visitor.
@@ -42,6 +50,38 @@ public class BorrowedCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(Client executor, String... arguments) {
+        //Checking that the amount of arguments is correct
+        if (arguments.length != 1) {
+            executor.sendMessage(this.getName() + ",missing-parameters," +
+                    "visitorID");
+            return ResponseFlag.SUCCESS;
+        }
+
+        long visitorID;
+        //Checking that the id passed was a number
+        try {
+            visitorID = parseLong(arguments[0]);
+        } catch (NumberFormatException e) {
+            return ResponseFlag.FAILURE;
+        }
+
+        //Finding the visitor with the matching ID in the database
+        Optional<? extends Visitor> visitorSearch = this.server.getDataStorage()
+                .ofLoaded(Visitor.class)
+                .filter(v -> v.getID() == visitorID)
+                .findAny();
+
+        //Seeing if the search found a visitor
+        Visitor visitor;
+        try {
+            visitor = visitorSearch.get();
+        } catch (NoSuchElementException e) {
+            executor.sendMessage(this.getName() + ",invalid-visitor-id;");
+            return ResponseFlag.SUCCESS;
+        }
+
+        //TODO: Find the books currently being borrowed by the visitor
+
         return ResponseFlag.NOT_FINISHED;
     }
 }
