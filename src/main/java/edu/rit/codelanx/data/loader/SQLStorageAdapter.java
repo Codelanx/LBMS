@@ -32,6 +32,11 @@ public class SQLStorageAdapter implements StorageAdapter {
     }
 
     @Override
+    public <R extends State> R insert(long id, StateBuilder<R> builder) {
+        return null;
+    }
+
+    @Override
     public void loadAll() {
 
     }

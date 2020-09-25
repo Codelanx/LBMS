@@ -1,4 +1,4 @@
-package edu.rit.codelanx;
+package edu.rit.codelanx.util;
 
 import edu.rit.codelanx.data.types.Library;
 import edu.rit.codelanx.util.Validate;

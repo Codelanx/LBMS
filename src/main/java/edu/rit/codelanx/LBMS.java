@@ -1,7 +1,9 @@
 package edu.rit.codelanx;
 
-import edu.rit.codelanx.ui.Client;
-import edu.rit.codelanx.ui.TextClient;
+import edu.rit.codelanx.network.client.Client;
+import edu.rit.codelanx.network.client.TextClient;
+import edu.rit.codelanx.network.server.LibServer;
+import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.util.Errors;
 
 import java.io.IOException;
@@ -25,9 +27,11 @@ public class LBMS {
             return;
         }
 
-        try (TextClient client = new TextClient(System.in, System.out)) {
-            client.sendMessage("Hello world!");
+    private void access() {
+        try (Client client = new TextClient(System.in, System.out)) {
+            client.connect(this.server);
             client.display();
+            client.sendMessage("Hello world!");
         } catch (Exception e) {
             Errors.report(e);
         }
@@ -39,7 +43,7 @@ public class LBMS {
      * @param args command-line arguments
      */
     public static void main(String... args) {
-
-        LBMS system = new LBMS(); //will consume main thread
+        LBMS system = new LBMS();
+        system.access(); //will consume main thread
     }
 }

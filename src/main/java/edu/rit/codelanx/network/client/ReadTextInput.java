@@ -1,8 +1,9 @@
-package edu.rit.codelanx.ui;
+package edu.rit.codelanx.network.client;
 
 import java.io.*;
 
-public class ReadTextInput implements IReadInput {
+//TODO: I left this here in case you wanted the code - sja9291
+public class ReadTextInput {//implements IReadInput {
     private final InputStream input;
     private final PrintStream output;
     private final BufferedReader buffer;
@@ -21,7 +22,6 @@ public class ReadTextInput implements IReadInput {
      * @return
      * @throws IOException
      */
-    @Override
     public String readInput(BufferedReader buffer) throws IOException {
         StringBuilder content = new StringBuilder();
         String line;
