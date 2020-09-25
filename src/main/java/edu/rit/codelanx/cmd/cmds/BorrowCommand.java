@@ -2,6 +2,7 @@ package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.Server;
 import edu.rit.codelanx.cmd.ResponseFlag;
+import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.types.Book;
 import edu.rit.codelanx.data.types.Visitor;
@@ -10,6 +11,8 @@ import edu.rit.codelanx.ui.Client;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static edu.rit.codelanx.cmd.CommandUtils.findVisitor;
+import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 import static java.lang.Long.parseLong;
 
 /**
@@ -53,10 +56,10 @@ public class BorrowCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(Client executor, String... arguments) {
 
-        //Checking that the amount of arguments is correct
-        if (arguments.length < 2) {
+        //Checking that they have the correct amount of parameters
+        if (numArgs(arguments, 2) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "visitorID,id");
+                    "visitorID;");
             return ResponseFlag.SUCCESS;
         }
 
@@ -73,19 +76,19 @@ public class BorrowCommand extends TextCommand {
         }
 
         //Finding the visitor with the matching ID in the database
-        Optional<? extends Visitor> visitorSearch = this.server.getDataStorage()
-                .ofLoaded(Visitor.class)
-                .filter(v -> v.getID() == visitorID)
-                .findAny();
+        Visitor v = findVisitor(this.server, visitorID);
+        if (v == null){
+            executor.sendMessage(this.getName() + ",invalid-visitor-id;");
+        }
 
         //Seeing if the search found a visitor
-        Visitor visitor;
-        try {
+        Visitor visitor = null; //Temporary
+        /*try {
             visitor = visitorSearch.get();
         } catch (NoSuchElementException e) {
             executor.sendMessage(this.getName() + ",invalid-visitor-id;");
             return ResponseFlag.SUCCESS;
-        }
+        }*/
 
         //TODO: Check that the visitor will have less than 5 borrowed books
 
