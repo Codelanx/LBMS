@@ -19,7 +19,9 @@ public interface DataStorage {
     public <R extends State> Stream<? extends R> ofLoaded(Class<R> type);
 
     /**
-     * Inserts a new state into the system, built from dynamic input or otherwise
+     * Inserts a new state into the system, built from dynamic input or otherwise.
+     * This method will allow the underlying storage to determine a new ID for the
+     * state
      *
      * @param builder A {@link StateBuilder} of the relevant state to insert
      * @param <R> The type of the {@link State} that results from being inserted

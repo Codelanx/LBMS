@@ -3,8 +3,7 @@ package edu.rit.codelanx.util;
 import java.lang.reflect.Constructor;
 import java.util.Objects;
 
-public enum Validate {
-    ;
+public enum Validate {;
 
     public static void isTrue(boolean exp, String failureReason, Class<? extends Throwable> type) {
         if (exp) return;

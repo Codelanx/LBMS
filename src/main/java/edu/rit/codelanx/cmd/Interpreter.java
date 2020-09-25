@@ -1,10 +1,6 @@
 package edu.rit.codelanx.cmd;
 
-import edu.rit.codelanx.ui.Client;
+public interface Interpreter {
 
-public interface Interpreter<Q extends Request, R extends Response> {
-
-    public R receive(Client executor, Q request);
-
-    //TODO: Handle partial request
+    public void receive(CommandExecutor executor, String data);
 }

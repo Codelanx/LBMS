@@ -24,8 +24,9 @@ public class LBMS {
         } catch (IOException e) {
             System.err.println("Fatal error while starting LBMS storage");
             Errors.report(e);
-            return;
+            throw new Error(e); //Error, because this is a fatal startup issue
         }
+    }
 
     private void access() {
         try (Client client = new TextClient(System.in, System.out)) {

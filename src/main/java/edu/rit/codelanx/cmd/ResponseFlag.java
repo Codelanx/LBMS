@@ -1,9 +1,8 @@
 package edu.rit.codelanx.cmd;
 
-import edu.rit.codelanx.Server;
-import edu.rit.codelanx.ui.Client;
+import edu.rit.codelanx.network.io.Message;
 
-public enum ResponseFlag implements Response {
+public enum ResponseFlag implements Message<String> {
     SUCCESS("Command ran successfully"),
     FAILURE("Command execution failed"),
     PARTIAL("Interpreter is waiting for a termination sequence"),
@@ -11,7 +10,7 @@ public enum ResponseFlag implements Response {
     UNKNOWN("Unknown command"),
     ;
 
-    private final Command<ResponseFlag> dummy = new DummyCommand();
+    private final Command dummy = new DummyCommand();
     private final String info;
 
     private ResponseFlag(String info) {
@@ -22,11 +21,16 @@ public enum ResponseFlag implements Response {
         return this.info;
     }
 
-    public Command<? extends ResponseFlag> toDummyCommand() {
+    public Command toDummyCommand() {
         return this.dummy;
     }
 
-    private final class DummyCommand implements Command<ResponseFlag> {
+    @Override
+    public String getData() {
+        return this.info;
+    }
+
+    private final class DummyCommand implements Command {
 
         @Override
         public String getName() {
@@ -34,7 +38,7 @@ public enum ResponseFlag implements Response {
         }
 
         @Override
-        public ResponseFlag onExecute(Client executor, String... arguments) {
+        public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
             return ResponseFlag.this;
         }
     }

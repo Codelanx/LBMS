@@ -11,6 +11,7 @@ public interface State {
         TRANSACTION,
         VISIT,
         VISITOR,
+        AUTHOR,
         UNKNOWN,
         ;
     }
