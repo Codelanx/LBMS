@@ -4,8 +4,11 @@ import edu.rit.codelanx.Server;
 import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.cmd.TextCommandMap;
 import edu.rit.codelanx.ui.Client;
+import edu.rit.codelanx.ui.IMessage;
+import edu.rit.codelanx.ui.TextClient;
+import edu.rit.codelanx.ui.TextMessage;
 
-public class TextInterpreter implements Interpreter<TextRequest, TextResponse> {
+public class TextInterpreter implements Interpreter<String,TextMessage> {
 
     private final Server server;
 
@@ -14,16 +17,8 @@ public class TextInterpreter implements Interpreter<TextRequest, TextResponse> {
         TextCommandMap.initialize(server); //Enables commands on this server
     }
 
-    @Override
-    public TextResponse receive(Client executor, TextRequest request) {
-        //TODO: Handle receiving a request here
-        //was it terminated? if so, exec a command
-        return null;
-    }
-
-
     /**
-     * checks if request str is terminated otr not.
+     * checks if request str is terminated or not.
      * @param request
      * @return
      */
@@ -36,5 +31,12 @@ public class TextInterpreter implements Interpreter<TextRequest, TextResponse> {
             r=content.substring(0,index);
         }
         return r;
+    }
+
+
+    @Override
+    public void receive(Client executor, TextMessage request) {
+        //TODO: Handle receiving a request here
+        //was it terminated? if so, exec a command
     }
 }
