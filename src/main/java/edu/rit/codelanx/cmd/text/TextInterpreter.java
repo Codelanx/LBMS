@@ -1,13 +1,18 @@
 package edu.rit.codelanx.cmd.text;
 
-import edu.rit.codelanx.Server;
+import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.cmd.Command;
+import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.Interpreter;
-import edu.rit.codelanx.cmd.TextCommandMap;
-import edu.rit.codelanx.ui.Client;
+import edu.rit.codelanx.cmd.ResponseFlag;
 
-public class TextInterpreter implements Interpreter<TextRequest, TextResponse> {
+import java.util.Map;
+import java.util.WeakHashMap;
+
+public class TextInterpreter implements Interpreter {
 
     private final Server server;
+    private final Map<CommandExecutor, StringBuilder> buffers = new WeakHashMap<>();
 
     public TextInterpreter(Server server) {
         this.server = server;
@@ -15,26 +20,31 @@ public class TextInterpreter implements Interpreter<TextRequest, TextResponse> {
     }
 
     @Override
-    public TextResponse receive(Client executor, TextRequest request) {
-        //TODO: Handle receiving a request here
-        //was it terminated? if so, exec a command
-        return null;
-    }
+    public void receive(CommandExecutor executor, String data) {
+        //TODO: Cleanup? Splitting up the method?
+        char[] c = data.toCharArray();
 
-
-    /**
-     * checks if request str is terminated otr not.
-     * @param request
-     * @return
-     */
-    //TODO: Revise this method.
-    public String terminatedRequest(TextRequest request){
-        String content = request.getData();
-        String r=null;
-        int index;
-        if ((index=content.indexOf(';'))!=-1){
-            r=content.substring(0,index);
+        StringBuilder buffer = this.buffers.computeIfAbsent(executor, k -> new StringBuilder());
+        for (int i = 0; i < c.length; i++) {
+            char val = c[i];
+            if (val == ';') {
+                //we hit a terminator
+                String full = buffer.toString();
+                buffer.setLength(0); //clear the buffer
+                this.execute(executor, full); //execute a received command
+                continue; //continue checking for input
+            }
+            buffer.append(c[i]); //add to our future command buffer
         }
-        return r;
     }
+
+    private void execute(CommandExecutor executor, String command) {
+        String[] args = command.split(",");
+        String[] passedArgs = new String[args.length - 1];
+        System.arraycopy(args, 1, passedArgs, 0, passedArgs.length);
+        Command cmd = TextCommandMap.getCommand(this.server, args[0]);
+        ResponseFlag r = cmd.onExecute(executor, passedArgs);
+        //TODO: Handle r
+    }
+
 }

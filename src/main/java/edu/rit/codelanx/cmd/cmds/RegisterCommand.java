@@ -1,10 +1,10 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.Server;
+import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.types.Visitor;
-import edu.rit.codelanx.ui.Client;
 
 import java.math.BigDecimal;
 
@@ -40,8 +40,7 @@ public class RegisterCommand extends TextCommand {
      * the given data.
      *
      * @param executor  the client that is calling the command
-     * @param arguments register: the name of the command to be run
-     *                  first name: the first name of the visitor.
+     * @param arguments first name: the first name of the visitor.
      *                  last name: the last name of the visitor.
      *                  address: the address of the visitor.
      *                  phone-number: the phone number of the visitor.
@@ -49,7 +48,7 @@ public class RegisterCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(Client executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
         //We use the builder pattern to create a new object in the data storage
         Visitor.Builder builder;
         //TODO: Fill out visitor's data from real arguments

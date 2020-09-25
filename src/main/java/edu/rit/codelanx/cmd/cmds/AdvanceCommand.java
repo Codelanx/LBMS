@@ -1,10 +1,11 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.Server;
+import com.codelanx.commons.util.InputOutput;
+import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.types.Visitor;
-import edu.rit.codelanx.ui.Client;
 
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public class AdvanceCommand extends TextCommand {
      * date.
      *
      * @param executor  the client that is calling the command
-     * @param arguments advance: name of the command to be run
+     * @param args      advance: name of the command to be run
      *                  numberofdays: number of days to move the library's
      *                  calendar forward, must be between 0 and 7 days.
      *                  numberofhours: number of hours to move the library's
@@ -53,7 +54,7 @@ public class AdvanceCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(Client executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         long someID = 42;
         Optional<? extends Visitor> visitor = this.server.getDataStorage()
                 .ofLoaded(Visitor.class)

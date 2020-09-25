@@ -1,12 +1,9 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.Server;
+import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.types.Book;
-import edu.rit.codelanx.ui.Client;
-
-import java.util.Optional;
 
 import static java.lang.Long.parseLong;
 
@@ -49,7 +46,7 @@ public class BorrowCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(Client executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
         //Checking that the amount of arguments is correct
         if (arguments.length < 2) {
             executor.sendMessage("Incorrect Number of Arguments.");

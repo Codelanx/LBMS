@@ -1,9 +1,12 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.Server;
+import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.ui.Client;
+import edu.rit.codelanx.data.types.Visitor;
+
+import java.util.Optional;
 
 /**
  * Pays all or part of an outstanding fine.
@@ -37,15 +40,14 @@ public class PayCommand extends TextCommand {
      * specific visitor's negative balance.
      *
      * @param executor  the client that is calling the command
-     * @param arguments pay: name of the command to be run
-     *                  visitorID: unique 10-digit ID of the visitor
+     * @param args      visitorID: unique 10-digit ID of the visitor
      *                  amount: the amount that the visitor is paying toward
-     *                  their fines
+     *                      their fines
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(Client executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         return ResponseFlag.NOT_FINISHED;
     }
 }

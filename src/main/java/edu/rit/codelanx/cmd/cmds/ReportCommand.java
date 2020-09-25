@@ -1,9 +1,9 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.Server;
+import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.ui.Client;
 
 /**
  * Reports various statistics about library usage for a period covering a
@@ -44,7 +44,7 @@ public class ReportCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(Client executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
         return ResponseFlag.NOT_FINISHED;
     }
 }

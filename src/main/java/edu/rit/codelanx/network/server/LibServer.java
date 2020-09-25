@@ -54,7 +54,7 @@ public class LibServer implements Server<TextMessage> {
     }
 
     @Override
-    public void registerClient(Client client) {
+    public void registerClient(Client<TextMessage> client) {
 
     }
 

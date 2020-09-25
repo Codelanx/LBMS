@@ -1,9 +1,9 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.Server;
+import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.ui.Client;
 
 /**
  * Purchases one or more books returned from the last book store search.
@@ -42,17 +42,14 @@ public class BuyCommand extends TextCommand {
      * of books
      *
      * @param executor  the client that is calling the command
-     * @param arguments buy: name of the command to be run
-     *                  quantity: number of copies of each book to purchase
-     *                  id: ID of the book as returned by the most recent
-     *                  book store search
-     *                  ids: comma-separated list of additional books to buy.
-     *                  The same quantity of each book will be purchased.
+     * @param arguments quantity: number of copies of each book to purchase
+     *                  id(s): 1 or more book IDs to be purchased (separated
+     *                      by commas).
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(Client executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
         return ResponseFlag.NOT_FINISHED;
     }
 }

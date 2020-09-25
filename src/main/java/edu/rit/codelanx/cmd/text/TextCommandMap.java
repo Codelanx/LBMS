@@ -1,8 +1,11 @@
-package edu.rit.codelanx.cmd;
+package edu.rit.codelanx.cmd.text;
 
-import edu.rit.codelanx.Server;
+import edu.rit.codelanx.cmd.Command;
+import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.cmds.*;
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.util.Validate;
+import edu.rit.codelanx.network.server.Server;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -29,14 +32,14 @@ public enum TextCommandMap {
     ;
 
     private static final TextCommandMap[] VALUES = TextCommandMap.values();
-    private final Map<Server, Command<? extends Response>> serverCmd = new WeakHashMap<>();
-    private final Function<Server, Command<? extends Response>> initializer;
+    private final Map<Server<TextMessage>, Command> serverCmd = new WeakHashMap<>();
+    private final Function<Server<TextMessage>, Command> initializer;
 
-    private TextCommandMap(Function<Server, Command<? extends Response>> initializer) {
+    private TextCommandMap(Function<Server<TextMessage>, Command> initializer) {
         this.initializer = initializer;
     }
 
-    public Command<? extends Response> toCommand(Server server) {
+    public Command toCommand(Server<TextMessage> server) {
         return this.serverCmd.computeIfAbsent(server, this.initializer);
     }
 
@@ -50,15 +53,15 @@ public enum TextCommandMap {
                 }).findAny();
     }
 
-    public static Command<? extends Response> getCommand(Server server, String cmdName) {
-        Optional<? extends Command<? extends Response>> opt =
+    public static Command getCommand(Server<TextMessage> server, String cmdName) {
+        Optional<? extends Command> opt =
                 TextCommandMap.getMappingFor(cmdName).map(c -> c.toCommand(server));
         return opt.isPresent() //overcoming the nested type bounding here with `opt` (it gets nasty)
                 ? opt.get()
                 : ResponseFlag.UNKNOWN.toDummyCommand();
     }
 
-    public static void initialize(Server server) {
+    public static void initialize(Server<TextMessage> server) {
         Arrays.stream(VALUES).forEach(c -> c.toCommand(server));
     }
 }
