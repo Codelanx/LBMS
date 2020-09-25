@@ -3,8 +3,16 @@ package edu.rit.codelanx.cmd.cmds;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
+import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
+import edu.rit.codelanx.data.types.Book;
+import edu.rit.codelanx.data.types.Visitor;
+import edu.rit.codelanx.ui.Client;
 
+import java.math.BigDecimal;
+
+import static edu.rit.codelanx.cmd.CommandUtils.findVisitor;
+import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 import static java.lang.Long.parseLong;
 
 /**
@@ -47,41 +55,66 @@ public class BorrowCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
-        //Checking that the amount of arguments is correct
-        if (arguments.length < 2) {
-            executor.sendMessage("Incorrect Number of Arguments.");
+
+        //Checking that they have the correct amount of parameters
+        if (numArgs(arguments, 2) == UtilsFlag.MISSINGPARAMS) {
+            executor.sendMessage(this.getName() + ",missing-parameters," +
+                    "visitorID;");
             return ResponseFlag.SUCCESS;
         }
 
-        //Checking that the id passed was a number
         long visitorID;
+        Set<Long> bookIDs = new HashSet<Long>();
+        //Checking that the id passed was a number
         try {
             visitorID = parseLong(arguments[0]);
-        } catch (NumberFormatException n) {
-            executor.sendMessage("Visitor ID must be a 10-digit number.");
-            return ResponseFlag.SUCCESS;
+            for (int i = 1; i < arguments.length; i++) {
+                bookIDs.add(parseLong(arguments[i]));
+            }
+        } catch (NumberFormatException e) {
+            return ResponseFlag.FAILURE;
         }
+
+        //Finding the visitor with the matching ID in the database
+        Visitor v = findVisitor(this.server, visitorID);
+        if (v == null){
+            executor.sendMessage(this.getName() + ",invalid-visitor-id;");
+        }
+
+        //Seeing if the search found a visitor
+        Visitor visitor = null; //Temporary
+        /*try {
+            visitor = visitorSearch.get();
+        } catch (NoSuchElementException e) {
+            executor.sendMessage(this.getName() + ",invalid-visitor-id;");
+            return ResponseFlag.SUCCESS;
+        }*/
 
         //TODO: Check that the visitor will have less than 5 borrowed books
 
-        //TODO: Check that the visitor has no fines
-
-        //Checking that the book ids are all numbers
-        String[] ids = arguments[1].split(",");
-        long[] bookIDs = new long[ids.length];
-        for (int i = 0; i < ids.length; i++){
-            try{
-                bookIDs[i] = parseLong(ids[i]);
-            } catch (NumberFormatException n){
-                executor.sendMessage("Book ID's must be a 13-digit number");
-                return ResponseFlag.SUCCESS;
-            }
+        //Checking that the visitor's account balance is in the positive
+        if (visitor.getMoney().compareTo(BigDecimal.ZERO) < 1) {
+            executor.sendMessage(this.getName() + ",outstanding-fine," + visitor.getMoney());
+            return ResponseFlag.SUCCESS;
         }
 
         //TODO: Search the database for the books in bookIDs, if any of them
         // aren't correct, don't allow them to check any of them out
+        Set<Book> books = new HashSet<>();
+        Optional<? extends Book> bookSearch;
+        //TODO: Change the search to search for all books by their id at
+        // one time
+        for (final long bookID : bookIDs) {
+            bookSearch =
+                    this.server.getDataStorage().ofLoaded(Book.class).filter(b -> b.getID() == bookID).findAny();
+            if (bookSearch.isPresent()) {
+                books.add(bookSearch.get());
+            } else {
+                executor.sendMessage(this.getName() + ",invalid-book-id," + bookID);
+            }
+        }
 
-        //TODO: Assign a return-by date to the book and check out the book to
+        //TODO: Assign a return-by date to the books and check out the books to
         // the visitor
 
         //TODO: Change the database to reflect the checked out book
