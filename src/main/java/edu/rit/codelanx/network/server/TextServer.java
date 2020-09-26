@@ -8,33 +8,22 @@ import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.data.DataFacade;
 import edu.rit.codelanx.data.DataStorage;
 import edu.rit.codelanx.data.ITEMPDataStorage;
-import edu.rit.codelanx.network.io.Message;
 import edu.rit.codelanx.network.io.Messenger;
-import edu.rit.codelanx.network.io.MessengerAdapter;
 import edu.rit.codelanx.network.io.TextMessage;
 
-public class LibServer implements Server<TextMessage> {
+public class TextServer implements Server<TextMessage> {
 
     private final DataStorage storage; //stores data
     private final Clock clock; //passes the time
     private final Interpreter commands;
-    private final MessengerAdapter<? super TextMessage> input;
 
     /**
      * Starts our program, loads relevant data, begins ticking server logic, etc
      */
-    public LibServer() {
+    public TextServer() {
         this.storage = new DataFacade();
         this.clock = new Clock(this);
         this.commands = new TextInterpreter(this);
-        this.input = new MessengerAdapter<>();
-        this.input.onMessage(TextMessage.class, (from, msg) -> {
-            if (!(from instanceof CommandExecutor)) {
-                throw new IllegalArgumentException("Cannot receive messages from a non-CommandExecutor");
-            }
-            String data = msg.getData();
-            this.getInterpreter().receive((CommandExecutor) from, data);
-        });
     }
 
     @Override
@@ -60,9 +49,10 @@ public class LibServer implements Server<TextMessage> {
 
     @Override
     public void receive(Messenger<TextMessage> from, TextMessage message) {
-        if (from instanceof CommandExecutor) {
-            this.getInterpreter().receive((CommandExecutor) from, message.getData());
+        if (!(from instanceof CommandExecutor)) {
+            throw new IllegalArgumentException("Cannot receive messages from a non-CommandExecutor");
         }
-
+        String data = message.getData();
+        this.getInterpreter().receive((CommandExecutor) from, data);
     }
 }
