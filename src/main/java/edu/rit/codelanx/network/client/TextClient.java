@@ -46,7 +46,6 @@ public class TextClient implements Client<TextMessage> {
 
     @Override
     public void display() throws IOException {
-        //TODO: Consume main thread
         String s;
         while ((s = this.buffer.readLine()) != null) {
             Server<TextMessage> server = this.server.get();
@@ -66,7 +65,7 @@ public class TextClient implements Client<TextMessage> {
 
     @Override
     public void sendMessage(String message) {
-        System.out.println(message);
+        this.output.println(message);
     }
 
     @Override
@@ -98,7 +97,7 @@ public class TextClient implements Client<TextMessage> {
             Checkout checkout = (Checkout) state;
             s = "Visitor ID: %d | Book id: %d| checkout time: %s";
             formatted_s = String.format(s, checkout.getVisitorID(), checkout.getBookID(), formatTime(checkout.getBorrowedAt()));
-        } else { /* ... */ }
+        } else { /* ... */ } //Old: Book
     }
 
     @Override
@@ -108,27 +107,5 @@ public class TextClient implements Client<TextMessage> {
         }
         this.output.println(message.getData());
     }
-
-
-    //    @Override
-//    public void close() throws Exception {
-//        this.buffer.close();
-//        this.reader.close();
-//    }
-
-//    @Override
-//    public void display() {
-//        try {
-//            String rq= readInput(buffer);
-//            TextRequest request= new TextRequest(rq);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        //TODO: revise
-//
-//    }
-//
-
-
 
 }
