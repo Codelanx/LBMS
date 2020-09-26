@@ -63,6 +63,7 @@ public class BorrowCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... arguments) {
 
+        //Checking that the amount of args passed is correct
         if (numArgs(arguments, 2) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");

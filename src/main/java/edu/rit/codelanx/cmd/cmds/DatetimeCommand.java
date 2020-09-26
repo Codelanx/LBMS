@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
@@ -20,7 +21,7 @@ public class DatetimeCommand extends TextCommand {
      *
      * @param server the server that the command is to be run on
      */
-    public DatetimeCommand(Server server) {
+    public DatetimeCommand(Server<TextMessage> server) {
         super(server);
     }
 
@@ -42,16 +43,16 @@ public class DatetimeCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor,
+                                  String... arguments) {
+
         //Checking that no other arguments were passed in
-        if (arguments.length > 0){
+        if (arguments.length > 0) {
             return ResponseFlag.FAILURE;
         }
+        //Getting the current time from the server's clock
+        executor.sendMessage(this.getName() + "," + server.getClock().getCurrentTime() + ";");
 
-        // TODO: Use the clock class to display the current time
-        //executor.sendMessage(this.getName() + "," + Clock.currentDate + ","
-        // + Clock.currentTime);
-
-        return ResponseFlag.NOT_FINISHED;
+        return ResponseFlag.SUCCESS;
     }
 }

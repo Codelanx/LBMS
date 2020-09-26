@@ -23,7 +23,7 @@ public final class CommandUtils {
         try {
             return parseLong(visitorID);
         } catch (NumberFormatException n) {
-            return null;
+            return (long)-1;
         }
     }
 

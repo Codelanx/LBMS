@@ -1,9 +1,17 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
+import static java.lang.Long.parseLong;
 
 /**
  * Purchases one or more books returned from the last book store search.
@@ -24,7 +32,7 @@ public class BuyCommand extends TextCommand {
      *
      * @param server the server that the command is to be run on
      */
-    public BuyCommand(Server server) {
+    public BuyCommand(Server<TextMessage> server) {
         super(server);
     }
 
@@ -50,6 +58,38 @@ public class BuyCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+
+        //Checking that the amount of args passed is correct
+        if (numArgs(arguments, 2) == UtilsFlag.MISSINGPARAMS) {
+            executor.sendMessage(this.getName() + ",missing-parameters," +
+                    "visitorID;");
+            return ResponseFlag.SUCCESS;
+        }
+
+        //Making sure the quantity is an int
+        int quantity;
+        try {
+            quantity = Integer.parseInt(arguments[0]);
+        } catch (NumberFormatException e){
+            return ResponseFlag.FAILURE;
+        }
+
+        if (quantity == 0){
+            executor.sendMessage(this.getName() + ",success," + quantity + ";");
+        }
+
+        Set<Long> bookIDs = new HashSet<Long>();
+        //Checking that the ids passed was a number
+        try {
+            for (int i = 1; i < arguments.length; i++) {
+                bookIDs.add(parseLong(arguments[i]));
+            }
+        } catch (NumberFormatException e) {
+            return ResponseFlag.FAILURE;
+        }
+
+        //TODO: Increment the book counts in the database for each book
+
         return ResponseFlag.NOT_FINISHED;
     }
 }

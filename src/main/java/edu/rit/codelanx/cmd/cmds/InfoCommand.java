@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
@@ -26,7 +27,7 @@ public class InfoCommand extends TextCommand {
      *
      * @param server the server that the command is to be run on
      */
-    public InfoCommand(Server server) {
+    public InfoCommand(Server<TextMessage> server) {
         super(server);
     }
 

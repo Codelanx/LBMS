@@ -80,6 +80,8 @@ public class AdvanceCommand extends TextCommand {
             server.getClock().advanceTime((int) result.get(1),
                     (int) result.get(2));
         }
+
+        executor.sendMessage(this.getName() + "success;");
         return ResponseFlag.SUCCESS;
     }
 }

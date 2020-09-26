@@ -5,7 +5,9 @@ import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.UtilsFlag;
+
 import static edu.rit.codelanx.cmd.CommandUtils.*;
+
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.ui.Client;
@@ -50,7 +52,8 @@ public class ArriveCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor,
+                                  String... arguments) {
         //Checking that they have the correct amount of parameters
         if (numArgs(arguments, 1) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
@@ -60,18 +63,19 @@ public class ArriveCommand extends TextCommand {
 
         //Checking that the id passed was a number
         Long visitorID = checkVisitorID(arguments[0]);
-        if (visitorID == null){
+        if (visitorID == -1) {
             return ResponseFlag.FAILURE;
         }
 
         //Finding the visitor with the matching ID in the database
         Visitor v = findVisitor(this.server, visitorID);
-        if (v == null){
+        if (v == null) {
             executor.sendMessage(this.getName() + ",invalid-id;");
         }
 
         //TODO: Start a visit for the visitor
         v.startVisit(server.getDataStorage().getLibrary());
+        executor.sendMessage(this.getName() + "," + visitorID + "," + server.getClock().getCurrentTime() + ";");
 
         return ResponseFlag.SUCCESS;
     }

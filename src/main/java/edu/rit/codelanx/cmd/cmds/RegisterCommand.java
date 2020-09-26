@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
@@ -23,7 +24,7 @@ public class RegisterCommand extends TextCommand {
      * Constructor for the RegisterCommand class
      * @param server the server that the command is to be run on
      */
-    public RegisterCommand(Server server) {
+    public RegisterCommand(Server<TextMessage> server) {
         super(server);
     }
 
