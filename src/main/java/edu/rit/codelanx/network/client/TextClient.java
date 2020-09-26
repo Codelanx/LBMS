@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
 
 public class TextClient implements Client<TextMessage> {
@@ -70,7 +71,11 @@ public class TextClient implements Client<TextMessage> {
     }
 
     @Override
-    public void renderState(State... state) {
+    public void renderState(State... states) {
+        Arrays.stream(states)
+                .map(State::toFormattedText)
+                .forEach(this.output::println); //final code version
+
         String s;
         String formatted_s = state.toFormattedText();
         this.output.println(formatted_s);
