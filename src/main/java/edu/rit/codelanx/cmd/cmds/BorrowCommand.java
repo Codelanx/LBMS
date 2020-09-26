@@ -1,5 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.SpecialCommandMethods;
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
@@ -10,6 +12,10 @@ import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.ui.Client;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 
 import static edu.rit.codelanx.cmd.CommandUtils.findVisitor;
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
@@ -31,7 +37,7 @@ public class BorrowCommand extends TextCommand {
      *
      * @param server the server that the command is to be run on
      */
-    public BorrowCommand(Server server) {
+    public BorrowCommand(Server<TextMessage> server) {
         super(server);
     }
 
@@ -54,9 +60,9 @@ public class BorrowCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor,
+                                  String... arguments) {
 
-        //Checking that they have the correct amount of parameters
         if (numArgs(arguments, 2) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");
@@ -77,33 +83,29 @@ public class BorrowCommand extends TextCommand {
 
         //Finding the visitor with the matching ID in the database
         Visitor v = findVisitor(this.server, visitorID);
-        if (v == null){
+        if (v == null) {
             executor.sendMessage(this.getName() + ",invalid-visitor-id;");
         }
-
-        //Seeing if the search found a visitor
-        Visitor visitor = null; //Temporary
-        /*try {
-            visitor = visitorSearch.get();
-        } catch (NoSuchElementException e) {
-            executor.sendMessage(this.getName() + ",invalid-visitor-id;");
-            return ResponseFlag.SUCCESS;
-        }*/
 
         //TODO: Check that the visitor will have less than 5 borrowed books
+        /*
+            if (v.getCheckedOut.size() > 5 || v.getCheckedOut.size() +
+            bookIDs.size() > 5){
+                executor.sendMessage(this.getName() + ",book-limit-exceeded;");
+                return ResponseFlag.Success;
+            }
+         */
 
         //Checking that the visitor's account balance is in the positive
-        if (visitor.getMoney().compareTo(BigDecimal.ZERO) < 1) {
-            executor.sendMessage(this.getName() + ",outstanding-fine," + visitor.getMoney());
+        if (v.getMoney().compareTo(BigDecimal.ZERO) < 1) {
+            executor.sendMessage(this.getName() + ",outstanding-fine," + v.getMoney());
             return ResponseFlag.SUCCESS;
         }
 
-        //TODO: Search the database for the books in bookIDs, if any of them
+        //Search the database for the books in bookIDs, if any of them
         // aren't correct, don't allow them to check any of them out
         Set<Book> books = new HashSet<>();
         Optional<? extends Book> bookSearch;
-        //TODO: Change the search to search for all books by their id at
-        // one time
         for (final long bookID : bookIDs) {
             bookSearch =
                     this.server.getDataStorage().ofLoaded(Book.class).filter(b -> b.getID() == bookID).findAny();
@@ -111,13 +113,17 @@ public class BorrowCommand extends TextCommand {
                 books.add(bookSearch.get());
             } else {
                 executor.sendMessage(this.getName() + ",invalid-book-id," + bookID);
+                return ResponseFlag.SUCCESS;
             }
         }
 
         //TODO: Assign a return-by date to the books and check out the books to
         // the visitor
-
-        //TODO: Change the database to reflect the checked out book
+        /*for (Book b : books){
+            b.checkout(v);
+        }
+        return ResponseFlag.SUCCESS;
+        */
 
         return ResponseFlag.NOT_FINISHED;
     }

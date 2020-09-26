@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
@@ -28,7 +29,7 @@ public class ArriveCommand extends TextCommand {
      *
      * @param server the server that the command is to be run on
      */
-    public ArriveCommand(Server server) {
+    public ArriveCommand(Server<TextMessage> server) {
         super(server);
     }
 
@@ -70,7 +71,8 @@ public class ArriveCommand extends TextCommand {
         }
 
         //TODO: Start a visit for the visitor
+        v.startVisit(server.getDataStorage().getLibrary());
 
-        return ResponseFlag.NOT_FINISHED;
+        return ResponseFlag.SUCCESS;
     }
 }

@@ -10,5 +10,6 @@ public enum UtilsFlag {
     INVALIDSORTORDER,
     INVALIDDAYS,
     INVALIDHOURS,
-    CORRECT
+    CORRECT,
+    ERROR
 }
