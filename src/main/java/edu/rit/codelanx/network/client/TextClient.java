@@ -9,6 +9,7 @@ import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,16 +47,14 @@ public class TextClient implements Client<TextMessage> {
     @Override
     public void display() throws IOException {
         //TODO: Consume main thread
-        String s = null;
+        String s;
         while ((s = this.buffer.readLine()) != null) {
             Server<TextMessage> server = this.server.get();
             if (server == null) {
                 System.err.println("Not connected to server!"); //prints per input attempt
                 continue;
             }
-            /*server.getReceiver().receive(this, new TextMessage(s));
-            this.message(server.getReceiver(), new TextMessage(s));
-            this.message(server.getMessenger(), new TextMessage(s));*/
+            this.message(server, new TextMessage(s));
         }
     }
 
