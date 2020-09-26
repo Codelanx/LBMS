@@ -99,6 +99,14 @@ public class Book extends UpdatableState implements FileSerializable {
     }
 
     @Override
+    public String toFormattedText() {
+        String authors = String.join(", ", this.getAuthors());
+        return String.format("Title: %s | ISBN: %s| Author: %s| Publisher: %s| publish date:%s| Total pages: %d| Total copies: %d| Total checkout: %d",
+                this.getTitle(), this.getISBN(), authors, this.getPublisher(),
+                this.getPublishDate(), this.getPageCount(), this.getTotalCopies(), this.getCheckedOut());
+    }
+
+    @Override
     public Map<String, Object> serialize() {
         Map<String, Object> back = new LinkedHashMap<>();
         back.put("id", this.id);
