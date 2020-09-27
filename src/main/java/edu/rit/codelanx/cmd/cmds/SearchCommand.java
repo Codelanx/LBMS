@@ -1,14 +1,18 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.*;
+import edu.rit.codelanx.data.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
-import edu.rit.codelanx.cmd.CommandExecutor;
-import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
- * Searches for books that may be purchased by the library and added to its collection.
- *
+ * Searches for books that may be purchased by the library and added to its
+ * collection.
+ * <p>
  * Request Format: search,title,[{authors},isbn[,publisher[,sort order]]]
  * title is the title of the book.
  * authors is the comma-separated list of authors of the book.
@@ -41,8 +45,7 @@ public class SearchCommand extends TextCommand {
      * purchased by the library (and added to its collection).
      *
      * @param executor  the client that is calling the command
-     * @param arguments search: name of the command to be run
-     *                  title: title of the book
+     * @param arguments title: title of the book
      *                  authors: comma-separated list of authors of the book
      *                  isbn: International Standard Book NUmber for the book
      *                  publisher: name of the book's publisher
@@ -51,7 +54,48 @@ public class SearchCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor,
+                                  String... arguments) {
+
+        //Checking that the amount of arguments is correct
+        if (CommandUtils.numArgs(arguments, 1) == UtilsFlag.MISSINGPARAMS) {
+            return ResponseFlag.FAILURE;
+        }
+        int numOfArgs = arguments.length;
+        String title, publisher, sortOrder, isbn = "";
+        String[] authors = {};
+        if (numOfArgs == 1) {
+            title = arguments[0];
+            Optional<? extends Book> bookSearch =
+                    this.server.getDataStorage().ofLoaded(Book.class).filter(b -> b.getTitle().equals(title)).findAny();
+        }
+        //Going through the args and assigning them to their variables
+        for (int i = 1; i < numOfArgs; i++) {
+            if (i == 1){
+                authors = arguments[i].split(",");
+            } else if (i == 2){
+                isbn = arguments[i];
+            } else if (i == 3){
+                publisher = arguments[i];
+            } else if (i == 4){
+                sortOrder = arguments[i];
+            }
+        }
+
+        //TODO: Search for the books in the database using the given args
+        /*List<Book> bookList = SpecialCommandMethods.getBooks(title, isbn,
+                publisher, sortOrder, authors);*/
+
+        //TODO: Create a string of results and send it to the executor
+        /*StringBuilder result =
+                new StringBuilder(this.getName() + "," + bookList.size() + ",\n");
+        for (Book b : bookList){
+            result.append(b.getID()).append(",").append(b.getISBN()).append(
+                    ",").append(b.getTitle()).append(",").append(b.getAuthors()).append(",").append(b.getPublishDate()).append("\n");
+        }
+        executor.sendMessage(result);
+        */
+
         return ResponseFlag.NOT_FINISHED;
     }
 }
