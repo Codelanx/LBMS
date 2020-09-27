@@ -73,7 +73,7 @@ public class TextClient implements Client<TextMessage> {
         Arrays.stream(states)
                 .map(State::toFormattedText)
                 .forEach(this.output::println); //final code version
-
+/*
         String s;
         String formatted_s = state.toFormattedText();
         this.output.println(formatted_s);
@@ -97,7 +97,7 @@ public class TextClient implements Client<TextMessage> {
             Checkout checkout = (Checkout) state;
             s = "Visitor ID: %d | Book id: %d| checkout time: %s";
             formatted_s = String.format(s, checkout.getVisitorID(), checkout.getBookID(), formatTime(checkout.getBorrowedAt()));
-        } else { /* ... */ } //Old: Book
+        } else { } //Old: Book*/
     }
 
     @Override
