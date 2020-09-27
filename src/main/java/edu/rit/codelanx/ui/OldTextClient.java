@@ -1,9 +1,8 @@
 package edu.rit.codelanx.ui;
 
-import edu.rit.codelanx.Server;
-//import edu.rit.codelanx.data.State;
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.types.*;
+import edu.rit.codelanx.network.io.TextMessage;
+import edu.rit.codelanx.network.server.Server;
 
 import java.io.*;
 import java.time.Instant;
@@ -13,13 +12,13 @@ import java.time.format.FormatStyle;
 import java.util.Locale;
 
 
-public class TextClient implements ITextClient {
+public class OldTextClient implements OldITextClient {
     private InputStreamReader reader;
     private BufferedReader buffer;
     private PrintStream output;
     private Server server;
 
-    public TextClient(InputStream input, PrintStream output) {
+    public OldTextClient(InputStream input, PrintStream output) {
         this.reader = new InputStreamReader(input);
         this.buffer = new BufferedReader(this.reader);
         this.output = output;
@@ -34,13 +33,13 @@ public class TextClient implements ITextClient {
     public void display() throws IOException {
         String str;
         while ((str = buffer.readLine()) != null) {
-            server.receive(this, new TextMessage(str));
+            //server.receive(this, new TextMessage(str));
         }
     }
 
     @Override
     public void connect(Server server) {
-        server.registerClient(this);
+        //server.registerClient(this);
         this.server = server;
     }
 
@@ -79,9 +78,7 @@ public class TextClient implements ITextClient {
      * @param message
      */
     @Override
-    public void receive(Server server, TextMessage message) {
+    public void receive(Server server, TextMessage message) throws IOException {
         this.output.println(message.getData());
     }
-
-
 }
