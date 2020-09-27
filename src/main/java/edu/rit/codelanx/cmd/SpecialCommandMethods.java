@@ -1,10 +1,8 @@
 package edu.rit.codelanx.cmd;
 
-import edu.rit.codelanx.data.types.Author;
-import edu.rit.codelanx.data.types.Book;
-import edu.rit.codelanx.data.types.Visit;
-import edu.rit.codelanx.data.types.Visitor;
+import edu.rit.codelanx.data.types.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -25,5 +23,7 @@ public interface SpecialCommandMethods {
     //Need a way to get the Instant for the time that the visitor started
     // their visit
     public Instant getVisitStart();
+
+    public void pay(Library library, Visitor visitor, BigDecimal amount);
 
 }

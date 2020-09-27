@@ -98,7 +98,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
         return str_time;
     }
 
-    BigDecimal updateMoney(BigDecimal amount) {
+    public BigDecimal updateMoney(BigDecimal amount) {
         this.flagModified();
         return this.money.getAndUpdate(amount::add);
     }

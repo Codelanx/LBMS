@@ -1,6 +1,8 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.types.Library;
 import edu.rit.codelanx.data.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -63,15 +65,12 @@ public class PayCommand extends TextCommand {
         }
 
         //establishes the visitorID in the arguments
-        long visitorID = Long.parseLong(args[0]);
-        /**
-        try {
-            visitorID = Long.parseLong(args[0]);
-            for (int i = 1; i < args.length; i++) {
+        long visitorID = Long.parseLong(args[1]);
+        //Determines the requested amount
+        BigDecimal amount = new BigDecimal(Double.parseDouble(args[2]));
+        //Gets the Library
+        Library library = DataStorage.getLibrary();
 
-            }
-        }
-         */
         //Finds a visitor
         Visitor visitor = findVisitor(this.server, visitorID);
         //checks to see if the visitor id exists
@@ -83,7 +82,17 @@ public class PayCommand extends TextCommand {
             executor.sendMessage(this.getName() + ",outstanding-fine," + visitor.getMoney());
             return ResponseFlag.SUCCESS;
         }
-        long amount = Long.parseLong(args[2]);
+        //int numOfArgs = args.length;
+
+        else {
+            this.server.getDataStorage().pay(library, visitor, amount);
+            return ResponseFlag.SUCCESS;
+        }
+
+        //visitor.updateMoney(amount);
+
+
+
 
 
         return ResponseFlag.NOT_FINISHED;

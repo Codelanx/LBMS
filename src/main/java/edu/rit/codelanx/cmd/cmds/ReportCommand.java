@@ -1,10 +1,13 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
+
+import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 
 /**
  * Reports various statistics about library usage for a period covering a
@@ -46,6 +49,14 @@ public class ReportCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+
+        if (numArgs(arguments, 2) == UtilsFlag. MISSINGPARAMS) {
+            executor.sendMessage(this.getName() + ",missing-parameters");
+            return ResponseFlag.SUCCESS;
+        }
+
+
+
         return ResponseFlag.NOT_FINISHED;
     }
 }
