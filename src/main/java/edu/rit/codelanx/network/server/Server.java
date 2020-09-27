@@ -8,6 +8,7 @@ import edu.rit.codelanx.data.ITEMPDataStorage;
 import edu.rit.codelanx.network.io.Message;
 
 public interface Server<T extends Message<?>> extends Messenger<T> {
+
     public Interpreter getInterpreter();
     public ITEMPDataStorage getDataStorage();
     public void registerClient(Client<T> client);

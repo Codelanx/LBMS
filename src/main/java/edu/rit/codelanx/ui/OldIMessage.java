@@ -1,5 +1,5 @@
 package edu.rit.codelanx.ui;
 
-public interface IMessage {
+public interface OldIMessage {
     public String getData();
 }

@@ -2,7 +2,7 @@ package edu.rit.codelanx;
 
 import edu.rit.codelanx.network.client.Client;
 import edu.rit.codelanx.network.client.TextClient;
-import edu.rit.codelanx.network.server.LibServer;
+import edu.rit.codelanx.network.server.TextServer;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.util.Errors;
 
@@ -18,7 +18,7 @@ public class LBMS {
     private final Server server;
 
     private LBMS() {
-        this.server = new LibServer();
+        this.server = new TextServer();
         try {
             this.server.getDataStorage().initialize();
         } catch (IOException e) {

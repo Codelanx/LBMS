@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+
 public class Visitor extends UpdatableState implements FileSerializable {
 
     private final String first;

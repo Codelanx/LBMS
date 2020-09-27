@@ -1,7 +1,7 @@
 package edu.rit.codelanx.util;
 
 import edu.rit.codelanx.data.types.Library;
-import edu.rit.codelanx.util.Validate;
+import edu.rit.codelanx.network.server.Server;
 
 import java.time.Instant;
 import java.time.temporal.ChronoField;
@@ -19,11 +19,11 @@ public class Clock {
     private static final int CLOSE_TIME_24HR = 19;
     private static final int OPEN_TIME_24HR = 8;
     private final AtomicBoolean open = new AtomicBoolean(true);
-    private final Server server;
+    private final Server<?> server;
     private long timeOffsetHours = 0;
     private ScheduledFuture<?> currentTimer;
 
-    public Clock(Server server) {
+    public Clock(Server<?> server) {
         this.server = server;
         this.currentTimer = TICKER.scheduleAtFixedRate(this::tick, 0, CHECK_INTERVAL, TimeUnit.MILLISECONDS);
     }

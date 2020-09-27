@@ -1,10 +1,15 @@
 package edu.rit.codelanx.network.client;
 
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.network.io.Message;
+import edu.rit.codelanx.data.types.Checkout;
+import edu.rit.codelanx.data.types.Library;
+import edu.rit.codelanx.data.types.Transaction;
+import edu.rit.codelanx.data.types.Visit;
+import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
 
 public class TextClient implements Client<TextMessage> {
@@ -40,17 +46,14 @@ public class TextClient implements Client<TextMessage> {
 
     @Override
     public void display() throws IOException {
-        //TODO: Consume main thread
-        String s = null;
+        String s;
         while ((s = this.buffer.readLine()) != null) {
             Server<TextMessage> server = this.server.get();
             if (server == null) {
                 System.err.println("Not connected to server!"); //prints per input attempt
                 continue;
             }
-            /*server.getReceiver().receive(this, new TextMessage(s));
-            this.message(server.getReceiver(), new TextMessage(s));
-            this.message(server.getMessenger(), new TextMessage(s));*/
+            this.message(server, new TextMessage(s));
         }
     }
 
@@ -62,12 +65,39 @@ public class TextClient implements Client<TextMessage> {
 
     @Override
     public void sendMessage(String message) {
-        System.out.println(message);
+        this.output.println(message);
     }
 
     @Override
-    public void renderState(State... state) {
-        //think about how to render Book, Visitor, etc
+    public void renderState(State... states) {
+        Arrays.stream(states)
+                .map(State::toFormattedText)
+                .forEach(this.output::println); //final code version
+/*
+        String s;
+        String formatted_s = state.toFormattedText();
+        this.output.println(formatted_s);
+        if (state instanceof Visitor) {
+            Visitor visitor = (Visitor) state;
+            s = "Visitor ID:%d| First Name: %s| Last name:%s |Address: %s| phone: %d| Currently visit:%b|balance amount= %d";
+            formatted_s = String.format(s, visitor.getID(), visitor.getFirstName(), visitor.getLastName(), visitor.getAddress(), visitor.getPhone(), visitor.isVisiting(), visitor.getMoney());
+        } else if (state instanceof Visit) {
+            Visit visit = (Visit) state;
+            s = "Visitor ID: %d| Arrival Time:%s | Departure time:%s";
+            formatted_s = String.format(s, visit.getID(), formatTime(visit.getStart()), formatTime(visit.getEnd()));
+        } else if (state instanceof Transaction) {
+            Transaction transaction = (Transaction) state;
+            s = "Visitor ID: %d | transaction amount: %d";
+            formatted_s = String.format(s, transaction.getVisitorID(), transaction.getAmount());
+        } else if (state instanceof Library) {
+            Library lib = (Library) state;
+            s = "Library Currently opens: %b";
+            formatted_s = String.format(s, lib.isOpen());
+        } else if (state instanceof Checkout) {
+            Checkout checkout = (Checkout) state;
+            s = "Visitor ID: %d | Book id: %d| checkout time: %s";
+            formatted_s = String.format(s, checkout.getVisitorID(), checkout.getBookID(), formatTime(checkout.getBorrowedAt()));
+        } else { } //Old: Book*/
     }
 
     @Override
@@ -77,27 +107,5 @@ public class TextClient implements Client<TextMessage> {
         }
         this.output.println(message.getData());
     }
-
-
-    //    @Override
-//    public void close() throws Exception {
-//        this.buffer.close();
-//        this.reader.close();
-//    }
-
-//    @Override
-//    public void display() {
-//        try {
-//            String rq= readInput(buffer);
-//            TextRequest request= new TextRequest(rq);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        //TODO: revise
-//
-//    }
-//
-
-
 
 }
