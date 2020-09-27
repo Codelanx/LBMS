@@ -9,8 +9,13 @@ import edu.rit.codelanx.data.state.UpdatableState;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,6 +28,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
     private final String phone;
     private final AtomicReference<BigDecimal> money = new AtomicReference<>();
     private transient Instant visitStart;
+    private transient Instant registration_date;
 
     //Behavioral methods here
 
@@ -65,6 +71,31 @@ public class Visitor extends UpdatableState implements FileSerializable {
     @Override
     public State.Type getType() {
         return State.Type.VISITOR;
+    }
+
+    /**
+     * return the string response for visitor
+     * @return string
+     */
+    @Override
+    public String toFormattedText() {
+        String visitor;
+        String formatted_visitor;
+         //register, id, registration date.
+        visitor="register,%d, %s";
+        formatted_visitor=String.format(visitor, this.getID(), format_time(registration_date));
+        return formatted_visitor;
+    }
+    /**
+     * format time (type instant) into a string
+     *
+     * @param time- to be formatted
+     * @return string representation of time
+     */
+    public String format_time(Instant time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(Locale.US).withZone(ZoneId.systemDefault());
+        String str_time = formatter.format(time);
+        return str_time;
     }
 
     BigDecimal updateMoney(BigDecimal amount) {
@@ -142,6 +173,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
         this.phone = build.phone;
         this.addr = build.addr;
         this.money.set(build.money);
+        this.registration_date= Instant.now();
     }
 
     public Visitor(ResultRow sql) throws SQLException {

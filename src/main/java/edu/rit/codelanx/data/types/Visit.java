@@ -8,8 +8,13 @@ import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.StateBuilder;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Visit extends ResultantState implements FileSerializable {
@@ -50,6 +55,51 @@ public class Visit extends ResultantState implements FileSerializable {
     @Override
     public State.Type getType() {
         return State.Type.VISIT;
+    }
+
+    /**
+     * String representation of a visit (arrvie/depart)
+     * @return string
+     */
+    @Override
+    public String toFormattedText() {
+        String visit;
+        String formatted_visit;
+        if (this.getEnd().equals(null)){
+            visit="arrive, %d, %s";   //arrive, id, arrive time
+            formatted_visit=String.format(visit, this.getID(), format_time(this.getStart()));
+        }else{
+            visit= "depart, %d, %s";                   //depart, id, end-time, duration
+            formatted_visit=String.format(visit, this.getID(),format_time(this.end), getDuration(this.end, this.start));
+        }
+
+        return formatted_visit;
+    }
+
+    /**
+     * gets the string representation of the visit duration (hr:min:sec)
+     * @param end- end time
+     * @param start- start time
+     * @return string duration
+     */
+    public String getDuration(Instant end, Instant start){
+        Duration dur= Duration.between(start, end);
+        int hours= dur.toHoursPart();
+        int mins= dur.toMinutesPart();
+        int seconds= dur.toSecondsPart();
+        return String.format("%d:%d:%d", hours, mins, seconds);
+    }
+
+    /**
+     * format time (type instant) into a string
+     *
+     * @param time- to be formatted
+     * @return string representation of time
+     */
+    public String format_time(Instant time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(Locale.US).withZone(ZoneId.systemDefault());
+        String str_time = formatter.format(time);
+        return str_time;
     }
 
     public static Builder create(DataStorage storage) {

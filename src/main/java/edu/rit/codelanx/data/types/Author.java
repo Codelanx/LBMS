@@ -13,4 +13,9 @@ public class Author implements State {
     public Type getType() {
         return null;
     }
+
+    @Override
+    public String toFormattedText() {
+        return null;
+    }
 }

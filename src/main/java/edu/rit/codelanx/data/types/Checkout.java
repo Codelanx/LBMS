@@ -57,6 +57,11 @@ public class Checkout extends ResultantState implements FileSerializable {
         return State.Type.CHECKOUT;
     }
 
+    @Override
+    public String toFormattedText() {
+        return null;
+    }
+
     public static Builder create(DataStorage storage) {
         return new Builder(storage);
     }

@@ -49,6 +49,11 @@ public class Transaction extends ResultantState implements FileSerializable {
         return State.Type.TRANSACTION;
     }
 
+    @Override
+    public String toFormattedText() {
+        return null;
+    }
+
     public static Builder create(DataStorage storage) {
         return new Builder(storage);
     }

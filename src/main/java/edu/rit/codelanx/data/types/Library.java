@@ -95,6 +95,11 @@ public class Library extends UpdatableState implements FileSerializable {
     }
 
     @Override
+    public String toFormattedText() {
+        return null;
+    }
+
+    @Override
     public Map<String, Object> serialize() {
         return new LinkedHashMap<String, Object>() {{ this.put("money", Library.this.money.get().doubleValue()); }};
     }
