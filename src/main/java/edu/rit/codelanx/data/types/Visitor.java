@@ -30,6 +30,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
     private transient Instant visitStart;
     private transient Instant registration_date;
 
+
     //Behavioral methods here
 
     public String getFirstName() {
@@ -51,6 +52,7 @@ public class Visitor extends UpdatableState implements FileSerializable {
     public BigDecimal getMoney() {
         return this.money.get();
     }
+
 
     public boolean startVisit(Library library) {
         if (!library.isOpen()) return false;

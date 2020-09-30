@@ -1,11 +1,18 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.types.Book;
+import edu.rit.codelanx.data.types.Library;
+import edu.rit.codelanx.data.types.Visit;
+import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
+
+import java.util.List;
 
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 
@@ -50,12 +57,21 @@ public class ReportCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
 
-        if (numArgs(arguments, 2) == UtilsFlag. MISSINGPARAMS) {
+        if (numArgs(arguments, 1) == UtilsFlag. MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters");
             return ResponseFlag.SUCCESS;
         }
 
+        else {
+            Book.Builder book;
+            book = Book.create(this.server.getDataStorage())
+                    .publishDate("2000/1/1")
+                    .totalCopies(10);
 
+            List<Visitor> numVisitor = ;
+            this.server.getDataStorage().totalRegisteredVisitors(numVisitor);
+
+        }
 
         return ResponseFlag.NOT_FINISHED;
     }

@@ -82,12 +82,20 @@ public class PayCommand extends TextCommand {
             executor.sendMessage(this.getName() + ",outstanding-fine," + visitor.getMoney());
             return ResponseFlag.SUCCESS;
         }
+
+        // checks to make sure the requested amount is not greater than the balance
+        else if (visitor.getMoney().compareTo(amount) < 1) {
+            executor.sendMessage((this.getName() + ",request-larger-than-balance," + visitor.getMoney()));
+            return ResponseFlag.SUCCESS;
+        }
         //int numOfArgs = args.length;
 
+        // pays the requested amount
         else {
             this.server.getDataStorage().pay(library, visitor, amount);
             return ResponseFlag.SUCCESS;
         }
+
 
         //visitor.updateMoney(amount);
 

@@ -24,6 +24,7 @@ public class Book extends UpdatableState implements FileSerializable {
     private final int pageCount;
     private int totalCopies;
     private int checkedOut;
+    private int libraryVisitors;
 
     private Book(long id, Builder builder) {
         super(id);
@@ -92,6 +93,8 @@ public class Book extends UpdatableState implements FileSerializable {
     public int getCheckedOut() {
         return this.checkedOut;
     }
+
+    public int getLibraryVisitors() { return this.libraryVisitors; }
 
     @Override
     public State.Type getType() {

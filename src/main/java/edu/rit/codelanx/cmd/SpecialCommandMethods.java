@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface SpecialCommandMethods {
 
+
     public List<Book> getBooks(String title, String isbn, String publisher,
                                String sortOrder, Author... authors);
 
@@ -25,5 +26,8 @@ public interface SpecialCommandMethods {
     public Instant getVisitStart();
 
     public void pay(Library library, Visitor visitor, BigDecimal amount);
+
+    public int totalRegisteredVisitors(List<Visitor> numVisitors);
+
 
 }
