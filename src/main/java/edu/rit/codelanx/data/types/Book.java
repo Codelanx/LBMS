@@ -94,8 +94,6 @@ public class Book extends UpdatableState implements FileSerializable {
         return this.checkedOut;
     }
 
-    public int getLibraryVisitors() { return this.libraryVisitors; }
-
     @Override
     public State.Type getType() {
         return State.Type.BOOK;
