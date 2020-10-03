@@ -36,7 +36,7 @@ public interface DataStorage {
      *
      * @return The relevant {@link Library} for the LBMS system
      */
-    public static Library getLibrary();
+    public Library getLibrary();
 
     /**
      * Runs the various preloading

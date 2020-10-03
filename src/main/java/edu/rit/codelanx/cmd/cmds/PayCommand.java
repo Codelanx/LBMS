@@ -69,7 +69,7 @@ public class PayCommand extends TextCommand {
         //Determines the requested amount
         BigDecimal amount = new BigDecimal(Double.parseDouble(args[2]));
         //Gets the Library
-        Library library = DataStorage.getLibrary();
+        Library library = this.server.getDataStorage().getLibrary();
 
         //Finds a visitor
         Visitor visitor = findVisitor(this.server, visitorID);
