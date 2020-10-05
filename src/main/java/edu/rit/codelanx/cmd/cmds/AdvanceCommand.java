@@ -1,6 +1,5 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.CommandUtils;
 import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.network.io.TextMessage;
@@ -8,10 +7,9 @@ import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.types.Visitor;
+import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * For simulation purposes. This method will advance the simulated date of the

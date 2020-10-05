@@ -5,7 +5,7 @@ import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.types.Visitor;
+import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.math.BigDecimal;
 
@@ -53,7 +53,7 @@ public class RegisterCommand extends TextCommand {
         //We use the builder pattern to create a new object in the data storage
         Visitor.Builder builder;
         //TODO: Fill out visitor's data from real arguments
-        builder = Visitor.create(this.server.getDataStorage())
+        builder = Visitor.create()
                 .firstName("Bob")
                 .lastName("RadicalAndDangerous")
                 .address("242 Electric Avenue")
@@ -64,7 +64,7 @@ public class RegisterCommand extends TextCommand {
             executor.sendMessage("Invalid number of arguments!");
             return ResponseFlag.FAILURE;
         }
-        Visitor registered = builder.build();
+        Visitor registered = builder.build(this.server.getDataStorage());
         //TODO: Maybe do something with our new user? It's already managed in DataStorage though
         return ResponseFlag.SUCCESS;
     }

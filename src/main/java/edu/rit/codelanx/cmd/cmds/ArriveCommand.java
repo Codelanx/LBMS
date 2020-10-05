@@ -9,14 +9,10 @@ import edu.rit.codelanx.cmd.UtilsFlag;
 import static edu.rit.codelanx.cmd.CommandUtils.*;
 
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.types.Visitor;
-import edu.rit.codelanx.ui.Client;
-import jdk.internal.net.http.common.Pair;
+import edu.rit.codelanx.data.state.types.Visitor;
 
-import java.util.Optional;
 
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
-import static java.lang.Long.parseLong;
 
 /**
  * Begins a new visit by a registered visitor.

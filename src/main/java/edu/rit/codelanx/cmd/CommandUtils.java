@@ -1,9 +1,8 @@
 package edu.rit.codelanx.cmd;
 
-import edu.rit.codelanx.data.types.Visitor;
+import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.List;

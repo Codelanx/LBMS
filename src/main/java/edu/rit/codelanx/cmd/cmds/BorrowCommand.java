@@ -1,19 +1,16 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.cmd.SpecialCommandMethods;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.types.Book;
-import edu.rit.codelanx.data.types.Visitor;
-import edu.rit.codelanx.ui.Client;
+import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 

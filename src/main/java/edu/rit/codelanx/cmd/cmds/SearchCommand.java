@@ -1,12 +1,11 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.*;
-import edu.rit.codelanx.data.types.Book;
+import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -81,6 +80,9 @@ public class SearchCommand extends TextCommand {
                 sortOrder = arguments[i];
             }
         }
+        this.server.getDataStorage().query(Book.class)
+                .isEqual(Book.Field.TITLE, "hohohoho")
+                .results();
 
         //TODO: Search for the books in the database using the given args
         /*List<Book> bookList = SpecialCommandMethods.getBooks(title, isbn,

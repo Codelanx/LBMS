@@ -1,18 +1,16 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
-import edu.rit.codelanx.data.DataStorage;
-import edu.rit.codelanx.data.types.Library;
-import edu.rit.codelanx.data.types.Visit;
+import edu.rit.codelanx.data.state.types.Library;
+import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.types.Visitor;
+import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static edu.rit.codelanx.cmd.CommandUtils.findVisitor;
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;

@@ -1,17 +1,12 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.CommandUtils;
-import edu.rit.codelanx.data.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.types.Visitor;
-
-import java.util.*;
-
-import static java.lang.Long.parseLong;
+import edu.rit.codelanx.data.state.types.Visitor;
 
 /**
  * Queries for a list of books currently borrowed by a specific visitor.

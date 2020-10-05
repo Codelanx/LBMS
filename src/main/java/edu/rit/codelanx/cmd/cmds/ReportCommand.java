@@ -1,11 +1,8 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
-import edu.rit.codelanx.data.DataStorage;
-import edu.rit.codelanx.data.types.Book;
-import edu.rit.codelanx.data.types.Library;
-import edu.rit.codelanx.data.types.Visit;
-import edu.rit.codelanx.data.types.Visitor;
+import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -64,12 +61,12 @@ public class ReportCommand extends TextCommand {
 
         else {
             Book.Builder book;
-            book = Book.create(this.server.getDataStorage())
-                    .publishDate("2000/1/1")
+            book = Book.create()
+                    //.publishDate("2000/1/1") //TODO: Fix
                     .totalCopies(10);
 
-            List<Visitor> numVisitor = ;
-            this.server.getDataStorage().totalRegisteredVisitors(numVisitor);
+            //List<Visitor> numVisitor = ; //TODO: Fix
+            //this.server.getDataStorage().totalRegisteredVisitors(numVisitor); //TODO: Fix
 
         }
 

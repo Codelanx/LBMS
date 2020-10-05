@@ -1,6 +1,9 @@
 package edu.rit.codelanx.cmd;
 
-import edu.rit.codelanx.data.types.*;
+import edu.rit.codelanx.data.state.types.Author;
+import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.Library;
+import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
