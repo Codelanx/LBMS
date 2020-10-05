@@ -4,13 +4,21 @@ import edu.rit.codelanx.config.ConfigKey;
 import edu.rit.codelanx.data.loader.FFStorageAdapter;
 import edu.rit.codelanx.data.loader.SQLStorageAdapter;
 import edu.rit.codelanx.data.loader.StorageAdapter;
+import edu.rit.codelanx.data.loader.Query;
+import edu.rit.codelanx.data.loader.StateQuery;
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.state.StateBuilder;
-import edu.rit.codelanx.data.types.*;
+import edu.rit.codelanx.data.loader.StateBuilder;
+import edu.rit.codelanx.data.state.types.*;
+import edu.rit.codelanx.data.storage.RelativeStorage;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DataFacade implements DataStorage {
@@ -18,17 +26,34 @@ public class DataFacade implements DataStorage {
     private static final Class<?>[] KNOWN_TYPES = {Book.class, Checkout.class, Library.class, Transaction.class, Visit.class, Visitor.class};
     private final Map<Class<? extends State>, Map<Long, State>> data = new HashMap<>();
     private final StorageAdapter adapter;
+    private final RelativeStorage relative;
 
     public DataFacade() {
         String type = ConfigKey.STORAGE_TYPE.as(String.class);
         this.adapter = type == null || !type.equalsIgnoreCase("sql")
-                ? new FFStorageAdapter(type)
-                : new SQLStorageAdapter();
+                ? new FFStorageAdapter(this, type)
+                : new SQLStorageAdapter(this);
+        this.relative = new RelativeStorage(this);
     }
 
     @Override
     public void initialize() throws IOException {
         this.adapter.loadAll();
+    }
+
+    @Override
+    public StorageAdapter getAdapter() {
+        return this.adapter;
+    }
+
+    @Override
+    public RelativeStorage getRelativeStorage() {
+        return this.relative;
+    }
+
+    @Override
+    public <R extends State> Query<R> query(Class<R> type) {
+        return new StateQuery<>(this, type);
     }
 
     @Override
@@ -72,5 +97,52 @@ public class DataFacade implements DataStorage {
 
     public <R extends State> R queryAll(Class<R> type) {
         return null; //TODO: Querying
+    }
+
+    public class SpecialCommandMethods implements edu.rit.codelanx.cmd.SpecialCommandMethods {
+
+        private final DataStorage storage;
+
+        public SpecialCommandMethods(DataStorage storage) {
+            this.storage = storage;
+        }
+
+        @Override
+        public List<Book> getBooks(String title, String isbn, String publisher, String sortOrder, Author... authors) {
+            if (authors.length > 0) { //return only the books by the given authors
+                return Arrays.stream(authors).flatMap(Author::getBooks).collect(Collectors.toList());
+            }
+            Query<Book> back = this.storage.query(Book.class);
+            if (title != null) back = back.isEqual(Book.Field.TITLE, title);
+            if (title != null) back = back.isEqual(Book.Field.ISBN, title);
+            if (title != null) back = back.isEqual(Book.Field.PUBLISHER, title);
+            return back.results().collect(Collectors.toList()); //TODO: sorting order is actually up to you!
+        }
+
+        @Override
+        public List<Book> getCheckedOut() {
+
+            return null;
+        }
+
+        @Override
+        public void checkOut(Visitor v) {
+
+        }
+
+        @Override
+        public Instant getVisitStart() {
+            return null;
+        }
+
+        @Override
+        public void pay(Library library, Visitor visitor, BigDecimal amount) {
+
+        }
+
+        @Override
+        public int totalRegisteredVisitors(List<Visitor> numVisitors) {
+            return 0;
+        }
     }
 }
