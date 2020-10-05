@@ -1,15 +1,9 @@
 package edu.rit.codelanx.network.client;
 
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.types.Checkout;
-import edu.rit.codelanx.data.types.Library;
-import edu.rit.codelanx.data.types.Transaction;
-import edu.rit.codelanx.data.types.Visit;
-import edu.rit.codelanx.data.types.Visitor;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;

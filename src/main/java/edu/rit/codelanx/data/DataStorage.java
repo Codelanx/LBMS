@@ -1,8 +1,11 @@
 package edu.rit.codelanx.data;
 
+import edu.rit.codelanx.data.loader.StorageAdapter;
+import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.state.StateBuilder;
-import edu.rit.codelanx.data.types.Library;
+import edu.rit.codelanx.data.loader.StateBuilder;
+import edu.rit.codelanx.data.state.types.Library;
+import edu.rit.codelanx.data.storage.RelativeStorage;
 
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -42,5 +45,11 @@ public interface DataStorage {
      * Runs the various preloading
      */
     public void initialize() throws IOException;
+
+    public <R extends State> Query<R> query(Class<R> type);
+
+    public StorageAdapter getAdapter();
+
+    public RelativeStorage getRelativeStorage();
 
 }

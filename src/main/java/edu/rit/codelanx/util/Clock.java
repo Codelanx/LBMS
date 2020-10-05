@@ -1,6 +1,6 @@
 package edu.rit.codelanx.util;
 
-import edu.rit.codelanx.data.types.Library;
+import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.network.server.Server;
 
 import java.time.Instant;

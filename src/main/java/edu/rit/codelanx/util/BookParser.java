@@ -1,8 +1,7 @@
 package edu.rit.codelanx.util;
 
-import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.data.DataStorage;
-import edu.rit.codelanx.data.types.Book;
+import edu.rit.codelanx.data.state.types.Book;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,6 +15,10 @@ public enum BookParser {;
     private static final String BOOKS_FILE = "books.txt";
     private static final int BOOK_COUNT = 515;
 
+    //TODO: data preconditional - when inserting, insert things without any form of external mappings
+    //TODO:     E.g. insert: [Author, Visitor, Library, Book] -> [AuthorListing, Visit, Checkout, Transaction]
+    //TODO: This will ensure that relationships are intact, as the latter will search for the former while being made
+
     //9780674028678,"The Race Between Education and Technology",{Claudia Dale Goldin, Lawrence F. Katz},"Harvard University Press",2008,488
     //9781591987628,"Build-a-Skill Instant Books: Synonyms and Antonyms, Gr. Kâ€“1, eBook",{Trisha Callella},"Creative Teaching Press",2007-01-01,32
     public static List<Book> parseBooks(DataStorage storage) {
@@ -25,7 +28,8 @@ public enum BookParser {;
             String s;
             while ((s = br.readLine()) != null) {
                 TempContainer temp = new TempContainer();
-                temp.builder = Book.create(storage).checkedOut(0).totalCopies(1); //TODO: More than 1 copy???
+                //TODO: Fix below, compiler error
+                //temp.builder = Book.create(storage).checkedOut(0).totalCopies(1); //TODO: More than 1 copy???
                 BookParser.parseBook(temp, s);
                 //TODO: Insert book to storage
             }
@@ -56,7 +60,7 @@ public enum BookParser {;
         temp.builder.publisher(s.substring(start, end));
         start = end+2; //skip ",
         end = s.indexOf(',', start);
-        temp.builder.publishDate(s.substring(start, end));
+        //temp.builder.publishDate(s.substring(start, end)); //TODO: Fix
         temp.builder.pageCount(Integer.parseInt(s.substring(end+1)));
         return temp.builder;
     }
