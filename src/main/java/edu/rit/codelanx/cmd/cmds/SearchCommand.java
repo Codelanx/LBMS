@@ -44,7 +44,7 @@ public class SearchCommand extends TextCommand {
      * purchased by the library (and added to its collection).
      *
      * @param executor  the client that is calling the command
-     * @param arguments title: title of the book
+     * @param args title: title of the book
      *                  authors: comma-separated list of authors of the book
      *                  isbn: International Standard Book NUmber for the book
      *                  publisher: name of the book's publisher
@@ -54,30 +54,30 @@ public class SearchCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
-                                  String... arguments) {
+                                  String... args) {
 
         //Checking that the amount of arguments is correct
-        if (CommandUtils.numArgs(arguments, 1) == UtilsFlag.MISSINGPARAMS) {
+        if (CommandUtils.numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {
             return ResponseFlag.FAILURE;
         }
-        int numOfArgs = arguments.length;
+        int numOfArgs = args.length;
         String title, publisher, sortOrder, isbn = "";
         String[] authors = {};
         if (numOfArgs == 1) {
-            title = arguments[0];
+            title = args[0];
             Optional<? extends Book> bookSearch =
                     this.server.getDataStorage().ofLoaded(Book.class).filter(b -> b.getTitle().equals(title)).findAny();
         }
         //Going through the args and assigning them to their variables
         for (int i = 1; i < numOfArgs; i++) {
             if (i == 1){
-                authors = arguments[i].split(",");
+                authors = args[i].split(",");
             } else if (i == 2){
-                isbn = arguments[i];
+                isbn = args[i];
             } else if (i == 3){
-                publisher = arguments[i];
+                publisher = args[i];
             } else if (i == 4){
-                sortOrder = arguments[i];
+                sortOrder = args[i];
             }
         }
         this.server.getDataStorage().query(Book.class)

@@ -10,5 +10,11 @@ public interface Command {
      */
     public String getName();
 
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments);
+    /**
+     *
+     * @param executor
+     * @param args      The args for the executed command
+     * @return
+     */
+    public ResponseFlag onExecute(CommandExecutor executor, String... args);
 }

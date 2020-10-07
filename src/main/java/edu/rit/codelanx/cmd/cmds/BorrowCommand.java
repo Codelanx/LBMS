@@ -50,18 +50,18 @@ public class BorrowCommand extends TextCommand {
      * Whenever this command is called, it will borrow a book for a visitor.
      *
      * @param executor  the client that is calling the command
-     * @param arguments visitorID: unique 10-digit ID of the visitor
-     *                  id: comma-separated list of IDs for the books to be
-     *                  borrowed by the visitor
+     * @param args {@inheritDoc}
+     *                  args[0]: long, unique 10-digit ID for {@link Visitor}
+     *                  args[1+]: Books for the visitor to borrow
      * @return a responseflag that says whether or not the command was
-     * executed correctly
+     *         executed correctly
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
-                                  String... arguments) {
+                                  String... args) {
 
         //Checking that the amount of args passed is correct
-        if (numArgs(arguments, 2) == UtilsFlag.MISSINGPARAMS) {
+        if (numArgs(args, 2) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");
             return ResponseFlag.SUCCESS;
@@ -71,9 +71,9 @@ public class BorrowCommand extends TextCommand {
         Set<Long> bookIDs = new HashSet<Long>();
         //Checking that the id passed was a number
         try {
-            visitorID = parseLong(arguments[0]);
-            for (int i = 1; i < arguments.length; i++) {
-                bookIDs.add(parseLong(arguments[i]));
+            visitorID = parseLong(args[0]);
+            for (int i = 1; i < args.length; i++) {
+                bookIDs.add(parseLong(args[i]));
             }
         } catch (NumberFormatException e) {
             return ResponseFlag.FAILURE;

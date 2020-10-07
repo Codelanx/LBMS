@@ -41,7 +41,7 @@ public class RegisterCommand extends TextCommand {
      * the given data.
      *
      * @param executor  the client that is calling the command
-     * @param arguments first name: the first name of the visitor.
+     * @param args first name: the first name of the visitor.
      *                  last name: the last name of the visitor.
      *                  address: the address of the visitor.
      *                  phone-number: the phone number of the visitor.
@@ -49,7 +49,7 @@ public class RegisterCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         //We use the builder pattern to create a new object in the data storage
         Visitor.Builder builder;
         //TODO: Fill out visitor's data from real arguments

@@ -44,7 +44,7 @@ public class InfoCommand extends TextCommand {
      * that are available to be borrowed and owned by the library.
      *
      * @param executor  the client that is calling the command
-     * @param arguments info: the name of the command to be run
+     * @param args info: the name of the command to be run
      *                  title: title of the book to be searched
      *                  isbn: the ISBN number for the book
      *                  publisher: the publisher of the book
@@ -54,7 +54,7 @@ public class InfoCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         return ResponseFlag.NOT_FINISHED;
     }
 }

@@ -44,23 +44,23 @@ public class DepartCommand extends TextCommand {
      * whose id is specified.
      *
      * @param executor  the client that is calling the command
-     * @param arguments visitorID: the visitor whose visit will end
+     * @param args visitorID: the visitor whose visit will end
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
-                                  String... arguments) {
+                                  String... args) {
 
         //Checking that they have the correct amount of parameters
-        if (numArgs(arguments, 1) == UtilsFlag.MISSINGPARAMS) {
+        if (numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");
             return ResponseFlag.SUCCESS;
         }
 
         //Checking that the id passed was a number
-        Long visitorID = checkVisitorID(arguments[0]);
+        Long visitorID = checkVisitorID(args[0]);
         if (visitorID == -1) {
             return ResponseFlag.FAILURE;
         }

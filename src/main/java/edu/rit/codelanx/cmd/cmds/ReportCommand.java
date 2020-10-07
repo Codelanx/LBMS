@@ -46,15 +46,15 @@ public class ReportCommand extends TextCommand {
      * usage of the library over a set period of time.
      *
      * @param executor  the client that is calling the command
-     * @param arguments report: name of the command to be run
+     * @param args report: name of the command to be run
      *                  days: the number of days that the report should cover
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
-        if (numArgs(arguments, 1) == UtilsFlag. MISSINGPARAMS) {
+        if (numArgs(args, 1) == UtilsFlag. MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters");
             return ResponseFlag.SUCCESS;
         }

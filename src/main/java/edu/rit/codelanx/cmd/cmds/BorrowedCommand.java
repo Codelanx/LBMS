@@ -38,23 +38,23 @@ public class BorrowedCommand extends TextCommand {
      * being currently borrowed by a visitor.
      *
      * @param executor  the client that is calling the command
-     * @param arguments visitorID: the id of the visitor to check
+     * @param args visitorID: the id of the visitor to check
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         //Checking that the amount of arguments is correct
-        if (arguments.length < 1) {
+        if (args.length < 1) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID");
             return ResponseFlag.SUCCESS;
-        } else if (arguments.length > 1){
+        } else if (args.length > 1){
             return ResponseFlag.FAILURE;
         }
 
         //Making sure that the visitor ID is correctly formatted
-        long visitorID = CommandUtils.checkVisitorID(arguments[0]);
+        long visitorID = CommandUtils.checkVisitorID(args[0]);
         if (visitorID == -1){
             return ResponseFlag.FAILURE;
         }

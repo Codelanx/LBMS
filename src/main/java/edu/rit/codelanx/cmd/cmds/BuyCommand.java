@@ -53,17 +53,17 @@ public class BuyCommand extends TextCommand {
      * of books
      *
      * @param executor  the client that is calling the command
-     * @param arguments quantity: number of copies of each book to purchase
+     * @param args quantity: number of copies of each book to purchase
      *                  id(s): 1 or more book IDs to be purchased (separated
      *                      by commas).
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
         //Checking that the amount of args passed is correct
-        if (numArgs(arguments, 2) == UtilsFlag.MISSINGPARAMS) {
+        if (numArgs(args, 2) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");
             return ResponseFlag.SUCCESS;
@@ -72,7 +72,7 @@ public class BuyCommand extends TextCommand {
         //Making sure the quantity is an int
         int quantity;
         try {
-            quantity = Integer.parseInt(arguments[0]);
+            quantity = Integer.parseInt(args[0]);
         } catch (NumberFormatException e){
             return ResponseFlag.FAILURE;
         }
@@ -84,8 +84,8 @@ public class BuyCommand extends TextCommand {
         Set<Long> bookIDs = new HashSet<Long>();
         //Checking that the ids passed was a number
         try {
-            for (int i = 1; i < arguments.length; i++) {
-                bookIDs.add(parseLong(arguments[i]));
+            for (int i = 1; i < args.length; i++) {
+                bookIDs.add(parseLong(args[i]));
             }
         } catch (NumberFormatException e) {
             return ResponseFlag.FAILURE;
