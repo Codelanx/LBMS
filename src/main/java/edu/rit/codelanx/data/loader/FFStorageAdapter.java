@@ -3,7 +3,7 @@ package edu.rit.codelanx.data.loader;
 import com.codelanx.commons.data.FileDataType;
 import com.codelanx.commons.data.types.Json;
 import com.codelanx.commons.data.types.XML;
-import edu.rit.codelanx.config.ConfigKey;
+import edu.rit.codelanx.ConfigKey;
 import edu.rit.codelanx.data.DataStorage;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;

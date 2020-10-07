@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data;
 
-import edu.rit.codelanx.config.ConfigKey;
+import edu.rit.codelanx.ConfigKey;
 import edu.rit.codelanx.data.loader.FFStorageAdapter;
 import edu.rit.codelanx.data.loader.SQLStorageAdapter;
 import edu.rit.codelanx.data.loader.StorageAdapter;

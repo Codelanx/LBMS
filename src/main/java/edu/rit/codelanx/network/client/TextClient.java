@@ -13,7 +13,14 @@ import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
-
+/**
+ * Represents a {@link Client} ran through the terminal
+ *
+ * @author sja9291  Spencer Alderman
+ * @author ahd6901  Amy Ha Do
+ *
+ * @see Client
+ */
 public class TextClient implements Client<TextMessage> {
 
     private final InputStreamReader reader;
@@ -33,11 +40,25 @@ public class TextClient implements Client<TextMessage> {
         this.output = output;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param server {@inheritDoc}
+     * 
+     * @see Client#connect(Server)
+     */
     @Override
     public void connect(Server<TextMessage> server) {
         this.server = new WeakReference<>(server);
     }
 
+    /**
+     * Begins reading input from the terminal, until a {@code null} is
+     * read
+     *
+     * @throws IOException {@inheritDoc}
+     * @see Client#display()
+     */
     @Override
     public void display() throws IOException {
         String s;

@@ -7,10 +7,8 @@ import edu.rit.codelanx.data.storage.field.FieldModifier;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class DecoratorKey<T> extends FieldDecorator<T> {
