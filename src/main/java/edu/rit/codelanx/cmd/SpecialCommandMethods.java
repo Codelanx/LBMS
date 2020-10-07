@@ -30,7 +30,17 @@ public interface SpecialCommandMethods {
 
     public void pay(Library library, Visitor visitor, BigDecimal amount);
 
-    public int totalRegisteredVisitors(List<Visitor> numVisitors);
+    public void totalRegisteredVisitors(List<Visitor> numVisitors);
+
+    public void numOfVistors(Visitor totalVisitors);
+
+    public void visitAvg(Visitor vavg);
+
+    public void numPurchased(Book books);
+
+    public void fines(BigDecimal collected);
+
+    public void outstanding(BigDecimal uncollected);
 
 
 }
