@@ -44,6 +44,10 @@ public class Author extends BasicState {
         super(storage, file);
     }
 
+    public String getName() {
+        return Field.NAME.get(this);
+    }
+
     public Stream<Book> getBooks() {
         return this.getLoader().query(AuthorListing.class)
                 .isEqual(AuthorListing.Field.AUTHOR, this)
