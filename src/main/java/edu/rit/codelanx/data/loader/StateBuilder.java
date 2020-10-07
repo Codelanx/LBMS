@@ -70,7 +70,7 @@ public abstract class StateBuilder<T extends State> {
     protected abstract T buildObj(DataStorage storage, long id);
 
     public static <T extends State> StateBuilder<T> of(StateConstructor<T> constructor, State.Type type, DataField<?>... fields) {
-        return new StateBuilder<>(type, fields) {
+        return new StateBuilder<T>(type, fields) {
             @Override
             protected T buildObj(DataStorage storage, long id) {
                 return constructor.create(storage, id, this);

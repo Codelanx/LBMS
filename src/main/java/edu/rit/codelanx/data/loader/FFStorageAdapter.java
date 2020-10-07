@@ -18,12 +18,14 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class FFStorageAdapter implements StorageAdapter {
 
-    private static final Pattern FF_DATA_SEARCH = Pattern.compile("config\\d*\\.(json|yml)");
+    private static final String DATA_FILE_NAME = "data";
+    private static final Pattern FF_DATA_SEARCH = Pattern.compile(DATA_FILE_NAME + "\\d*\\.(json|yml)");
     private final Class<? extends FileDataType> type;
     private final RelativeStorage dataBank;
     private final DataStorage storage;
@@ -56,7 +58,13 @@ public class FFStorageAdapter implements StorageAdapter {
             throw new IllegalStateException("File contents already loaded!");
         }
         String ext = (this.type == Json.class ? ".json" : ".yml");
-        File ref = new File("config" + ext); //only supporting json/yml flatfiles
+        File ref = new File(DATA_FILE_NAME + ext); //only supporting json/yml flatfiles
+        if (!ref.exists()) {
+            this.library = Library.create()
+                    .setValue(Library.Field.MONEY, BigDecimal.ZERO)
+                    .build(this.storage);
+            return;
+        }
         FileDataType data = FileDataType.newInstance(this.type, ref);
         List<?> read = data.getMutable("data").as(List.class);
         if (ref.exists() && read == null) {
@@ -77,7 +85,9 @@ public class FFStorageAdapter implements StorageAdapter {
         Library lib = this.storage.query(Library.class).results().findAny().orElse(null);
         if (lib == null) {
             //no library defined yet, make one!
-            lib = Library.create().money(BigDecimal.ZERO).build(this.storage);
+            lib = Library.create()
+                    .setValue(Library.Field.MONEY, BigDecimal.ZERO)
+                    .build(this.storage);
         }
         this.library = lib;
     }
@@ -89,18 +99,24 @@ public class FFStorageAdapter implements StorageAdapter {
 
     private void errorRecovery(File ref, String ext) throws IOException {
         System.err.println("Bad data file provided, backing up and starting fresh");
+        if (!ref.isAbsolute()) {
+            ref = ref.getAbsoluteFile();
+        }
         File[] avail = ref.getParentFile().listFiles(File::isFile);
         if (avail == null) {
             //is this a bad description? it's pretty much what I'll say in response to this error ever happening
             throw new IllegalStateException("wat");
         }
         long next = Arrays.stream(avail).map(File::getName)
-                .filter(s -> FF_DATA_SEARCH.matcher(s).group(1).equalsIgnoreCase(ext))
+                .filter(s -> {
+                    Matcher m = FF_DATA_SEARCH.matcher(s);
+                    return m.matches() && m.group(1).equalsIgnoreCase(ext);
+                })
                 .count();
         if (next > ConfigKey.MAX_BACKUP_FILES.as(int.class)) {
             throw new IllegalStateException("Ran out of room for backups, aborting!");
         }
-        Files.move(ref.toPath(), new File("config" + next + ext).toPath());
+        Files.move(ref.toPath(), new File(DATA_FILE_NAME + next + ext).toPath());
     }
 
     @Override

@@ -1,5 +1,5 @@
 {
-    "storage-type": "sql",
+    "storage-type": "json",
     "max-backup-files": 100,
     "sql": {
         "keep-alive-ms": 600000,

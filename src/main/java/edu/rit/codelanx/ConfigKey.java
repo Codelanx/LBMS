@@ -9,7 +9,7 @@ import com.codelanx.commons.data.types.MySQL;
 @RelativePath("config.json")
 
 public enum ConfigKey implements ConfigFile {
-    STORAGE_TYPE("storage-type", "sql"), //sql, yml, or json
+    STORAGE_TYPE("storage-type", "json"), //sql, yml, or json
     MAX_BACKUP_FILES("max-backup-files", 100),
     SQL_KEEPALIVE_MS("sql.keep-alive-ms", 1000 * 60 * 10), //10 minutes
     SQL_USER("sql.auth.username", "swen-262"),

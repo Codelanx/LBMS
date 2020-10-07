@@ -1,12 +1,15 @@
 package edu.rit.codelanx;
 
+import com.codelanx.commons.logging.Debugger;
 import edu.rit.codelanx.network.client.Client;
 import edu.rit.codelanx.network.client.TextClient;
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.TextServer;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.util.Errors;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Implementation of the LBMS system requirements
@@ -15,7 +18,7 @@ import java.io.IOException;
  */
 public class LBMS {
 
-    private final Server server;
+    private final Server<TextMessage> server;
 
     private LBMS() {
         this.server = new TextServer();
@@ -29,7 +32,7 @@ public class LBMS {
     }
 
     private void access() {
-        try (Client client = new TextClient(System.in, System.out)) {
+        try (Client<TextMessage> client = new TextClient(System.in, System.out)) {
             client.connect(this.server);
             client.display();
             client.sendMessage("Hello world!");
