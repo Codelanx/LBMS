@@ -1,6 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -8,11 +9,14 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.time.Instant;
+import java.util.Optional;
+
 import static edu.rit.codelanx.cmd.CommandUtils.*;
 
 /**
  * Ends a visit in progress.
- *
+ * <p>
  * Request Format: depart,visitor ID
  * visitor ID is the unique 10-digit ID of the visitor
  */
@@ -45,7 +49,8 @@ public class DepartCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... arguments) {
+    public ResponseFlag onExecute(CommandExecutor executor,
+                                  String... arguments) {
 
         //Checking that they have the correct amount of parameters
         if (numArgs(arguments, 1) == UtilsFlag.MISSINGPARAMS) {
@@ -56,24 +61,20 @@ public class DepartCommand extends TextCommand {
 
         //Checking that the id passed was a number
         Long visitorID = checkVisitorID(arguments[0]);
-        if (visitorID == -1){
+        if (visitorID == -1) {
             return ResponseFlag.FAILURE;
         }
 
         //Finding the visitor with the matching ID in the database
         Visitor v = findVisitor(this.server, visitorID);
-        if (v == null){
+        if (v == null || !v.isVisiting()) {
             executor.sendMessage(this.getName() + ",invalid-id;");
         }
+        
+        Optional<? extends Visit> visit =
+                server.getDataStorage().ofLoaded(Visit.class).filter(visit1 -> visit1.getVisitor() == v).findAny();
+        executor.sendMessage(this.getName() + "," + v.getID() + "," + visit.get().toFormattedText());
 
-        //TODO: Figure out how to get the visit duration
-        /*Instant visitStartTime = v.getVisitStart();
-        v.endVisit(this.server.getDataStorage(),
-                this.server.getClock().getCurrentTime());
-        executor.sendMessage(this.getName() + "," + visitorID + "," + server
-        .getClock().getCurrentTime() + "," + );
         return ResponseFlag.SUCCESS;
-         */
-        return ResponseFlag.NOT_FINISHED;
     }
 }

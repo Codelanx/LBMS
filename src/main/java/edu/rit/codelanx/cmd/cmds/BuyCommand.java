@@ -1,6 +1,8 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -8,6 +10,7 @@ import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
@@ -88,8 +91,16 @@ public class BuyCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
 
-        //TODO: Increment the book counts in the database for each book
 
+        for (Long id : bookIDs){
+            Optional<? extends Book> bookSearch = server.getDataStorage()
+                    .ofLoaded(Book.class)
+                    .filter(b -> b.getID() == id)
+                    .findAny();
+            if (bookSearch.isPresent()){
+               //TODO: How to increment amount of books
+            }
+        }
         return ResponseFlag.NOT_FINISHED;
     }
 }

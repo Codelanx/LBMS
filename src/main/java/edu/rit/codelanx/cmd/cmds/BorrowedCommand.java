@@ -67,7 +67,7 @@ public class BorrowedCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        //TODO: Find the books currently being borrowed by the visitor
+        //TODO: How to get the books checked out by a visitor
         /*String responseString = this.getName() + ",";
         if (v.getCheckedOut.size() == 0){
             executor.sendMessage(this.getName() + ",0;");

@@ -67,11 +67,17 @@ public class ArriveCommand extends TextCommand {
         Visitor v = findVisitor(this.server, visitorID);
         if (v == null) {
             executor.sendMessage(this.getName() + ",invalid-id;");
+            return ResponseFlag.SUCCESS;
         }
 
-        //TODO: Start a visit for the visitor
+        if (v.isVisiting()) {
+            executor.sendMessage(this.getName() + ",duplicate;");
+            return ResponseFlag.SUCCESS;
+        }
+
         v.startVisit(server.getDataStorage().getLibrary());
-        executor.sendMessage(this.getName() + "," + visitorID + "," + server.getClock().getCurrentTime() + ";");
+        executor.sendMessage(this.getName() + "," + visitorID + "," +
+                server.getClock().getCurrentTime() + ";");
 
         return ResponseFlag.SUCCESS;
     }

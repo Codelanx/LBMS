@@ -85,7 +85,7 @@ public class BorrowCommand extends TextCommand {
             executor.sendMessage(this.getName() + ",invalid-visitor-id;");
         }
 
-        //TODO: Check that the visitor will have less than 5 borrowed books
+        //TODO: How to get amount of books visitor has checked out
         /*
             if (v.getCheckedOut.size() > 5 || v.getCheckedOut.size() +
             bookIDs.size() > 5){
@@ -115,8 +115,7 @@ public class BorrowCommand extends TextCommand {
             }
         }
 
-        //TODO: Assign a return-by date to the books and check out the books to
-        // the visitor
+        //TODO: How to check out a book
         /*for (Book b : books){
             b.checkout(v);
         }
