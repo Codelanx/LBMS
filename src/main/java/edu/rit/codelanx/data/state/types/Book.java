@@ -138,36 +138,43 @@ public class Book extends BasicState {
             super(StateType.BOOK, Field.VALUES);
         }
 
+        @Deprecated
         public Builder title(String title) {
             this.setValue(Field.TITLE, title);
             return this;
         }
 
+        @Deprecated
         public Builder isbn(String isbn) {
             this.setValue(Field.ISBN, isbn);
             return this;
         }
 
+        @Deprecated
         public Builder publisher(String publisher) {
             this.setValue(Field.PUBLISHER, publisher);
             return this;
         }
 
+        @Deprecated
         public Builder publishDate(Instant publishDate) {
             this.setValue(Field.PUBLISH_DATE, publishDate);
             return this;
         }
 
+        @Deprecated
         public Builder pageCount(int pageCount) {
             this.setValue(Field.PAGE_COUNT, pageCount);
             return this;
         }
 
+        @Deprecated
         public Builder totalCopies(int totalCopies) {
             this.setValue(Field.TOTAL_COPIES, totalCopies);
             return this;
         }
 
+        @Deprecated
         public Builder checkedOut(int checkedOut) {
             this.setValue(Field.CHECKED_OUT, checkedOut);
             return this;

@@ -143,7 +143,7 @@ public class Visitor extends BasicState {
                 .setValue(Transaction.Field.MONEY, amount)
                 .setValue(Transaction.Field.REASON, reason)
                 .build(this.getLoader());
-        return Field.MONEY.mutate(this, old -> old.add(amount));
+        return Field.MONEY.mutate(this, amount::add);
     }
 
     //Creational handling below
@@ -154,32 +154,38 @@ public class Visitor extends BasicState {
         //return StateBuilder.of(Visitor::new, StateType.VISITOR, Field.VALUES);
     }
 
+    @Deprecated
     public static class Builder extends StateBuilder<Visitor> {
 
         private Builder() {
             super(StateType.VISITOR, Field.VALUES);
         }
 
+        @Deprecated
         public Builder firstName(String first) {
             this.setValue(Field.FIRST, first);
             return this;
         }
 
+        @Deprecated
         public Builder lastName(String last) {
             this.setValue(Field.LAST, last);
             return this;
         }
 
+        @Deprecated
         public Builder address(String addr) {
             this.setValue(Field.ADDRESS, addr);
             return this;
         }
 
+        @Deprecated
         public Builder phone(String phone) {
             this.setValue(Field.PHONE, phone);
             return this;
         }
 
+        @Deprecated
         public Builder money(BigDecimal money) {
             this.setValue(Field.MONEY, money);
             return this;

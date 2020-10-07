@@ -8,22 +8,17 @@ import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.loader.StateQuery;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.loader.StateBuilder;
-import edu.rit.codelanx.data.state.types.*;
+import edu.rit.codelanx.data.state.types.Library;
+import edu.rit.codelanx.data.state.types.StateType;
 import edu.rit.codelanx.data.storage.RelativeStorage;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DataFacade implements DataStorage {
 
-    private static final Class<?>[] KNOWN_TYPES = {Book.class, Checkout.class, Library.class, Transaction.class, Visit.class, Visitor.class};
     private final Map<Class<? extends State>, Map<Long, State>> data = new HashMap<>();
     private final StorageAdapter adapter;
     private final RelativeStorage relative;
@@ -87,62 +82,14 @@ public class DataFacade implements DataStorage {
 
     @Override
     public Library getLibrary() {
-        return null; //TODO:
+        return this.adapter.getLibrary();
     }
 
     public <R extends State> R query(Class<R> type, long id) {
-        //TODO: Querying
-        return null;
+        State.Type stateType = StateType.fromClassStrict(type);
+        return this.query(type)
+                //TODO: filter by ID
+                .results().findAny().orElse(null);
     }
 
-    public <R extends State> R queryAll(Class<R> type) {
-        return null; //TODO: Querying
-    }
-
-    public class SpecialCommandMethods implements edu.rit.codelanx.cmd.SpecialCommandMethods {
-
-        private final DataStorage storage;
-
-        public SpecialCommandMethods(DataStorage storage) {
-            this.storage = storage;
-        }
-
-        @Override
-        public List<Book> getBooks(String title, String isbn, String publisher, String sortOrder, Author... authors) {
-            if (authors.length > 0) { //return only the books by the given authors
-                return Arrays.stream(authors).flatMap(Author::getBooks).collect(Collectors.toList());
-            }
-            Query<Book> back = this.storage.query(Book.class);
-            if (title != null) back = back.isEqual(Book.Field.TITLE, title);
-            if (title != null) back = back.isEqual(Book.Field.ISBN, title);
-            if (title != null) back = back.isEqual(Book.Field.PUBLISHER, title);
-            return back.results().collect(Collectors.toList()); //TODO: sorting order is actually up to you!
-        }
-
-        @Override
-        public List<Book> getCheckedOut() {
-
-            return null;
-        }
-
-        @Override
-        public void checkOut(Visitor v) {
-
-        }
-
-        @Override
-        public Instant getVisitStart() {
-            return null;
-        }
-
-        @Override
-        public void pay(Library library, Visitor visitor, BigDecimal amount) {
-
-        }
-
-        @Override
-        public int totalRegisteredVisitors(List<Visitor> numVisitors) {
-            return 0;
-        }
-    }
 }

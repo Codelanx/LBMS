@@ -7,7 +7,6 @@ import edu.rit.codelanx.data.storage.field.FieldModifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class DecoratorUnique<T> extends FieldDecorator<T> {

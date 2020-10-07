@@ -1,13 +1,11 @@
 package edu.rit.codelanx.network.server;
 
-import edu.rit.codelanx.network.client.Client;
 import edu.rit.codelanx.util.Clock;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.data.DataFacade;
 import edu.rit.codelanx.data.DataStorage;
-import edu.rit.codelanx.data.ITEMPDataStorage;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
 
@@ -32,19 +30,13 @@ public class TextServer implements Server<TextMessage> {
     }
 
     @Override
-    public ITEMPDataStorage getDataStorage() {
-        return (ITEMPDataStorage) new Object(); //CCE, but better than NPE since that throws warnings -everywhere-
-        //return this.storage; //TODO Fix this to return normally, once SpecialCommandMethods is resolved
+    public DataStorage getDataStorage() {
+        return this.storage;
     }
 
     @Override
     public Clock getClock() {
         return this.clock;
-    }
-
-    @Override
-    public void registerClient(Client<TextMessage> client) {
-
     }
 
     @Override

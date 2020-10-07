@@ -10,12 +10,7 @@ import java.util.Optional;
 
 import static java.lang.Long.parseLong;
 
-public final class CommandUtils {
-
-    // Private constructor to prevent instantiation
-    private CommandUtils() {
-        throw new UnsupportedOperationException();
-    }
+public enum CommandUtils {;
 
     //Checking that a visitorID is valid
     public static Long checkVisitorID(String visitorID) {

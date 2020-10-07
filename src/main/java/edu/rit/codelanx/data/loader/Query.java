@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 public interface Query<T> {
 
+    //runtime
     public <E> Query<T> filterBy(DataField<E> field, Predicate<E> test);
 
     //comparisons
