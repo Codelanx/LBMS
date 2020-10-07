@@ -90,7 +90,7 @@ public class PayCommand extends TextCommand {
 
         // pays the requested amount
         else {
-            this.server.getDataStorage().pay(library, visitor, amount);
+            library.transact(visitor, amount, "Paying off balance");
             return ResponseFlag.SUCCESS;
         }
 

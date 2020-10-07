@@ -91,6 +91,11 @@ public class Library extends BasicState {
                 .forAllLoaded(vis -> vis.endVisit(at));
     }
 
+    public void transact(Visitor visitor, BigDecimal amount, String reason) {
+        visitor.updateMoney(amount, reason);
+        Field.MONEY.mutate(this, amount::add);
+    }
+
     public boolean isOpen() {
         return this.open.get();
     }
