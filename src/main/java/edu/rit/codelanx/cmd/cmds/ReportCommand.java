@@ -68,6 +68,12 @@ public class ReportCommand extends TextCommand {
             //List<Visitor> numVisitor = ; //TODO: Fix
             //this.server.getDataStorage().totalRegisteredVisitors(numVisitor); //TODO: Fix
 
+
+            //TODO: Get the number of visitors
+            //TODO: Get the average length of a visit in the format hh:mm:ss
+            //TODO: Get the number of books purchased
+            //TODO: Get the amount of fines collected in US Dollars
+            //TODO: Get teh outstanding amount of uncollected fines in US Dollars
         }
 
         return ResponseFlag.NOT_FINISHED;
