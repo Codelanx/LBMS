@@ -152,16 +152,19 @@ public class Visit extends BasicState {
             super(StateType.VISIT, Field.VALUES);
         }
 
+        @Deprecated
         public Builder start(Instant start) {
             this.setValue(Field.START, start);
             return this;
         }
 
+        @Deprecated
         public Builder end(Instant end) {
             this.setValue(Field.END, end);
             return this;
         }
 
+        @Deprecated
         public Builder visitor(Visitor visitor) {
             this.setValue(Checkout.Field.VISITOR, visitor);
             return this;

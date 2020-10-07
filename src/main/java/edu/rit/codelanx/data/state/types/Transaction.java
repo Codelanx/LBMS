@@ -100,11 +100,13 @@ public class Transaction extends BasicState {
             super(StateType.TRANSACTION, Field.VALUES);
         }
 
+        @Deprecated
         public Builder amount(BigDecimal amount) {
             this.setValue(Field.MONEY, amount);
             return this;
         }
 
+        @Deprecated
         public Builder visitorID(Visitor visitor) {
             this.setValue(Field.VISITOR, visitor);
             return this;

@@ -116,6 +116,7 @@ public class Library extends BasicState {
             super( StateType.LIBRARY, Field.VALUES);
         }
 
+        @Deprecated
         public Builder money(BigDecimal money) {
             this.setValue(Field.MONEY, money);
             return this;

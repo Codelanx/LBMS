@@ -121,16 +121,19 @@ public class Checkout extends BasicState {
             super(StateType.CHECKOUT, Field.VALUES);
         }
 
+        @Deprecated
         public Builder at(Instant at) {
             this.setValue(Field.AT, at);
             return this;
         }
 
+        @Deprecated
         public Builder book(Book book) {
             this.setValue(Field.BOOK, book);
             return this;
         }
 
+        @Deprecated
         public Builder visitor(Visitor visitor) {
             this.setValue(Field.VISITOR, visitor);
             return this;
