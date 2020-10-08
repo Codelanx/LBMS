@@ -6,6 +6,7 @@ import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -84,9 +85,10 @@ public class SearchCommand extends TextCommand {
                 .isEqual(Book.Field.TITLE, "hohohoho")
                 .results();
 
-        //TODO: Search for the books in the database using the given args
-        /*List<Book> bookList = SpecialCommandMethods.getBooks(title, isbn,
-                publisher, sortOrder, authors);*/
+        /*//TODO: Search for the books in the database using the given args
+        List<Book> bookList = server.getDataStorage().query(Book.class)
+        .isEqual()
+         */
 
         //TODO: Create a string of results and send it to the executor
         /*StringBuilder result =

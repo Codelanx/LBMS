@@ -1,5 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import com.sun.tools.javac.comp.Check;
+import edu.rit.codelanx.data.state.types.Checkout;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -49,12 +51,12 @@ public class BorrowCommand extends TextCommand {
     /**
      * Whenever this command is called, it will borrow a book for a visitor.
      *
-     * @param executor  the client that is calling the command
-     * @param args {@inheritDoc}
-     *                  args[0]: long, unique 10-digit ID for {@link Visitor}
-     *                  args[1+]: Books for the visitor to borrow
+     * @param executor the client that is calling the command
+     * @param args     {@inheritDoc}
+     *                 args[0]: long, unique 10-digit ID for {@link Visitor}
+     *                 args[1+]: Books for the visitor to borrow
      * @return a responseflag that says whether or not the command was
-     *         executed correctly
+     * executed correctly
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
@@ -85,14 +87,14 @@ public class BorrowCommand extends TextCommand {
             executor.sendMessage(this.getName() + ",invalid-visitor-id;");
         }
 
-        //TODO: How to get amount of books visitor has checked out
-        /*
-            if (v.getCheckedOut.size() > 5 || v.getCheckedOut.size() +
-            bookIDs.size() > 5){
-                executor.sendMessage(this.getName() + ",book-limit-exceeded;");
-                return ResponseFlag.Success;
-            }
-         */
+        //Query for checkout
+        long checkedOutBooks = server.getDataStorage()
+                .query(Checkout.class).isEqual(Checkout.Field.VISITOR, v).results().count();
+
+        //Checking they don't or won't have too many books
+        if (checkedOutBooks > 5 || checkedOutBooks + bookIDs.size() > 5){
+            executor.sendMessage(this.getName() + ",book-limit-exceeded;");
+        }
 
         //Checking that the visitor's account balance is in the positive
         if (v.getMoney().compareTo(BigDecimal.ZERO) < 1) {
@@ -115,13 +117,11 @@ public class BorrowCommand extends TextCommand {
             }
         }
 
-        //TODO: How to check out a book
-        /*for (Book b : books){
+        //TODO: Make sure that this is all that's needed
+        for (Book b : books){
             b.checkout(v);
         }
-        return ResponseFlag.SUCCESS;
-        */
 
-        return ResponseFlag.NOT_FINISHED;
+        return ResponseFlag.SUCCESS;
     }
 }

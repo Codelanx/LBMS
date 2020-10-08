@@ -59,6 +59,16 @@ public class Book extends BasicState {
         super(storage, sql);
     }
 
+    public Checkout checkout(Visitor taker){
+        //TODO: Decrement the CHECKED_OUT field so that you can't infinitely
+        // check out a book
+        return Checkout.create()
+                .setValue(Checkout.Field.BOOK, this)
+                .setValue(Checkout.Field.VISITOR, taker)
+                .setValue(Checkout.Field.AT, Instant.now())
+                .build(this.getLoader());
+    }
+
     public Book(DataStorage storage, Map<String, Object> file) {
         super(storage, file);
     }

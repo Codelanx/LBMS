@@ -1,12 +1,17 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.CommandUtils;
+import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.Checkout;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.state.types.Visitor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Queries for a list of books currently borrowed by a specific visitor.
@@ -59,7 +64,6 @@ public class BorrowedCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
 
-
         //Finding the visitor with the matching ID in the database
         Visitor v = CommandUtils.findVisitor(this.server, visitorID);
         if (v == null){
@@ -67,23 +71,24 @@ public class BorrowedCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        //TODO: How to get the books checked out by a visitor
-        /*String responseString = this.getName() + ",";
-        if (v.getCheckedOut.size() == 0){
-            executor.sendMessage(this.getName() + ",0;");
-            return ResponseFlag.SUCCESS;
-        } else {
-            responseString += v.getCheckedOut.size();
-            for (Book b : v.getCheckedOut()){
-                Map<String, Object> bookData = b.getData();
-                responseString += ("\n" + bookData.get("id") + "," + bookData.get("isbn") +
-                        "," + bookData.get("title") + "," + bookData.get(
-                                "date_borrowed;");
-            }
-            executor.sendMessage(responseString);
-        }
-        return ResponseFlag.SUCCESS;*/
+        String responseString = this.getName() + ",";
 
-        return ResponseFlag.NOT_FINISHED;
+        List<Checkout> books = server.getDataStorage().query(Checkout.class)
+                .isEqual(Checkout.Field.VISITOR, v)
+                .results()
+                .collect(Collectors.toList());
+
+        if (books.size() == 0){
+            executor.sendMessage(responseString + "0;");
+        } else {
+            responseString += books.size() + "\n";
+            for (Checkout b : books) {
+                responseString += (b.getBook().toFormattedText() + "\n");
+            }
+        }
+        executor.sendMessage(responseString);
+
+        return ResponseFlag.SUCCESS;
+
     }
 }
