@@ -8,17 +8,22 @@ import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.loader.StateQuery;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.loader.StateBuilder;
-import edu.rit.codelanx.data.state.types.Library;
-import edu.rit.codelanx.data.state.types.StateType;
+import edu.rit.codelanx.data.state.types.*;
 import edu.rit.codelanx.data.storage.RelativeStorage;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DataFacade implements DataStorage {
 
+    private static final Class<?>[] KNOWN_TYPES = {Book.class, Checkout.class, Library.class, Transaction.class, Visit.class, Visitor.class};
     private final Map<Class<? extends State>, Map<Long, State>> data = new HashMap<>();
     private final StorageAdapter adapter;
     private final RelativeStorage relative;
@@ -82,14 +87,16 @@ public class DataFacade implements DataStorage {
 
     @Override
     public Library getLibrary() {
-        return this.adapter.getLibrary();
+        return null; //TODO:
     }
 
     public <R extends State> R query(Class<R> type, long id) {
-        State.Type stateType = StateType.fromClassStrict(type);
-        return this.query(type)
-                //TODO: filter by ID
-                .results().findAny().orElse(null);
+        //TODO: Querying
+        return null;
+    }
+
+    public <R extends State> R queryAll(Class<R> type) {
+        return null; //TODO: Querying
     }
 
 }

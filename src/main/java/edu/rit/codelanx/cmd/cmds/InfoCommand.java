@@ -1,10 +1,22 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.data.state.State;
+import edu.rit.codelanx.data.state.types.Author;
+import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 
 /**
  * Searches for books owned by the library and available for borrowing by
@@ -46,6 +58,7 @@ public class InfoCommand extends TextCommand {
      * @param executor  the client that is calling the command
      * @param args info: the name of the command to be run
      *                  title: title of the book to be searched
+     *                  authors: the comma-separated list of authors of the book
      *                  isbn: the ISBN number for the book
      *                  publisher: the publisher of the book
      *                  sort order: way to sort the result of searching the
@@ -55,6 +68,50 @@ public class InfoCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
+        if (numArgs(args, 1) == UtilsFlag. MISSINGPARAMS) {
+            executor.sendMessage(this.getName() + ",missing-parameters");
+            return ResponseFlag.SUCCESS;
+        }
+        // queries for books
+        Book book = this.server.getDataStorage().query(Book.class).results().findAny().orElse(null);
+
+        // if the first arg is title then return the title
+        if (args[1] == "title") {
+            book.getTitle();
+            executor.renderState(book);
+            return ResponseFlag.SUCCESS;
+        } else {
+            executor.sendMessage("incorrect parameter");
+        }
+
+        // Checks to make sure the second param is authors and gets the authors to the client
+        if (args[2] == "authors") {
+
+            Author[] authors = this.server.getDataStorage().query(Author.class).results().toArray(Author[]::new);
+            executor.renderState(authors);
+
+            return ResponseFlag.SUCCESS;
+        } else {
+            executor.sendMessage("incorrect parameter");
+        }
+
+        // Checks to make sure the third param is isbn and sends then isbn to the client
+        if (args[3] == "isbn") {
+            String isbn = book.getISBN();
+            executor.sendMessage(isbn);
+            return ResponseFlag.SUCCESS;
+
+        } else {
+            executor.sendMessage("incorrect parameter");
+        }
+
+
+
+
+
+
+
+
         return ResponseFlag.NOT_FINISHED;
     }
 }
