@@ -5,6 +5,7 @@ import edu.rit.codelanx.network.io.Message;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.util.Errors;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -91,7 +92,15 @@ Add a prompt (e.g.):
                 this.output.println("Error: Not connected to server!");
                 continue;
             }
-            this.message(server, new TextMessage(line)); //otherwise, send it off
+            try {
+                this.message(server, new TextMessage(line)); //otherwise, send it off
+            } catch (Throwable t) {
+                this.output.println("Server encountered error while processing latest request");
+                Errors.report(t);
+                if (this.output == System.out) {
+                    System.err.flush();
+                }
+            }
         };
     }
 
