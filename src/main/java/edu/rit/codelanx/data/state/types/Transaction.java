@@ -15,6 +15,9 @@ import java.util.Map;
 import static edu.rit.codelanx.data.storage.field.FieldModifier.*;
 
 @StorageContainer("transactions")
+/**
+ * A {@link BasicState} represents a Transaction between LBMS and the client.
+ */
 public class Transaction extends BasicState {
 
     public static class Field {
@@ -84,7 +87,10 @@ public class Transaction extends BasicState {
 
     @Override
     public String toFormattedText() {
-        return null; //TODO
+        String transaction="Transaction ID: %d| Visitor: %s %s| Reason: %s| Amount: %s";
+        String formatted_transaction = String.format(transaction, this.getID(), this.getVisitor().getFirstName(),
+                this.getVisitor().getLastName(), this.getReason(), this.getAmount().toPlainString() );
+        return null;
     }
 
     public static Builder create() {

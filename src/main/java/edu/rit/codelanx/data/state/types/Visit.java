@@ -39,24 +39,12 @@ public class Visit extends BasicState {
         Instant start = this.getStart();
         Instant end = this.getEnd();
         String visit;
-        String formatted_visit;
-        visit = "depart, %d, %s, %s";                   //depart, id, end-time, duration
-        formatted_visit = String.format(visit, this.getID(), format_time(end), formatDuration(end, start));
+        visit = "Visit ID: %d| Visitor ID %d| Visit Duration: %s";
+        String formatted_visit = String.format(visit, this.getID(), this.getVisitor().getID(),
+                this.getDuration().toString());
         return formatted_visit;
     }
 
-    /**
-     * gets the string representation of the visit duration (hr:min:sec)
-     *
-     * @param end-   end time
-     * @param start- start time
-     * @return string duration
-     */
-    //Probably not worth making public just yet, we might want to move it after all
-    private String formatDuration(Instant end, Instant start) {
-        Duration dur = Duration.between(start, end);
-        return dur.toString();
-    }
 
     /**
      * gets the visit duration
