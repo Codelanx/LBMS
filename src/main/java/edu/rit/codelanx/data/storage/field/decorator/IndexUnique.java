@@ -2,18 +2,18 @@ package edu.rit.codelanx.data.storage.field.decorator;
 
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.storage.field.DataField;
-import edu.rit.codelanx.data.storage.field.FieldModifier;
+import edu.rit.codelanx.data.storage.field.FieldIndicies;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class DecoratorUnique<T> extends FieldDecorator<T> {
+public class IndexUnique<T> extends FieldIndex<T> {
 
     private final Map<T, State> uniqueMap = new HashMap<>();
 
-    public DecoratorUnique(DataField<T> parent) {
+    public IndexUnique(DataField<T> parent) {
         super(parent);
     }
 
@@ -58,7 +58,7 @@ public class DecoratorUnique<T> extends FieldDecorator<T> {
     }
 
     @Override
-    public FieldModifier getModifierType() {
-        return FieldModifier.FM_UNIQUE;
+    public FieldIndicies getIndexType() {
+        return FieldIndicies.FM_UNIQUE;
     }
 }

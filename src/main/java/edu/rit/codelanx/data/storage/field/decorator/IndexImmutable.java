@@ -2,13 +2,13 @@ package edu.rit.codelanx.data.storage.field.decorator;
 
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.storage.field.DataField;
-import edu.rit.codelanx.data.storage.field.FieldModifier;
+import edu.rit.codelanx.data.storage.field.FieldIndicies;
 
 import java.util.function.UnaryOperator;
 
-public class DecoratorImmutable<T> extends FieldDecorator<T> {
+public class IndexImmutable<T> extends FieldIndex<T> {
 
-    public DecoratorImmutable(DataField<T> parent) {
+    public IndexImmutable(DataField<T> parent) {
         super(parent);
     }
 
@@ -28,7 +28,7 @@ public class DecoratorImmutable<T> extends FieldDecorator<T> {
     }
 
     @Override
-    public FieldModifier getModifierType() {
-        return FieldModifier.FM_IMMUTABLE;
+    public FieldIndicies getIndexType() {
+        return FieldIndicies.FM_IMMUTABLE;
     }
 }

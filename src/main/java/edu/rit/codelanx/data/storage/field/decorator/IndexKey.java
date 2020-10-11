@@ -2,7 +2,7 @@ package edu.rit.codelanx.data.storage.field.decorator;
 
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.storage.field.DataField;
-import edu.rit.codelanx.data.storage.field.FieldModifier;
+import edu.rit.codelanx.data.storage.field.FieldIndicies;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,11 +11,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class DecoratorKey<T> extends FieldDecorator<T> {
+public class IndexKey<T> extends FieldIndex<T> {
 
     private final Map<Object, Set<State>> states = new HashMap<>();
 
-    public DecoratorKey(DataField<T> parent) {
+    public IndexKey(DataField<T> parent) {
         super(parent);
     }
 
@@ -61,7 +61,7 @@ public class DecoratorKey<T> extends FieldDecorator<T> {
     }
 
     @Override
-    public FieldModifier getModifierType() {
-        return FieldModifier.FM_KEY;
+    public FieldIndicies getIndexType() {
+        return FieldIndicies.FM_KEY;
     }
 }

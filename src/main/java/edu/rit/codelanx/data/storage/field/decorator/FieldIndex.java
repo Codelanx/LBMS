@@ -3,29 +3,29 @@ package edu.rit.codelanx.data.storage.field.decorator;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.storage.field.DataField;
 import edu.rit.codelanx.data.storage.field.FieldInitializer;
-import edu.rit.codelanx.data.storage.field.FieldModifier;
+import edu.rit.codelanx.data.storage.field.FieldIndicies;
 
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-public abstract class FieldDecorator<T> implements DataField<T> {
+public abstract class FieldIndex<T> implements DataField<T> {
 
     protected final DataField<T> parent;
 
-    public FieldDecorator(DataField<T> parent) {
+    public FieldIndex(DataField<T> parent) {
         this.parent = parent;
     }
 
     //Returns not the parent, but the original component that was decorated
     protected DataField<T> getComponent() {
         DataField<T> back = this;
-        while (back instanceof FieldDecorator) {
-            back = ((FieldDecorator<T>) back).parent;
+        while (back instanceof FieldIndex) {
+            back = ((FieldIndex<T>) back).parent;
         }
         return back;
     }
 
-    public abstract FieldModifier getModifierType();
+    public abstract FieldIndicies getIndexType();
 
     @Override
     public boolean isKey() {
@@ -38,8 +38,8 @@ public abstract class FieldDecorator<T> implements DataField<T> {
     }
 
     @Override
-    public boolean hasModifier(FieldModifier modifier) {
-        return this.getModifierType() == modifier || this.parent.hasModifier(modifier);
+    public boolean hasIndex(FieldIndicies modifier) {
+        return this.getIndexType() == modifier || this.parent.hasIndex(modifier);
     }
 
     @Override
