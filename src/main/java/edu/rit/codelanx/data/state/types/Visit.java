@@ -64,9 +64,7 @@ public class Visit extends BasicState {
         return formatter.format(time);
     }
 
-    /**
-     * represents a Visit
-     */
+
     public static class Field {
         public static final DataField<Long> ID;
         public static final DataField<Visitor> VISITOR;

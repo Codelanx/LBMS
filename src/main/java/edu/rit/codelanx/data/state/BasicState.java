@@ -28,6 +28,12 @@ public abstract class BasicState implements State, FileSerializable {
     private final DataStorage loader;
     private final Map<DataField<?>, Object> values = new HashMap<>();
 
+    /**
+     * construct the state from State buil
+     * @param loader {@link DataStorage}
+     * @param id long type
+     * @param builder {@link StateBuilder}
+     */
     public BasicState(DataStorage loader, long id, StateBuilder<?> builder) {
         this.loader = loader;
         this.id = id;
@@ -40,11 +46,22 @@ public abstract class BasicState implements State, FileSerializable {
         }
     }
 
+    /**
+     * constructs the state from file input.
+     * @param loader {@link DataStorage}
+     * @param file- to get input from
+     */
     public BasicState(DataStorage loader, Map<String, Object> file) {
         this.loader = loader;
         this.id = this.init(loader, f -> InputMapper.getObject(file, f.getName()));
     }
 
+    /**
+     * takes input from sql database and constructs the state
+     * @param loader {@link DataStorage}
+     * @param sql {@link ResultSet}
+     * @throws SQLException when errors occur
+     */
     public BasicState(DataStorage loader, ResultSet sql) throws SQLException {
         this.loader = loader;
         this.id = this.initSQL(loader, f -> InputMapper.getObject(f.getType(), sql, f.getName()));
@@ -119,6 +136,10 @@ public abstract class BasicState implements State, FileSerializable {
         return back;
     }
 
+    /**
+     * string representation of the state
+     * @return id, state type string
+     */
     @Override
     public String toString() {
         return "State{"
