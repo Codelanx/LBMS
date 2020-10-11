@@ -82,16 +82,16 @@ Add a prompt (e.g.):
             IntStream.range(0, 100) //a Stream<Integer> from 0 to 99
                 .forEach(i -> this.output.println()); //print a line for each
         }
-        for (;;) {
-            this.output.print(PROMPT_PREFIX);
-            String line = this.buffer.readLine();
-            if (line == null) break; //No more input
-            Server<TextMessage> server = this.server.get();
-            if (server == null) { //prints per input attempt
+        for (;;) { //loop infinitely
+            this.output.print(PROMPT_PREFIX); //print our command prompt
+            String line = this.buffer.readLine(); //grab the user's input
+            if (line == null) break; //EOF / no more input
+            Server<TextMessage> server = this.server.get(); //Get our connected server
+            if (server == null) { //if not connected, discard this input
                 this.output.println("Error: Not connected to server!");
                 continue;
             }
-            this.message(server, new TextMessage(line));
+            this.message(server, new TextMessage(line)); //otherwise, send it off
         };
     }
 
