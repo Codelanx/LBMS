@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * Represents a {@link Client} ran through the terminal
@@ -74,9 +75,16 @@ Add a prompt (e.g.):
      */
     @Override
     public void display() throws IOException {
+//        Scanner scanner= new Scanner(System.in);
+
         if (this.output == System.out) {
+            for (int i=0; i<100; i++){
+                System.out.println("\n");
+            }
+            System.out.println("$>>input: ");
             //TODO: clear the screen on start (print 100ish blank lines?)
         }
+
         String s;
         while ((s = this.buffer.readLine()) != null) {
             Server<TextMessage> server = this.server.get();
