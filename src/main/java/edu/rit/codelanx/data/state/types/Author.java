@@ -8,6 +8,7 @@ import edu.rit.codelanx.data.storage.field.DataField;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -37,23 +38,37 @@ public class Author extends BasicState {
         super(storage, id, author);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param storage {@inheritDoc}
+     * @param sql {@inheritDoc}
+     * @throws SQLException {@inheritDoc}
+     */
     public Author(DataStorage storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param storage {@inheritDoc}
+     * @param file {@inheritDoc}
+     */
     public Author(DataStorage storage, Map<String, Object> file) {
         super(storage, file);
     }
 
+    //TODO: Document
     public String getName() {
         return Field.NAME.get(this);
     }
 
+    //TODO: Document
     public Stream<Book> getBooks() {
         return this.getLoader().query(AuthorListing.class)
                 .isEqual(AuthorListing.Field.AUTHOR, this)
                 .results().map(AuthorListing::getBook);
     }
+
 
     @Override
     protected DataField<? super Object>[] getFieldsUnsafe() {

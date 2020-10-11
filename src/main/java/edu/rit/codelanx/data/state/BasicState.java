@@ -67,6 +67,7 @@ public abstract class BasicState implements State, FileSerializable {
         this.id = this.initSQL(loader, f -> InputMapper.getObject(f.getType(), sql, f.getName()));
     }
 
+    //helper method to initialize the id/data fields
     private long initSQL(DataStorage loader, SQLFunction<DataField<?>, Object> mapper) throws SQLException {
         long id = InputMapper.toType(Long.class, mapper.apply(this.getIDField()));
         for (DataField<? super Object> f : this.getFieldsUnsafe()) {
@@ -78,14 +79,19 @@ public abstract class BasicState implements State, FileSerializable {
         return id;
     }
 
+    //same as #initSQL without the SQLException
     private long init(DataStorage loader, Function<DataField<?>, Object> mapper) {
         try {
             return this.initSQL(loader, mapper::apply);
-        } catch (SQLException ex) {
+        } catch (SQLException ex) { //Should never happen - mapper::apply does not produce SQLException
             throw new RuntimeException("Failed to initialize state", ex);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public long getID() {
         return this.id;
