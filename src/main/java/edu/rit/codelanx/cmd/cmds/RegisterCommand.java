@@ -1,5 +1,11 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.data.state.BasicState;
+import edu.rit.codelanx.data.state.State;
+import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.StateType;
+import edu.rit.codelanx.data.state.types.Visit;
+import edu.rit.codelanx.data.storage.field.DataField;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -51,21 +57,31 @@ public class RegisterCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         //We use the builder pattern to create a new object in the data storage
-        Visitor.Builder builder;
-        //TODO: Fill out visitor's data from real arguments
-        builder = Visitor.create()
-                .firstName("Bob")
-                .lastName("RadicalAndDangerous")
-                .address("242 Electric Avenue")
-                .phone("555-555-BRAD")
-                .money(BigDecimal.valueOf(2.00));
-        //check if it's valid (our example always should be)
-        if (!builder.isValid()) {
-            executor.sendMessage("Invalid number of arguments!");
-            return ResponseFlag.FAILURE;
+
+        if (args.length < 1) {
+            executor.sendMessage(this.getName() + ",missing-parameters," +
+                    "visitorID");
+            return ResponseFlag.SUCCESS;
+        } else {
+
+            // Creates a new Visitor id from the arguments
+            Visitor newID = Visitor.create()
+                    .setValue(Visitor.Field.FIRST, args[0])
+                    .setValue(Visitor.Field.LAST, args[1])
+                    .setValue(Visitor.Field.ADDRESS, args[3])
+                    .setValue(Visitor.Field.PHONE, args[4])
+                    .build(this.server.getDataStorage());
+            newID.getID();
+            executor.renderState(newID);
+
+            // Checks to see if the new visitor information is valid
+            if (!newID.isValid()) {
+                executor.sendMessage("Invalid number of arguments!");
+                return ResponseFlag.FAILURE;
+            }
+
+            return ResponseFlag.SUCCESS;
         }
-        Visitor registered = builder.build(this.server.getDataStorage());
-        //TODO: Maybe do something with our new user? It's already managed in DataStorage though
-        return ResponseFlag.SUCCESS;
+
     }
 }

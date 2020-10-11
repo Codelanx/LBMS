@@ -9,6 +9,7 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.Date;
 import java.util.List;
 
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
@@ -60,14 +61,14 @@ public class ReportCommand extends TextCommand {
         }
 
         else {
-            Book.Builder book;
-            book = Book.create()
-                    //.publishDate("2000/1/1") //TODO: Fix
-                    .totalCopies(10);
+
 
             //List<Visitor> numVisitor = ; //TODO: Fix
             //this.server.getDataStorage().totalRegisteredVisitors(numVisitor); //TODO: Fix
+            Book book = this.server.getDataStorage().query(Book.class).results().findAny().orElse(null);
 
+            //executor.renderState(book.getTotalCopies());
+            //Date date = this.get
 
 
             //TODO: Get the number of visitors
