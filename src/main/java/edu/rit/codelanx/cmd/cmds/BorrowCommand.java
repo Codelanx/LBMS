@@ -1,6 +1,5 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import com.sun.tools.javac.comp.Check;
 import edu.rit.codelanx.data.state.types.Checkout;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
