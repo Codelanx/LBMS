@@ -85,7 +85,7 @@ public class DepartCommand extends TextCommand {
         String endOutput = TIME_OF_DAY_FORMAT.format(end);
         String durOutput = this.formatDuration(d);
 
-        executor.sendMessage(this.buildResponse(this.getName(), v.getID() + "", endOutput, durOutput));
+        executor.sendMessage(this.buildResponse(this.getName(), v.getID(), endOutput, durOutput));
 
         return ResponseFlag.SUCCESS;
     }

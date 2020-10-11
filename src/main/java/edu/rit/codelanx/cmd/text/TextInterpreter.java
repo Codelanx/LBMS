@@ -49,6 +49,9 @@ public class TextInterpreter implements Interpreter {
         if (command.params.length > 0 && args.length <= 0) { //if we need args, and there are none
             return command.buildResponse(command.getName(), "missing-params", command.getUsage()); //example of an error string
         }
+        for (int i = 0; i < command.params.length; i++) {
+
+        }
         return null; //null if we're good!
     }
 

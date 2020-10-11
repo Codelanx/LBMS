@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.StreamSupport;
 
 public abstract class TextCommand implements Command {
 
@@ -51,6 +52,10 @@ public abstract class TextCommand implements Command {
      */
     protected String buildResponse(Object... tokens) {
         return String.join(TOKEN_DELIMITER, Arrays.stream(tokens).map(Objects::toString).toArray(String[]::new)) + ";";
+    }
+
+    protected String buildResponse(Iterable<?> tokens) {
+        return String.join(TOKEN_DELIMITER, StreamSupport.stream(tokens.spliterator(), false).map(Objects::toString).toArray(String[]::new)) + ";";
     }
 
     /**
