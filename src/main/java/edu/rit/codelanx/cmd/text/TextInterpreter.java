@@ -53,7 +53,7 @@ public class TextInterpreter implements Interpreter {
             String out = String.join(",", data);
             executor.sendMessage(out);
         } else {
-            executor.sendMessage(r.getDescription());
+            executor.sendMessage(r.getDescription()); //TODO: Remove in production
         }
         //TODO: Handle r
     }
