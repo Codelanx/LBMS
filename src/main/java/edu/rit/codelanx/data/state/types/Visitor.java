@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_COMPOSITE;
 import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_IMMUTABLE;
 import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_KEY;
 
@@ -36,6 +37,7 @@ public class Visitor extends BasicState {
         public static final DataField<String> LAST;
         public static final DataField<String> ADDRESS;
         public static final DataField<String> PHONE;
+        public static final DataField<Instant> REGISTRATION_DATE;
         public static final DataField<BigDecimal> MONEY;
         //TODO: What was the below used for?
         //public static final DataField<Instant> REGISTRATION_DATE;
@@ -48,18 +50,25 @@ public class Visitor extends BasicState {
          * @return id, name, address, phone, balance
          */
         public static DataField<? super Object>[] values() {
-            return new DataField[]{ID, FIRST, LAST, ADDRESS, PHONE, MONEY};
+            return new DataField[]{ID, FIRST, LAST, ADDRESS, PHONE, REGISTRATION_DATE, MONEY};
         }
 
         static {
             ID = DataField.makeIDField(Book.class);
-            FIRST = DataField.buildSimple(String.class, "first", FM_IMMUTABLE, FM_KEY);
-            LAST = DataField.buildSimple(String.class, "last", FM_IMMUTABLE, FM_KEY);
-            ADDRESS = DataField.buildSimple(String.class, "address", FM_IMMUTABLE);
-            PHONE = DataField.buildSimple(String.class, "phone", FM_IMMUTABLE, FM_KEY);
+            FIRST = DataField.buildSimple(String.class, "first", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
+            LAST = DataField.buildSimple(String.class, "last", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
+            ADDRESS = DataField.buildSimple(String.class, "address", FM_IMMUTABLE, FM_COMPOSITE);
+            PHONE = DataField.buildSimple(String.class, "phone", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
+            REGISTRATION_DATE = DataField.buildSimple(Instant.class, "registration_date", FM_IMMUTABLE);
             MONEY = DataField.buildSimple(BigDecimal.class, "money", FM_IMMUTABLE);
             VALUES = Book.Field.values();
         }
+    }
+
+    public static class Key {
+        //unique keys
+        //composite keys
+        //mapping keys
     }
 
     //keeps track of an ongoing visit. If it ends, a `Visit` is added to the data
