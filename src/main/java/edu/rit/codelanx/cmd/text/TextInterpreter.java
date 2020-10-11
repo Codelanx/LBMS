@@ -1,20 +1,22 @@
 package edu.rit.codelanx.cmd.text;
 
+import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.Command;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.cmd.ResponseFlag;
+import edu.rit.codelanx.util.Validate;
 
 import java.util.Map;
 import java.util.WeakHashMap;
 
 public class TextInterpreter implements Interpreter {
 
-    private final Server server;
+    private final Server<TextMessage> server;
     private final Map<CommandExecutor, StringBuilder> buffers = new WeakHashMap<>();
 
-    public TextInterpreter(Server server) {
+    public TextInterpreter(Server<TextMessage> server) {
         this.server = server;
         TextCommandMap.initialize(server); //Enables commands on this server
     }
@@ -44,6 +46,15 @@ public class TextInterpreter implements Interpreter {
         System.arraycopy(args, 1, passedArgs, 0, passedArgs.length);
         Command cmd = TextCommandMap.getCommand(this.server, args[0]);
         ResponseFlag r = cmd.onExecute(executor, passedArgs);
+        if (r == ResponseFlag.MISSING_ARGS && cmd instanceof TextCommand) {
+            TextCommand tcmd = (TextCommand) cmd;
+            String[] data = tcmd.missingArgs;
+            Validate.nonNull(data, "Did not set missing argument parameters!");
+            String out = String.join(",", data);
+            executor.sendMessage(out);
+        } else {
+            executor.sendMessage(r.getDescription());
+        }
         //TODO: Handle r
     }
 
