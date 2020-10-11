@@ -76,29 +76,6 @@ public class Visitor extends BasicState {
     //So maybe rethink this part of our design. Because terrorists.
     private final AtomicReference<Instant> visitStart = new AtomicReference<>(null);
 
-    //Storage serialization handling below
-
-    /**
-     * @see BasicState
-     */
-    Visitor(DataStorage storage, long id, StateBuilder<Visitor> build) {
-        super(storage, id, build);
-    }
-
-    /**
-     * @see BasicState
-     */
-    public Visitor(DataStorage storage, ResultSet sql) throws SQLException {
-        super(storage, sql);
-    }
-
-    /**
-     * @see BasicState
-     */
-    public Visitor(DataStorage storage, Map<String, Object> file) {
-        super(storage, file);
-    }
-
     //Behavioral methods here
 
     /**
@@ -265,6 +242,24 @@ public class Visitor extends BasicState {
     @Override
     protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
+    }
+
+
+    //Storage serialization handling below
+
+    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
+    Visitor(DataStorage storage, long id, StateBuilder<Visitor> build) {
+        super(storage, id, build);
+    }
+
+    /** @see BasicState#BasicState(DataStorage, ResultSet) */
+    public Visitor(DataStorage storage, ResultSet sql) throws SQLException {
+        super(storage, sql);
+    }
+
+    /** @see BasicState#BasicState(DataStorage, Map) */
+    public Visitor(DataStorage storage, Map<String, Object> file) {
+        super(storage, file);
     }
 
 }

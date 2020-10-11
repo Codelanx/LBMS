@@ -9,6 +9,7 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -95,8 +96,12 @@ public class ReportCommand extends TextCommand {
             Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
                     .results()
                     .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
-            Set<Transaction> lateFees = map.get("late fee");
-            Set<Transaction> paidFees = map.get("Paying off balance");
+            Set<Transaction> paidFees = map.get(Transaction.Reason.PAYING_LATE_FEE.getReason());
+            Set<Transaction> lateFees = map.get(Transaction.Reason.CHARGING_LATE_FEE.getReason());
+            if (lateFees == null) {
+                lateFees = Collections.emptySet();
+            }
+            int amountLateFees = map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();
             int finesCollected = paidFees.size();
             int outstandingFines = lateFees.size() - finesCollected;
 

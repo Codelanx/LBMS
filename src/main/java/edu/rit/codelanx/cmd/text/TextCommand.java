@@ -12,6 +12,16 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
 
+/*
+TODO:
+TODO:   For every command, test for:
+TODO:     - No input
+TODO:     - Bad input
+TODO:     - Good input
+TODO:     - Other weird bad inputs / edge cases (e.g. duplicates)
+TODO:
+ */
+
 public abstract class TextCommand implements Command {
 
     public static final String TOKEN_DELIMITER = ",";

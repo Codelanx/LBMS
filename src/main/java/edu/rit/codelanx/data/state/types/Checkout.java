@@ -82,7 +82,7 @@ public class Checkout extends BasicState {
         //TODO: Determine if a fine should be applied
         if (false) {
             //TODO: And the amount (negative because we're taking from them)
-            this.getLoader().getLibrary().transact(this.getVisitor(), BigDecimal.valueOf(-1D), "late fee");
+            this.getLoader().getLibrary().transact(this.getVisitor(), BigDecimal.valueOf(-1D), Transaction.Reason.CHARGING_LATE_FEE);
         }
         Field.RETURNED.set(this, true);
     }

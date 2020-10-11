@@ -34,7 +34,7 @@ public class Transaction extends BasicState {
         static {
             ID = DataField.makeIDField(Checkout.class);
             VISITOR = DataField.buildFromState(Visitor.class, "visitor", Visitor.Field.ID, FM_IMMUTABLE, FM_KEY);
-            REASON = DataField.buildSimple(String.class, "reason", FM_IMMUTABLE);
+            REASON = DataField.buildSimple(String.class, "reason", FM_IMMUTABLE, FM_KEY);
             MONEY = DataField.buildSimple(BigDecimal.class, "money", FM_IMMUTABLE);
             VALUES = Library.Field.values();
         }
@@ -94,6 +94,24 @@ public class Transaction extends BasicState {
 
     public static StateBuilder<Transaction> create() {
         return StateBuilder.of(Transaction::new, StateType.TRANSACTION, Field.ID, Field.VALUES);
+    }
+
+    public enum Reason {
+        CHARGING_LATE_FEE("late fee"), //library charges a new late fee
+        PAYING_LATE_FEE("paying late fee"), //visitor pays late fee balance
+        SELLING_BOOK("selling book"), //library sells book to visitor
+        PURCHASE_BOOK("purchase book"), //library buys book from book store
+        ;
+
+        private final String reason;
+
+        private Reason(String reason) {
+            this.reason = reason;
+        }
+
+        public String getReason() {
+            return this.reason;
+        }
     }
 
 }

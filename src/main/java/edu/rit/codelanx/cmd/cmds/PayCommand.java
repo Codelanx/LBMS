@@ -3,6 +3,7 @@ package edu.rit.codelanx.cmd.cmds;
 import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Library;
+import edu.rit.codelanx.data.state.types.Transaction;
 import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -96,7 +97,7 @@ public class PayCommand extends TextCommand {
 
         // pays the requested amount
         else {
-            library.transact(visitor, amount, "Paying off balance");
+            library.transact(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
             return ResponseFlag.SUCCESS;
         }
 

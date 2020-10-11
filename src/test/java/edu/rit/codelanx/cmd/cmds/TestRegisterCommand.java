@@ -12,7 +12,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-
 public class TestRegisterCommand {
 
     private @Mock Server<TextMessage> serv;
