@@ -24,14 +24,16 @@ import java.util.function.Function;
 public abstract class BasicState implements State, FileSerializable {
 
     private final AtomicBoolean valid = new AtomicBoolean(false);
+    private final long id;
     private final DataStorage loader;
     private final Map<DataField<?>, Object> values = new HashMap<>();
 
     public BasicState(DataStorage loader, long id, StateBuilder<?> builder) {
         this.loader = loader;
+        this.id = id;
         DataField<?> idField = this.getIDField();
         idField.initialize(this, id);
-        DataField<?>[] fields = this.getFieldUnsafe(); //id field should be the first indexed field
+        DataField<?>[] fields = this.getFieldsUnsafe(); //id field should be the first indexed field
         for (int i = 0; i < fields.length; i++) { //but just in case we'll iterate them all
             if (fields[i] == idField) continue;
             fields[i].initialize(this, builder.getValue(fields[i]));
@@ -39,36 +41,40 @@ public abstract class BasicState implements State, FileSerializable {
     }
 
     public BasicState(DataStorage loader, Map<String, Object> file) {
-        this(loader);
-        this.init(loader, f -> InputMapper.getObject(file, f.getName()));
+        this.loader = loader;
+        this.id = this.init(loader, f -> InputMapper.getObject(file, f.getName()));
     }
 
     public BasicState(DataStorage loader, ResultSet sql) throws SQLException {
-        this(loader);
-        this.initSQL(loader, f -> InputMapper.getObject(f.getType(), sql, f.getName()));
-    }
-
-    private BasicState(DataStorage loader) {
         this.loader = loader;
+        this.id = this.initSQL(loader, f -> InputMapper.getObject(f.getType(), sql, f.getName()));
     }
 
-    private void initSQL(DataStorage loader, SQLFunction<DataField<?>, Object> mapper) throws SQLException {
-        for (DataField<? super Object> f : this.getFieldUnsafe()) {
+    private long initSQL(DataStorage loader, SQLFunction<DataField<?>, Object> mapper) throws SQLException {
+        long id = InputMapper.toType(Long.class, mapper.apply(this.getIDField()));
+        for (DataField<? super Object> f : this.getFieldsUnsafe()) {
+            if (f == (DataField<?>) this.getIDField()) continue;
             Object o = mapper.apply(f);
             f.initialize(this, InputMapper.toTypeOrState(loader, f.getType(), o));
         }
         this.valid.set(true);
+        return id;
     }
 
-    private void init(DataStorage loader, Function<DataField<?>, Object> mapper) {
-        for (DataField<? super Object> f : this.getFieldUnsafe()) {
-            Object o = mapper.apply(f);
-            f.initialize(this, InputMapper.toTypeOrState(loader, f.getType(), o));
+    private long init(DataStorage loader, Function<DataField<?>, Object> mapper) {
+        try {
+            return this.initSQL(loader, mapper::apply);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Failed to initialize state", ex);
         }
-        this.valid.set(true);
     }
 
-    protected abstract DataField<? super Object>[] getFieldUnsafe();
+    @Override
+    public long getID() {
+        return this.id;
+    }
+
+    protected abstract DataField<? super Object>[] getFieldsUnsafe();
     
     @Override
     public DataStorage getLoader() {
@@ -85,7 +91,7 @@ public abstract class BasicState implements State, FileSerializable {
         this.valid.set(false);
         this.values.clear();
         this.getIDField().forget(this);
-        for (DataField<?> f : this.getFieldUnsafe()) {
+        for (DataField<?> f : this.getFieldsUnsafe()) {
             f.forget(this);
         }
     }
@@ -107,7 +113,7 @@ public abstract class BasicState implements State, FileSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> back = new LinkedHashMap<>();
         back.put("id", this.getID());
-        for (DataField<?> field : this.getFieldUnsafe()) {
+        for (DataField<?> field : this.getFieldsUnsafe()) {
             back.put(field.getName(), field.serialize(this));
         }
         return back;

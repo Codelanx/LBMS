@@ -55,7 +55,7 @@ public class Checkout extends BasicState {
     }
 
     @Override
-    protected DataField<? super Object>[] getFieldUnsafe() {
+    protected DataField<? super Object>[] getFieldsUnsafe() {
         return Checkout.Field.VALUES;
     }
 

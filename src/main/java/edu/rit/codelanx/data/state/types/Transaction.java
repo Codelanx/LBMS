@@ -53,7 +53,7 @@ public class Transaction extends BasicState {
     }
 
     @Override
-    protected DataField<? super Object>[] getFieldUnsafe() {
+    protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
     }
 

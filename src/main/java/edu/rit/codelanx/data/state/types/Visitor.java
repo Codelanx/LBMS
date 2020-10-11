@@ -286,7 +286,7 @@ public class Visitor extends BasicState {
      * @return visitor id, name, address, phone, balance
      */
     @Override
-    protected DataField<? super Object>[] getFieldUnsafe() {
+    protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
     }
 
