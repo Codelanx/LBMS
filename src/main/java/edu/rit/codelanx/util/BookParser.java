@@ -45,7 +45,7 @@ public enum BookParser {;
     }
 
     //TODO: Fix
-    public static Book.Builder parseBook(TempContainer temp, String s) {
+    public static StateBuilder<Book> parseBook(TempContainer temp, String s) {
     /*    int start = 0, end = s.indexOf(',');
         temp.builder.setValue(Book.Field.ISBN, s.substring(start, end));
         start = end+2; //skip ,"
