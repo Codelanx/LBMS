@@ -24,6 +24,20 @@ import java.util.Arrays;
  */
 public class TextClient implements Client<TextMessage> {
 
+/*
+TODO:
+
+Console output:
+
+Add a prompt (e.g.):
+        $>> input
+        output
+        output
+        $>> input2
+        output
+        output
+ */
+
     private final InputStreamReader reader;
     private final BufferedReader buffer;
     private final PrintStream output;
@@ -60,6 +74,9 @@ public class TextClient implements Client<TextMessage> {
      */
     @Override
     public void display() throws IOException {
+        if (this.output == System.out) {
+            //TODO: clear the screen on start (print 100ish blank lines?)
+        }
         String s;
         while ((s = this.buffer.readLine()) != null) {
             Server<TextMessage> server = this.server.get();
