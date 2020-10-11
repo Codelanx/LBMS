@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 /**
  * Represents a {@link Client} ran through the terminal
@@ -78,9 +79,8 @@ Add a prompt (e.g.):
     public void display() throws IOException {
         if (this.output == System.out) {
             //clear the screen on start (print 100 blank lines)
-            for (int i = 0; i < 100; i++) {
-                this.output.println();
-            }
+            IntStream.range(0, 100) //a Stream<Integer> from 0 to 99
+                .forEach(i -> this.output.println()); //print a line for each
         }
         for (;;) {
             this.output.print(PROMPT_PREFIX);
