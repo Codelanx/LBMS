@@ -5,17 +5,14 @@ import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.storage.StorageContainer;
 import edu.rit.codelanx.data.storage.field.DataField;
-import edu.rit.codelanx.network.client.Client;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -231,7 +228,7 @@ public class Visitor extends BasicState {
     public static class Builder extends StateBuilder<Visitor> {
 
         private Builder() {
-            super(StateType.VISITOR, Field.VALUES);
+            super(StateType.VISITOR, Field.ID, Field.VALUES);
         }
 
         @Deprecated

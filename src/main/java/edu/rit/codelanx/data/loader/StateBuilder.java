@@ -17,12 +17,14 @@ import java.util.stream.Collectors;
 public abstract class StateBuilder<T extends State> {
 
     protected final State.Type type;
+    private final DataField<?> idField;
     private final DataField<?>[] fields;
     private final Map<DataField<?>, Object> values = new HashMap<>(); //always maps DataField<E> -> E
     private final Map<DataField<?>, List<State>> associations = new HashMap<>();
 
-    public StateBuilder(State.Type type, DataField<?>... fields) {
+    public StateBuilder(State.Type type, DataField<?> idField, DataField<?>... fields) {
         this.type = type;
+        this.idField = idField;
         this.fields = fields;
     }
 
@@ -48,7 +50,8 @@ public abstract class StateBuilder<T extends State> {
     public final T build(DataStorage storage) {
         if (!this.isValid()) {
             String missing = Arrays.stream(this.fields)
-                    .filter(f -> this.getValue(f) != null)
+                    .filter(f -> f != this.idField)
+                    .filter(f -> this.getValue(f) == null)
                     .map(DataField::getName)
                     .collect(Collectors.joining(", "));
             throw new IllegalStateException("Cannot build an incomplete object (No fields for: " + missing + ")");
@@ -57,7 +60,9 @@ public abstract class StateBuilder<T extends State> {
     }
 
     public boolean isValid() {
-        return Arrays.stream(this.fields).allMatch(f -> this.getValue(f) != null);
+        return Arrays.stream(this.fields)
+                .filter(f -> f != this.idField)
+                .allMatch(f -> this.getValue(f) != null);
     }
 
     //TODO: HMMMM I DISLIKE THIS BEING HERE
@@ -69,8 +74,8 @@ public abstract class StateBuilder<T extends State> {
 
     protected abstract T buildObj(DataStorage storage, long id);
 
-    public static <T extends State> StateBuilder<T> of(StateConstructor<T> constructor, State.Type type, DataField<?>... fields) {
-        return new StateBuilder<T>(type, fields) {
+    public static <T extends State> StateBuilder<T> of(StateConstructor<T> constructor, State.Type type, DataField<Long> idField, DataField<?>... fields) {
+        return new StateBuilder<T>(type, idField, fields) {
             @Override
             protected T buildObj(DataStorage storage, long id) {
                 return constructor.create(storage, id, this);

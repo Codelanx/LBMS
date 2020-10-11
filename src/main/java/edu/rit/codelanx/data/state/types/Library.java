@@ -115,7 +115,7 @@ public class Library extends BasicState {
     public static class Builder extends StateBuilder<Library> {
 
         public Builder() {
-            super( StateType.LIBRARY, Field.VALUES);
+            super( StateType.LIBRARY, Field.ID, Field.VALUES);
         }
 
         @Deprecated

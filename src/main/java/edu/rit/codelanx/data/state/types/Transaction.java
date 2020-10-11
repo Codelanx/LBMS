@@ -3,7 +3,6 @@ package edu.rit.codelanx.data.state.types;
 import edu.rit.codelanx.data.DataStorage;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
-import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.storage.StorageContainer;
 import edu.rit.codelanx.data.storage.field.DataField;
 
@@ -103,7 +102,7 @@ public class Transaction extends BasicState {
     public static class Builder extends StateBuilder<Transaction> {
 
         private Builder() {
-            super(StateType.TRANSACTION, Field.VALUES);
+            super(StateType.TRANSACTION, Field.ID, Field.VALUES);
         }
 
         @Deprecated

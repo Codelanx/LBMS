@@ -84,7 +84,7 @@ public class AuthorListing extends BasicState {
     }
 
     public static StateBuilder<AuthorListing> create() {
-        return StateBuilder.of(AuthorListing::new, StateType.AUTHOR_LISTING, Field.VALUES);
+        return StateBuilder.of(AuthorListing::new, StateType.AUTHOR_LISTING, Field.ID, Field.VALUES);
     }
 
 }

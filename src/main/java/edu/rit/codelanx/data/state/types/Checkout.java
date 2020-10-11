@@ -122,7 +122,7 @@ public class Checkout extends BasicState {
     public static class Builder extends StateBuilder<Checkout> {
 
         private Builder() {
-            super(StateType.CHECKOUT, Field.VALUES);
+            super(StateType.CHECKOUT, Field.ID, Field.VALUES);
         }
 
         @Deprecated

@@ -18,7 +18,6 @@ import java.util.Map;
 
 import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_IMMUTABLE;
 import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_KEY;
-import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_UNIQUE;
 
 /**
  * A {@link BasicState} represents a complete Visit
@@ -146,7 +145,7 @@ public class Visit extends BasicState {
     public static class Builder extends StateBuilder<Visit> {
 
         private Builder() {
-            super(StateType.VISIT, Field.VALUES);
+            super(StateType.VISIT, Field.ID, Field.VALUES);
         }
 
         @Deprecated

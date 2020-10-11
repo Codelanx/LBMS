@@ -143,7 +143,7 @@ public class Book extends BasicState {
     public static class Builder extends StateBuilder<Book> {
 
         public Builder() {
-            super(StateType.BOOK, Field.VALUES);
+            super(StateType.BOOK, Field.ID, Field.VALUES);
         }
 
         @Deprecated

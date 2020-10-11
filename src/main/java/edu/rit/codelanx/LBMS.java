@@ -1,6 +1,5 @@
 package edu.rit.codelanx;
 
-import com.codelanx.commons.logging.Debugger;
 import edu.rit.codelanx.network.client.Client;
 import edu.rit.codelanx.network.client.TextClient;
 import edu.rit.codelanx.network.io.TextMessage;
@@ -9,7 +8,6 @@ import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.util.Errors;
 
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * Implementation of the LBMS system requirements

@@ -84,7 +84,7 @@ public class Author extends BasicState {
     }
 
     public static StateBuilder<Author> create() {
-        return StateBuilder.of(Author::new, StateType.AUTHOR, Field.VALUES);
+        return StateBuilder.of(Author::new, StateType.AUTHOR, Field.ID, Field.VALUES);
     }
 
 }
