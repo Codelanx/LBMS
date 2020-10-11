@@ -87,13 +87,17 @@ public class StateStorage<T extends State> {
         if (this.storage.getAdapter().isCached()) {
             return;
         }
+        this.doRelease(state);
+    }
+
+    private void doRelease(T state) {
         this.loaded.remove(state.getID());
         Arrays.stream(state.getFields()).forEach(d -> d.forget(state));
     }
 
     public void remove(T state) {
         this.storage.getAdapter().remove(state);
-        this.release(state);
+        this.doRelease(state); //TODO: potential race condition
     }
 
     public void forAllLoaded(Consumer<T> consumer) {

@@ -100,6 +100,27 @@ public class SearchCommand extends TextCommand {
         executor.sendMessage(result);
         */
 
+        Query<Book> query = this.server.getBookStore().query(Book.class);
+        String isbnIsATakenVariableNameGDI = args[2];
+        if (args[2] != null && !args[2].equals("*")) {
+            query = query.isEqual(Book.Field.ISBN, args[2]);
+        }
+
+
+        //TODO: From spencer
+
+        Book b = this.server.getBookStore().query(Book.class)
+                .isEqual(Book.Field.TITLE, "huck finn")
+                .results()
+                .findAny().orElse(null);
+        if (b == null) {
+            //TODO: book not found in the remote book store
+            return ResponseFlag.SUCCESS;
+        }
+        Book ours = b;//b.findOn(this.server.getDataStorage()); //TODO: Make a valid #findOn command
+        if (ours == null) {
+            this.server.getDataStorage().getRelativeStorage().addState(b);
+        }
         return ResponseFlag.NOT_FINISHED;
     }
 }

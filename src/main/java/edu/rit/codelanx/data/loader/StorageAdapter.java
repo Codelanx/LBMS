@@ -3,6 +3,7 @@ package edu.rit.codelanx.data.loader;
 import edu.rit.codelanx.data.DataStorage;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;
+import edu.rit.codelanx.data.storage.StateStorage;
 import edu.rit.codelanx.data.storage.field.DataField;
 
 import java.io.IOException;
@@ -14,9 +15,14 @@ public interface StorageAdapter {
     public <R extends State> R insert(StateBuilder<R> builder);
     public void loadAll() throws IOException;
     public void saveAll() throws IOException;
+    public DataStorage getAdaptee();
     //TODO: Update/save
 
-    public <R extends State> Stream<R> handleQuery(StateQuery<R> query);
+    default public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
+        Class<R> type = query.getType();
+        StateStorage<R> data = this.getAdaptee().getRelativeStorage().getStateStorage(type);
+        return query.locateLocal(data);
+    }
     public <R extends State> R loadState(long id, Class<R> type);
     public <R extends State, E> Stream<R> loadState(Class<R> type, DataField<E> field, E value);
     //notified when a change occurs, along with the new value

@@ -82,6 +82,11 @@ public class SQLStorageAdapter implements StorageAdapter {
     }
 
     @Override
+    public DataStorage getAdaptee() {
+        return this.storage;
+    }
+
+    @Override
     public <R extends State> R loadState(long id, Class<R> type) {
         State.Type stateType = StateType.fromClassStrict(type);
         return this.db.get().query(rs -> {

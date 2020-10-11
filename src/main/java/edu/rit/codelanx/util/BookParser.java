@@ -1,13 +1,13 @@
 package edu.rit.codelanx.util;
 
 import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.types.Book;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public enum BookParser {;
@@ -40,19 +40,21 @@ public enum BookParser {;
     }
 
     public static class TempContainer {
-        public Book.Builder builder;
+        public StateBuilder<Book> builder;
         public String[] authors;
     }
 
+    //TODO: Fix
     public static Book.Builder parseBook(TempContainer temp, String s) {
-        int start = 0, end = s.indexOf(',');
-        temp.builder.isbn(s.substring(start, end));
+    /*    int start = 0, end = s.indexOf(',');
+        temp.builder.setValue(Book.Field.ISBN, s.substring(start, end));
         start = end+2; //skip ,"
         end = s.indexOf('"', start);
-        temp.builder.title(s.substring(start, end));
+        temp.builder.setValue(Book.Field.TITLE, s.substring(start, end));
         start = end+3; //skip ",{
         end = s.indexOf('}', start);
         //TODO: Figure out what to do with authors
+        //TODO: We know now, we have to insert author objects and the listings!
         temp.authors = Arrays.stream(s.substring(start, end).split(","))
                 .map(String::trim).toArray(String[]::new);
         start = end+3; //skip },"
@@ -63,5 +65,8 @@ public enum BookParser {;
         //temp.builder.publishDate(s.substring(start, end)); //TODO: Fix
         temp.builder.pageCount(Integer.parseInt(s.substring(end+1)));
         return temp.builder;
+
+     */
+        return null;
     }
 }

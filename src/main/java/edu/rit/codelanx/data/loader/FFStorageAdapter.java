@@ -7,7 +7,6 @@ import edu.rit.codelanx.ConfigKey;
 import edu.rit.codelanx.data.DataStorage;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;
-import edu.rit.codelanx.data.storage.RelativeStorage;
 import edu.rit.codelanx.data.storage.StateStorage;
 import edu.rit.codelanx.data.storage.field.DataField;
 
@@ -27,9 +26,13 @@ public class FFStorageAdapter implements StorageAdapter {
     private static final String DATA_FILE_NAME = "data";
     private static final Pattern FF_DATA_SEARCH = Pattern.compile(DATA_FILE_NAME + "\\d*\\.(json|yml)");
     private final Class<? extends FileDataType> type;
-    private final RelativeStorage dataBank;
     private final DataStorage storage;
     private volatile Library library;
+
+    protected FFStorageAdapter(DataStorage storage) {
+        this.storage = storage;
+        this.type = null;
+    }
 
     public FFStorageAdapter(DataStorage storage, String type) {
         this.type = FileDataType.fromString(type);
@@ -39,7 +42,11 @@ public class FFStorageAdapter implements StorageAdapter {
         } else if (this.type == XML.class) {
             throw new UnsupportedOperationException("Sorry! We don't support XML"); //Why? because the parser is broken
         }
-        this.dataBank = new RelativeStorage(storage);
+    }
+
+    @Override
+    public DataStorage getAdaptee() {
+        return this.storage;
     }
 
     @Override
@@ -81,7 +88,7 @@ public class FFStorageAdapter implements StorageAdapter {
         }
         read.stream()
                 .map(o -> (State) o)
-                .forEach(this.dataBank::addState);
+                .forEach(this.getAdaptee().getRelativeStorage()::addState);
         Library lib = this.storage.query(Library.class).results().findAny().orElse(null);
         if (lib == null) {
             //no library defined yet, make one!
@@ -121,20 +128,22 @@ public class FFStorageAdapter implements StorageAdapter {
 
     @Override
     public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
+        //TODO: Handle the query for information
+        //TODO: Indexing for relative fields?
         Class<R> type = query.getType();
-        StateStorage<R> data = this.dataBank.getStateStorage(type);
+        StateStorage<R> data = this.storage.getRelativeStorage().getStateStorage(type);
         return query.locateLocal(data);
     }
 
     @Override
     public <R extends State> R loadState(long id, Class<R> type) {
         //flatfile storage is preloaded, no on-demand loading necessary
-        return this.dataBank.getStateStorage(type).getByID(id);
+        return this.getAdaptee().getRelativeStorage().getStateStorage(type).getByID(id);
     }
 
     @Override
     public <R extends State, E> Stream<R> loadState(Class<R> type, DataField<E> field, E value) {
-        StateStorage<R> data = this.dataBank.getStateStorage(type);
+        StateStorage<R> data = this.getAdaptee().getRelativeStorage().getStateStorage(type);
         return data.streamLoaded()
                 .filter(s -> Objects.equals(field.get(s), value));
     }
@@ -146,6 +155,7 @@ public class FFStorageAdapter implements StorageAdapter {
 
     @Override
     public void remove(State state) {
+        //TODO: Actually remove the state
         //nothing to do here, data lives in the caches
     }
 

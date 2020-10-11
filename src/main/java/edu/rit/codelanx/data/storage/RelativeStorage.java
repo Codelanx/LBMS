@@ -19,8 +19,9 @@ public class RelativeStorage {
         }
     }
 
-    public void addState(State state) {
-        this.<State>getStateStorage(state.getClass()).addState(state);
+    public <T extends State> void addState(T state) {
+        Class<T> clazz = (Class<T>) state.getClass();
+        this.getStateStorage(clazz).addState(state);
     }
 
     @SuppressWarnings("unchecked") //one Storage<T> per Class<T>
