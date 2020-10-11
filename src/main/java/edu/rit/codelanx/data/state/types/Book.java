@@ -129,7 +129,8 @@ public class Book extends BasicState {
 
     @Override
     public String toFormattedText() {
-       return this.getFields().toString();
+
+        return this.getFields().toString();
     }
 
     public static Builder create() {

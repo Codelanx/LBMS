@@ -77,6 +77,7 @@ public class Author extends BasicState {
 
     @Override
     public String toFormattedText() {
+
         String author="Author: %s| Author' books: %s";
         String formatted_author= String.format(author, this.getName(), this.getBooks().toString());
         return formatted_author;
