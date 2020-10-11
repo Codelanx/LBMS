@@ -129,10 +129,7 @@ public class Book extends BasicState {
 
     @Override
     public String toFormattedText() {
-        String authors = null;//String.join(", ", this.getAuthors()); //TODO: Fix this
-        return String.format("Title: %s | ISBN: %s| Author: %s| Publisher: %s| publish date:%s| Total pages: %d| Total copies: %d| Total checkout: %d",
-                this.getTitle(), this.getISBN(), authors, this.getPublisher(),
-                this.getPublishDate(), this.getPageCount(), this.getTotalCopies(), this.getCheckedOut());
+       return this.getFields().toString();
     }
 
     public static Builder create() {

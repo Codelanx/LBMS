@@ -105,7 +105,7 @@ public class Checkout extends BasicState {
 
     @Override
     public String toFormattedText() {
-        return null; //TODO
+        return getFields().toString();
     }
 
     public static Builder create() {

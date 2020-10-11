@@ -90,7 +90,7 @@ public class Transaction extends BasicState {
         String transaction="Transaction ID: %d| Visitor: %s %s| Reason: %s| Amount: %s";
         String formatted_transaction = String.format(transaction, this.getID(), this.getVisitor().getFirstName(),
                 this.getVisitor().getLastName(), this.getReason(), this.getAmount().toPlainString() );
-        return null;
+        return formatted_transaction;
     }
 
     public static Builder create() {
