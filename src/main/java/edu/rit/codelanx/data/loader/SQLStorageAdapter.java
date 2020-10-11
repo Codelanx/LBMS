@@ -42,7 +42,9 @@ public class SQLStorageAdapter implements StorageAdapter {
         Library lib = resp.getResponse();
         if (lib == null) {
             //No library yet, make one!
-            lib = Library.create().money(BigDecimal.ZERO).build(storage);
+            lib = Library.create()
+                    .setValue(Library.Field.MONEY, BigDecimal.ZERO)
+                    .build(storage);
         }
         this.lib = lib;
     }

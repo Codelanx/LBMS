@@ -17,8 +17,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_IMMUTABLE;
-import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_KEY;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_IMMUTABLE;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_KEY;
 
 /**
  * A {@link BasicState} presents a visitor
@@ -133,13 +133,14 @@ public class Visitor extends BasicState {
      * @param endTime of the visit
      * @return true if successfully ends a visit. Otherwise, false.
      */
-    public boolean endVisit(Instant endTime) {
+    public Visit endVisit(Instant endTime) {
         Instant start = this.visitStart.getAndUpdate(k -> null);
-        if (start == null) return false;
-        Visit.create()
-                .start(start).end(endTime).visitor(this)
+        if (start == null) return null;
+        return Visit.create()
+                .setValue(Visit.Field.VISITOR, this)
+                .setValue(Visit.Field.START, start)
+                .setValue(Visit.Field.END, endTime)
                 .build(this.getLoader());
-        return true;
     }
 
     /**
@@ -218,67 +219,8 @@ public class Visitor extends BasicState {
      * @return builder
      */
     //Creational handling below
-    public static Builder create() {
-        return new Builder();
-        //TODO: Fix command code, then replace with this:
-        //return StateBuilder.of(Visitor::new, StateType.VISITOR, Field.VALUES);
-    }
-
-    @Deprecated
-    public static class Builder extends StateBuilder<Visitor> {
-
-        private Builder() {
-            super(StateType.VISITOR, Field.ID, Field.VALUES);
-        }
-
-        @Deprecated
-        public Builder firstName(String first) {
-            this.setValue(Field.FIRST, first);
-            return this;
-        }
-
-        @Deprecated
-        public Builder lastName(String last) {
-            this.setValue(Field.LAST, last);
-            return this;
-        }
-
-        @Deprecated
-        public Builder address(String addr) {
-            this.setValue(Field.ADDRESS, addr);
-            return this;
-        }
-
-        @Deprecated
-        public Builder phone(String phone) {
-            this.setValue(Field.PHONE, phone);
-            return this;
-        }
-
-        @Deprecated
-        public Builder money(BigDecimal money) {
-            this.setValue(Field.MONEY, money);
-            return this;
-        }
-
-        @Override
-        protected Visitor buildObj(DataStorage storage, long id) {
-            return new Visitor(storage, id, this);
-        }
-    }
-
-    //Storage serialization handling below
-
-    Visitor(DataStorage storage, long id, StateBuilder<Visitor> build) {
-        super(storage, id, build);
-    }
-
-    public Visitor(DataStorage storage, ResultSet sql) throws SQLException {
-        super(storage, sql);
-    }
-
-    public Visitor(DataStorage storage, Map<String, Object> file) {
-        super(storage, file);
+    public static StateBuilder<Visitor> create() {
+        return StateBuilder.of(Visitor::new, StateType.VISITOR, Field.ID, Field.VALUES);
     }
 
     /**

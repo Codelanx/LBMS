@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import static edu.rit.codelanx.data.storage.field.FieldModifier.*;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 
 @StorageContainer("transactions")
 /**
@@ -92,35 +92,8 @@ public class Transaction extends BasicState {
         return formatted_transaction;
     }
 
-    public static Builder create() {
-        return new Builder();
-        //TODO: replace with below once command code is fixed
-        //return StateBuilder.of(Transaction::new, StateType.TRANSACTION, Field.VALUES);
-    }
-
-    @Deprecated
-    public static class Builder extends StateBuilder<Transaction> {
-
-        private Builder() {
-            super(StateType.TRANSACTION, Field.ID, Field.VALUES);
-        }
-
-        @Deprecated
-        public Builder amount(BigDecimal amount) {
-            this.setValue(Field.MONEY, amount);
-            return this;
-        }
-
-        @Deprecated
-        public Builder visitorID(Visitor visitor) {
-            this.setValue(Field.VISITOR, visitor);
-            return this;
-        }
-
-        @Override
-        protected Transaction buildObj(DataStorage storage, long id) {
-            return new Transaction(storage, id, this);
-        }
+    public static StateBuilder<Transaction> create() {
+        return StateBuilder.of(Transaction::new, StateType.TRANSACTION, Field.ID, Field.VALUES);
     }
 
 }

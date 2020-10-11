@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import static edu.rit.codelanx.data.storage.field.FieldModifier.*;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 
 /**
  * represents a book's list of authors.

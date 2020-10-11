@@ -13,9 +13,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 
-import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_IMMUTABLE;
-import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_KEY;
-import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_UNIQUE;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_IMMUTABLE;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_KEY;
 
 @StorageContainer("checkouts")
 public class Checkout extends BasicState {
@@ -112,41 +111,8 @@ public class Checkout extends BasicState {
         return getFields().toString();
     }
 
-    public static Builder create() {
-        return new Builder();
-        //TODO: replace with below once command code is fixed
-        //return StateBuilder.of(Checkout::new, StateType.CHECKOUT, Field.VALUES);
-    }
-
-    @Deprecated
-    public static class Builder extends StateBuilder<Checkout> {
-
-        private Builder() {
-            super(StateType.CHECKOUT, Field.ID, Field.VALUES);
-        }
-
-        @Deprecated
-        public Builder at(Instant at) {
-            this.setValue(Field.AT, at);
-            return this;
-        }
-
-        @Deprecated
-        public Builder book(Book book) {
-            this.setValue(Field.BOOK, book);
-            return this;
-        }
-
-        @Deprecated
-        public Builder visitor(Visitor visitor) {
-            this.setValue(Field.VISITOR, visitor);
-            return this;
-        }
-
-        @Override
-        protected Checkout buildObj(DataStorage storage, long id) {
-            return new Checkout(storage, id, this);
-        }
+    public static StateBuilder<Checkout> create() {
+        return StateBuilder.of(Checkout::new, StateType.CHECKOUT, Field.ID, Field.VALUES);
     }
 
 }

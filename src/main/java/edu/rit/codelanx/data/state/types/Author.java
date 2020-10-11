@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static edu.rit.codelanx.data.storage.field.FieldModifier.*;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 
 
 @StorageContainer("authors")

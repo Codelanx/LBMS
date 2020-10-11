@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static edu.rit.codelanx.data.storage.field.FieldModifier.*;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 
 @StorageContainer("books")
 public class Book extends BasicState {
@@ -133,64 +133,8 @@ public class Book extends BasicState {
         return this.getFields().toString();
     }
 
-    public static Builder create() {
-        return new Builder();
-        //TODO: replace with below once command code is fixed
-        //return StateBuilder.of(Book::new, StateType.BOOK, Field.VALUES);
+    public static StateBuilder<Book> create() {
+        return StateBuilder.of(Book::new, StateType.BOOK, Field.ID, Field.VALUES);
     }
 
-    @Deprecated
-    public static class Builder extends StateBuilder<Book> {
-
-        public Builder() {
-            super(StateType.BOOK, Field.ID, Field.VALUES);
-        }
-
-        @Deprecated
-        public Builder title(String title) {
-            this.setValue(Field.TITLE, title);
-            return this;
-        }
-
-        @Deprecated
-        public Builder isbn(String isbn) {
-            this.setValue(Field.ISBN, isbn);
-            return this;
-        }
-
-        @Deprecated
-        public Builder publisher(String publisher) {
-            this.setValue(Field.PUBLISHER, publisher);
-            return this;
-        }
-
-        @Deprecated
-        public Builder publishDate(Instant publishDate) {
-            this.setValue(Field.PUBLISH_DATE, publishDate);
-            return this;
-        }
-
-        @Deprecated
-        public Builder pageCount(int pageCount) {
-            this.setValue(Field.PAGE_COUNT, pageCount);
-            return this;
-        }
-
-        @Deprecated
-        public Builder totalCopies(int totalCopies) {
-            this.setValue(Field.TOTAL_COPIES, totalCopies);
-            return this;
-        }
-
-        @Deprecated
-        public Builder checkedOut(int checkedOut) {
-            this.setValue(Field.CHECKED_OUT, checkedOut);
-            return this;
-        }
-
-        @Override
-        protected Book buildObj(DataStorage storage, long id) {
-            return new Book(storage, id, this);
-        }
-    }
 }

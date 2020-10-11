@@ -16,8 +16,8 @@ import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Map;
 
-import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_IMMUTABLE;
-import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_KEY;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_IMMUTABLE;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_KEY;
 
 /**
  * A {@link BasicState} represents a complete Visit
@@ -135,40 +135,7 @@ public class Visit extends BasicState {
         return StateType.VISIT;
     }
 
-    public static Builder create() {
-        return new Builder();
-        //TODO: replace with below once command code is fixed
-        //return StateBuilder.of(Visit::new, StateType.VISIT, Field.VALUES);
-    }
-
-    @Deprecated
-    public static class Builder extends StateBuilder<Visit> {
-
-        private Builder() {
-            super(StateType.VISIT, Field.ID, Field.VALUES);
-        }
-
-        @Deprecated
-        public Builder start(Instant start) {
-            this.setValue(Field.START, start);
-            return this;
-        }
-
-        @Deprecated
-        public Builder end(Instant end) {
-            this.setValue(Field.END, end);
-            return this;
-        }
-
-        @Deprecated
-        public Builder visitor(Visitor visitor) {
-            this.setValue(Checkout.Field.VISITOR, visitor);
-            return this;
-        }
-
-        @Override
-        protected Visit buildObj(DataStorage storage, long id) {
-            return new Visit(storage, id, this);
-        }
+    public static StateBuilder<Visit> create() {
+        return StateBuilder.of(Visit::new, StateType.VISIT, Field.ID, Field.VALUES);
     }
 }

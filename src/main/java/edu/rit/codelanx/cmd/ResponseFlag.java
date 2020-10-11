@@ -39,6 +39,11 @@ public enum ResponseFlag implements Message<String> {
         }
 
         @Override
+        public String getUsage() {
+            return "";
+        }
+
+        @Override
         public ResponseFlag onExecute(CommandExecutor executor, String... args) {
             return ResponseFlag.this;
         }
