@@ -6,6 +6,7 @@ public enum ResponseFlag implements Message<String> {
     SUCCESS("Command ran successfully"),
     FAILURE("Command execution failed"),
     PARTIAL("Interpreter is waiting for a termination sequence"),
+    MISSING_ARGS("Command did not receive all necessary arguments"),
     NOT_FINISHED("Implementation of this command is not complete"),
     UNKNOWN("Unknown command"),
     ;
