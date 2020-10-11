@@ -90,8 +90,8 @@ public class RegisterCommand extends TextCommand {
         Visitor newVisitor = Visitor.create()
                 .setValue(Visitor.Field.FIRST, args[0])
                 .setValue(Visitor.Field.LAST, args[1])
-                .setValue(Visitor.Field.ADDRESS, args[3])
-                .setValue(Visitor.Field.PHONE, args[4])
+                .setValue(Visitor.Field.ADDRESS, args[2])
+                .setValue(Visitor.Field.PHONE, args[3])
                 .setValue(Visitor.Field.REGISTRATION_DATE, registeredAt)
                 .setValue(Visitor.Field.MONEY, BigDecimal.ZERO)
                 .build(this.server.getDataStorage());
