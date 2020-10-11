@@ -39,6 +39,7 @@ Add a prompt (e.g.):
         output
  */
 
+    private static final String PROMPT_PREFIX = "$-> ";
     private final InputStreamReader reader;
     private final BufferedReader buffer;
     private final PrintStream output;
@@ -75,24 +76,23 @@ Add a prompt (e.g.):
      */
     @Override
     public void display() throws IOException {
-//        Scanner scanner= new Scanner(System.in);
-
         if (this.output == System.out) {
-            for (int i=0; i<100; i++){
-                System.out.println("\n");
+            //clear the screen on start (print 100 blank lines)
+            for (int i = 0; i < 100; i++) {
+                this.output.println();
             }
-            System.out.println("$>>input: ");
-            //TODO: clear the screen on start (print 100ish blank lines?)
         }
-
+        this.output.print(PROMPT_PREFIX);
         String s;
         while ((s = this.buffer.readLine()) != null) {
+            //System.out.println("$>>input: "); //TODO:
             Server<TextMessage> server = this.server.get();
             if (server == null) {
                 System.err.println("Not connected to server!"); //prints per input attempt
                 continue;
             }
             this.message(server, new TextMessage(s));
+            this.output.print(PROMPT_PREFIX);
         }
     }
 
