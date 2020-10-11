@@ -1,4 +1,4 @@
-package edu.rit.codelanx.config;
+package edu.rit.codelanx;
 
 import com.codelanx.commons.config.ConfigFile;
 import com.codelanx.commons.config.DataHolder;
@@ -8,6 +8,9 @@ import com.codelanx.commons.data.types.MySQL;
 
 @RelativePath("config.json")
 
+/**
+ * Represents a list of possible configuration values available to our system
+ */
 public enum ConfigKey implements ConfigFile {
     STORAGE_TYPE("storage-type", "json"), //sql, yml, or json
     MAX_BACKUP_FILES("max-backup-files", 100),

@@ -8,31 +8,32 @@ import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.loader.StateQuery;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.loader.StateBuilder;
-import edu.rit.codelanx.data.state.types.*;
+import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.storage.RelativeStorage;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class DataFacade implements DataStorage {
+public class LibraryData implements DataStorage {
 
-    private static final Class<?>[] KNOWN_TYPES = {Book.class, Checkout.class, Library.class, Transaction.class, Visit.class, Visitor.class};
     private final Map<Class<? extends State>, Map<Long, State>> data = new HashMap<>();
     private final StorageAdapter adapter;
     private final RelativeStorage relative;
 
-    public DataFacade() {
-        String type = ConfigKey.STORAGE_TYPE.as(String.class);
-        this.adapter = type == null || !type.equalsIgnoreCase("sql")
-                ? new FFStorageAdapter(this, type)
-                : new SQLStorageAdapter(this);
+    public LibraryData() {
+        this(Optional.ofNullable(ConfigKey.STORAGE_TYPE.as(String.class))
+                    .filter(s -> !"sql".equalsIgnoreCase(s))
+                    //hackaround with a type witness
+                    .<Function<DataStorage, StorageAdapter>>map(s -> data -> new FFStorageAdapter(data, s))
+                    .orElse(SQLStorageAdapter::new));
+    }
+
+    public LibraryData(Function<DataStorage, StorageAdapter> adapter) {
+        this.adapter = adapter.apply(this);
         this.relative = new RelativeStorage(this);
     }
 
@@ -80,23 +81,9 @@ public class DataFacade implements DataStorage {
         return this.getStates(type).values().stream();
     }
 
-    /*@Override
-    public void add(State state) {
-        this.modStates(state.getClass()).put(state.getID(), state);
-    }*/
-
     @Override
     public Library getLibrary() {
-        return null; //TODO:
-    }
-
-    public <R extends State> R query(Class<R> type, long id) {
-        //TODO: Querying
-        return null;
-    }
-
-    public <R extends State> R queryAll(Class<R> type) {
-        return null; //TODO: Querying
+        return this.adapter.getLibrary();
     }
 
 }

@@ -1,6 +1,5 @@
 package edu.rit.codelanx.data.storage.field;
 
-import com.codelanx.commons.data.SQLBiFunction;
 import edu.rit.codelanx.data.DataStorage;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.state.State;
@@ -48,7 +47,7 @@ public interface DataField<T> {
         return Stream.of(this.get(state));
     }
 
-    default public boolean hasModifier(FieldModifier modifier) {
+    default public boolean hasIndex(FieldIndicies modifier) {
         return false;
     }
 
@@ -77,14 +76,14 @@ public interface DataField<T> {
         return new Builder<>(type);
     }
 
-    public static <R> DataField<R> buildSimple(Class<R> type, String name, FieldModifier... modifiers) {
+    public static <R> DataField<R> buildSimple(Class<R> type, String name, FieldIndicies... modifiers) {
         return DataField.builder(type)
                 .name(name)
                 .modifiers(modifiers)
                 .build();
     }
 
-    public static <R extends State, T> DataField<R> buildFromState(Class<R> type, String name, DataField<T> other, FieldModifier... modifiers) {
+    public static <R extends State, T> DataField<R> buildFromState(Class<R> type, String name, DataField<T> other, FieldIndicies... modifiers) {
         return DataField.builder(type)
                 .name(name)
                 .modifiers(modifiers)
@@ -99,7 +98,7 @@ public interface DataField<T> {
     public static DataField<Long> makeIDField(Supplier<? extends Long> nextID) {
         return DataField.builder(Long.class)
                 .name("id")
-                .modifiers(FieldModifier.FM_IMMUTABLE, FieldModifier.FM_UNIQUE, FieldModifier.FM_KEY)
+                .modifiers(FieldIndicies.FM_IMMUTABLE, FieldIndicies.FM_UNIQUE, FieldIndicies.FM_KEY)
                 .giveDefaultValue(nextID)
                 .build();
     }
@@ -114,12 +113,12 @@ public interface DataField<T> {
 
     public static class Builder<R> {
 
-        private static final FieldModifier[] EMPTY = new FieldModifier[0];
+        private static final FieldIndicies[] EMPTY = new FieldIndicies[0];
 
         protected final Class<R> type;
         private String name;
         private Supplier<? extends R> defaultValue = null;
-        private FieldModifier[] modifiers = EMPTY;
+        private FieldIndicies[] modifiers = EMPTY;
 
         public Builder(Class<R> type) {
             if (type == null) {
@@ -133,7 +132,7 @@ public interface DataField<T> {
             return this;
         }
 
-        public Builder<R> modifiers(FieldModifier... modifiers) {
+        public Builder<R> modifiers(FieldIndicies... modifiers) {
             this.modifiers = modifiers;
             return this;
         }
@@ -158,7 +157,7 @@ public interface DataField<T> {
         public DataField<R> build() {
             FieldInitializer<R> init = new FieldInitializer<>(this.name, this.type, this.defaultValue);
             DataField<R> back = new DataFieldLoader<>(init);
-            for (FieldModifier fm : modifiers) {
+            for (FieldIndicies fm : modifiers) {
                 back = fm.map(back);
             }
             return back;
@@ -189,7 +188,7 @@ public interface DataField<T> {
         }
 
         @Override
-        public MappingBuilder<T, E> modifiers(FieldModifier... modifiers) {
+        public MappingBuilder<T, E> modifiers(FieldIndicies... modifiers) {
             this.from.modifiers(modifiers);
             return this;
         }
@@ -203,7 +202,7 @@ public interface DataField<T> {
         public DataField<T> build() {
             FieldInitializer<T> init = new FieldInitializer<>(this.from.name, this.from.type, this.from.defaultValue);
             DataField<T> back = new DataFieldLoader<>(this.to, init);
-            for (FieldModifier fm : this.from.modifiers) {
+            for (FieldIndicies fm : this.from.modifiers) {
                 back = fm.map(back);
             }
             return back;

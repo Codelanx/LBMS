@@ -10,5 +10,6 @@ public interface Server<T extends Message<?>> extends Messenger<T> {
 
     public Interpreter getInterpreter();
     public DataStorage getDataStorage();
+    public DataStorage getBookStore();
     public Clock getClock();
 }

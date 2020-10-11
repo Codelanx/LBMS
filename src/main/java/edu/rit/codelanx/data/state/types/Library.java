@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static edu.rit.codelanx.data.storage.field.FieldModifier.*;
+import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 
 //There should only ever be one of these initially, but just in case there's multiple...
 @StorageContainer("libraries")
@@ -106,29 +106,7 @@ public class Library extends BasicState {
         return Field.MONEY.set(this, amount);
     }
 
-    public static Builder create() {
-        return new Builder();
-        //TODO: replace with below once command code is fixed
-        //return StateBuilder.of(Library::new, StateType.LIBRARY, Field.VALUES);
+    public static StateBuilder<Library> create() {
+        return StateBuilder.of(Library::new, StateType.LIBRARY, Field.ID, Field.VALUES);
     }
-
-    public static class Builder extends StateBuilder<Library> {
-
-        public Builder() {
-            super( StateType.LIBRARY, Field.ID, Field.VALUES);
-        }
-
-        @Deprecated
-        public Builder money(BigDecimal money) {
-            this.setValue(Field.MONEY, money);
-            return this;
-        }
-
-        @Override
-        protected Library buildObj(DataStorage storage, long id) {
-            return new Library(storage, id, this);
-        }
-
-    }
-
 }

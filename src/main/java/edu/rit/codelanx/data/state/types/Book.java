@@ -59,8 +59,13 @@ public class Book extends BasicState {
         super(storage, sql);
     }
 
-    public Checkout checkout(Visitor taker){
-        //TODO: Decrement the CHECKED_OUT field so that you can't infinitely
+    public Checkout checkout(Visitor taker) {
+        Field.CHECKED_OUT.mutate(this, old -> {
+            if (old <= 0) {
+                throw new UnsupportedOperationException("All books are already checked out");
+            }
+            return old - 1;
+        });
         // check out a book
         return Checkout.create()
                 .setValue(Checkout.Field.BOOK, this)
