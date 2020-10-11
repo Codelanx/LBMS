@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Checkout;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -47,6 +48,13 @@ public class BorrowCommand extends TextCommand {
         return "borrow";
     }
 
+    @Override
+    public TextParam.Builder buildParams() {
+        return TextParam.create()
+                .argument("visitor-id")
+                .list("book-id", 1);
+    }
+
     /**
      * Whenever this command is called, it will borrow a book for a visitor.
      *
@@ -58,9 +66,10 @@ public class BorrowCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor,
-                                  String... args) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
+        if (args.length < 2) {
 
+        }
         //Checking that the amount of args passed is correct
         if (numArgs(args, 2) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +

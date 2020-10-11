@@ -1,6 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Author;
 import edu.rit.codelanx.data.state.types.Book;
@@ -41,6 +42,11 @@ public class InfoCommand extends TextCommand {
      */
     public InfoCommand(Server<TextMessage> server) {
         super(server);
+    }
+
+    @Override
+    protected TextParam.Builder buildParams() {
+        return null;
     }
 
     /**

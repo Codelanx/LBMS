@@ -1,17 +1,19 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.CommandUtils;
+import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.UtilsFlag;
 
-import static edu.rit.codelanx.cmd.CommandUtils.*;
-
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.state.types.Visitor;
+import com.codelanx.commons.util.InputOutput;
 
 
+import static edu.rit.codelanx.cmd.CommandUtils.findVisitor;
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 
 /**
@@ -31,8 +33,13 @@ public class ArriveCommand extends TextCommand {
         super(server);
     }
 
+    @Override
+    protected TextParam.Builder buildParams() {
+        return null;
+    }
+
     /**
-     * @link edu.rit.codelanx.cmd.Command#getName()
+     * @see edu.rit.codelanx.cmd.Command#getName
      */
     @Override
     public String getName() {
@@ -43,22 +50,43 @@ public class ArriveCommand extends TextCommand {
      * Whenever this command is called, it will begin a new visit.
      *
      * @param executor  the client that is calling the command
-     * @param arguments visitorID: the unique 10-digit ID of the visitor
+     * @param args visitorID: the unique 10-digit ID of the visitor
      * @return a responseflag that says whether or not the command was
-     * executed correctly
+     *         executed correctly
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
-                                  String... arguments) {
+                                  String... args) {
+        if (args.length != 1) {
+            //ERROR
+            //handle it
+        }
+        Long id = InputOutput.parseLong(args[0]).orElse(null);
+        if (id == null) {
+            //we couldn't parse it
+            //ERROR
+        }
+        //pre: we have a valid id, we need a Visitor
+        Visitor visitor = this.server.getDataStorage().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, id)
+                .results().findAny().orElse(null);
+        if (visitor == null) {
+            //no visitor found by this ID
+            //ERROR
+        }
+        //start a new visit
+        visitor.startVisit(this.server.getDataStorage().getLibrary());
+
+
         //Checking that they have the correct amount of parameters
-        if (numArgs(arguments, 1) == UtilsFlag.MISSINGPARAMS) {
+        if (numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");
             return ResponseFlag.SUCCESS;
         }
 
         //Checking that the id passed was a number
-        Long visitorID = checkVisitorID(arguments[0]);
+        Long visitorID = CommandUtils.checkVisitorID(args[0]);
         if (visitorID == -1) {
             return ResponseFlag.FAILURE;
         }

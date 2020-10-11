@@ -40,22 +40,33 @@ public class TextInterpreter implements Interpreter {
         }
     }
 
+    private String getDenialReason(TextCommand command, String... args) {
+        //TODO: All pre-checks here
+        //TODO: Check args against command#params for things like length, correctness, etc
+        if (command.params == null) {
+            return null; //TODO: command didn't implement params yet
+        }
+        if (command.params.length > 0 && args.length <= 0) { //if we need args, and there are none
+            return command.buildResponse(command.getName(), "missing-params", command.getUsage()); //example of an error string
+        }
+        return null; //null if we're good!
+    }
+
     private void execute(CommandExecutor executor, String command) {
         String[] args = command.split(",");
         String[] passedArgs = new String[args.length - 1];
         System.arraycopy(args, 1, passedArgs, 0, passedArgs.length);
         Command cmd = TextCommandMap.getCommand(this.server, args[0]);
-        ResponseFlag r = cmd.onExecute(executor, passedArgs);
-        if (r == ResponseFlag.MISSING_ARGS && cmd instanceof TextCommand) {
+        if (cmd instanceof TextCommand) {
             TextCommand tcmd = (TextCommand) cmd;
-            String[] data = tcmd.missingArgs;
-            Validate.nonNull(data, "Did not set missing argument parameters!");
-            String out = String.join(",", data);
-            executor.sendMessage(out);
-        } else {
-            executor.sendMessage(r.getDescription()); //TODO: Remove in production
+            String denial = this.getDenialReason(tcmd, passedArgs);
+            if (denial != null) {
+                executor.sendMessage(denial);
+                return;
+            }
         }
-        //TODO: Handle r
+        ResponseFlag r = cmd.onExecute(executor, passedArgs);
+        executor.sendMessage(r.getDescription()); //TODO: Remove in production
     }
 
 }

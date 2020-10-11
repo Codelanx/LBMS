@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Book;
@@ -32,6 +33,11 @@ public class RegisterCommand extends TextCommand {
      */
     public RegisterCommand(Server<TextMessage> server) {
         super(server);
+    }
+
+    @Override
+    protected TextParam.Builder buildParams() {
+        return null;
     }
 
     /**

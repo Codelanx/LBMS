@@ -2,12 +2,12 @@ package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.CommandUtils;
 import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.util.List;
 
@@ -32,6 +32,13 @@ public class AdvanceCommand extends TextCommand {
      */
     public AdvanceCommand(Server<TextMessage> server) {
         super(server);
+    }
+
+    @Override
+    protected TextParam.Builder buildParams() {
+        return TextParam.create()
+                .argument("number-of-days")
+                .argument("number-of-hours");
     }
 
     /**

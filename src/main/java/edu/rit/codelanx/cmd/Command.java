@@ -11,6 +11,13 @@ public interface Command {
     public String getName();
 
     /**
+     * Returns the parameter list / full usage of the command
+     *
+     * @return The full usage string, excluding the {@link #getName} parameter
+     */
+    public String getUsage();
+
+    /**
      *
      * @param executor
      * @param args      The args for the executed command

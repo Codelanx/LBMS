@@ -1,6 +1,8 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.*;
+import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -32,6 +34,16 @@ public class SearchCommand extends TextCommand {
         super(server);
     }
 
+    @Override
+    protected TextParam.Builder buildParams() {
+        return TextParam.create()
+                .argument("title")
+                .listOptional("authors")
+                .argumentOptional("isbn")
+                .argumentOptional("publisher")
+                .argumentOptional("sort-order");
+    }
+
     /**
      * @link edu.rit.codelanx.cmd.Command#getName()
      */
@@ -56,6 +68,9 @@ public class SearchCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
+        //args == {title, authors, isbn, publisher, sort-order}
+        //if optional and omitted, value is null
+        //if value is a list, value.split(TextCommand.TOKEN_DELIMITER) will provide the subarguments of that argument
 
         //Checking that the amount of arguments is correct
         if (CommandUtils.numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {

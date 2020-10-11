@@ -1,6 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
+import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
@@ -32,6 +33,11 @@ public class PayCommand extends TextCommand {
      */
     public PayCommand(Server<TextMessage> server) {
         super(server);
+    }
+
+    @Override
+    protected TextParam.Builder buildParams() {
+        return null;
     }
 
     /**
