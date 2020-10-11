@@ -2,9 +2,7 @@ package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.types.Book;
-import edu.rit.codelanx.data.state.types.Transaction;
-import edu.rit.codelanx.data.state.types.Visitor;
+import edu.rit.codelanx.data.state.types.*;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -73,29 +71,40 @@ public class ReportCommand extends TextCommand {
         else {
 
 
-            //List<Visitor> numVisitor = ; //TODO: Fix
-            //this.server.getDataStorage().totalRegisteredVisitors(numVisitor); //TODO: Fix
-            Book book = this.server.getDataStorage().query(Book.class).results().findAny().orElse(null);
+            //Gets the date
+            executor.sendMessage(getName() + "," + server.getClock().getCurrentTime() + ";");
 
-            //executor.renderState(book.getTotalCopies());
-            //Date date = this.get
+            //Finds all the books
+            Book books = this.server.getDataStorage().ofLoaded(Book.class).findAny().orElse(null);
+            executor.renderState(books);
+
+            //TODO fix
+            Visitor numVisitors = this.server.getDataStorage().ofLoaded(Visitor.class).findAny().orElse(null);
+            executor.renderState(numVisitors);
+
+            // Gets the duration of all the visits
+            Visit avgVisit = this.server.getDataStorage().ofLoaded(Visit.class).findAny().orElse(null);
+            executor.sendMessage(avgVisit.getDuration().toString());
+
+            //TODO get the number of books purchased
+            Library numPurchased = this.server.getDataStorage().ofLoaded(Library.class).findAny().orElse(null);
+            //executor.sendMessage();
 
 
-            //TODO: Get the number of visitors
-            //TODO: Get the average length of a visit in the format hh:mm:ss
-            //TODO: Get the number of books purchased
-            //TODO: Get the amount of fines collected in US Dollars
-            //TODO: Get the outstanding amount of uncollected fines in US Dollars
+            Visitor getTotalFines = this.server.getDataStorage().ofLoaded(Visitor.class).findAny().orElse(null);
+
+
+            Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
+                    .results()
+                    .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
+            Set<Transaction> lateFees = map.get("late fee");
+            Set<Transaction> paidFees = map.get("Paying off balance");
+            int finesCollected = paidFees.size();
+            int outstandingFines = lateFees.size() - finesCollected;
+
+            return ResponseFlag.NOT_FINISHED;
+
         }
 
-        Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
-                .results()
-                .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
-        Set<Transaction> lateFees = map.get("late fee");
-        Set<Transaction> paidFees = map.get("Paying off balance");
-        int finesCollected = paidFees.size();
-        int outstandingFines = lateFees.size() - finesCollected;
-
-        return ResponseFlag.NOT_FINISHED;
     }
 }

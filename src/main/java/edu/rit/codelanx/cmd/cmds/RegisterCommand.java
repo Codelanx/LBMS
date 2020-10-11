@@ -71,10 +71,12 @@ public class RegisterCommand extends TextCommand {
 
         //We can assume all input is good - bounds are correct and no conversions to be done
 
-        //TODO: Check for a duplicate visitor
+        // Compares the inputted arguments to those already existing
         Visitor current = this.server.getDataStorage().query(Visitor.class)
                 .isEqual(Visitor.Field.FIRST, args[0])
-                //...
+                .isEqual(Visitor.Field.LAST, args[1])
+                .isEqual(Visitor.Field.ADDRESS, args[2])
+                .isEqual(Visitor.Field.PHONE, args[3])
                 .results().findAny().orElse(null);
         if (current != null) {
             //We already have a visitor with a matching first, last, address, AND phone number
@@ -91,7 +93,7 @@ public class RegisterCommand extends TextCommand {
                 .setValue(Visitor.Field.ADDRESS, args[3])
                 .setValue(Visitor.Field.PHONE, args[4])
                 .setValue(Visitor.Field.REGISTRATION_DATE, registeredAt)
-                //TODO: Missing MONEY field
+                .setValue(Visitor.Field.MONEY, BigDecimal.ZERO)
                 .build(this.server.getDataStorage());
 
         executor.renderState(newVisitor);
