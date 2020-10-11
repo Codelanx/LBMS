@@ -82,18 +82,17 @@ Add a prompt (e.g.):
                 this.output.println();
             }
         }
-        this.output.print(PROMPT_PREFIX);
-        String s;
-        while ((s = this.buffer.readLine()) != null) {
-            //System.out.println("$>>input: "); //TODO:
+        for (;;) {
+            this.output.print(PROMPT_PREFIX);
+            String line = this.buffer.readLine();
+            if (line == null) break; //No more input
             Server<TextMessage> server = this.server.get();
-            if (server == null) {
-                System.err.println("Not connected to server!"); //prints per input attempt
+            if (server == null) { //prints per input attempt
+                this.output.println("Error: Not connected to server!");
                 continue;
             }
-            this.message(server, new TextMessage(s));
-            this.output.print(PROMPT_PREFIX);
-        }
+            this.message(server, new TextMessage(line));
+        };
     }
 
     /**
