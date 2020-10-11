@@ -5,15 +5,17 @@ import java.util.Objects;
 
 public enum Validate {;
 
-    public static void isTrue(boolean exp, String failureReason, Class<? extends Throwable> type) {
+    public static void isTrue(boolean exp, String failureReason, Class<? extends RuntimeException> type) {
         if (exp) return;
+        RuntimeException out;
         try {
-            Constructor<? extends Throwable> c = type.getConstructor(String.class);
+            Constructor<? extends RuntimeException> c = type.getConstructor(String.class);
             c.setAccessible(true);
-            throw (Throwable) c.newInstance(failureReason);
+            out = c.newInstance(failureReason);
         } catch (Throwable ex) {
             throw new UnsupportedOperationException(failureReason, ex);
         }
+        throw out;
     }
 
     public static void isTrue(boolean exp, String failureReason) {
