@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 
+/**
+ * provides interface for data processing of a state
+ */
 public interface State {
 
     public DataField<Long> getIDField();

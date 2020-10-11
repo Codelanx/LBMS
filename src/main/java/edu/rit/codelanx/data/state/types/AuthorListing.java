@@ -12,6 +12,11 @@ import java.util.Map;
 
 import static edu.rit.codelanx.data.storage.field.FieldModifier.*;
 
+/**
+ * represents a book's list of authors.
+ *
+ * @author sja9291  Spencer Alderman
+ */
 @StorageContainer("book_authors")
 public class AuthorListing extends BasicState {
 

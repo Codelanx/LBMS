@@ -16,6 +16,11 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
+/**
+ * an abstract of type {@link State} that provides baseline functionalities of a state.
+ * @see State
+ * @author sja9291  Spencer Alderman
+ */
 public abstract class BasicState implements State, FileSerializable {
 
     private final AtomicBoolean valid = new AtomicBoolean(false);
@@ -64,7 +69,7 @@ public abstract class BasicState implements State, FileSerializable {
     }
 
     protected abstract DataField<? super Object>[] getFieldUnsafe();
-
+    
     @Override
     public DataStorage getLoader() {
         return this.loader;

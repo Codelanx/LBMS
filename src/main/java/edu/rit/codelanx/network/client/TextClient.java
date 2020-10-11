@@ -29,6 +29,11 @@ public class TextClient implements Client<TextMessage> {
     private final PrintStream output;
     private volatile WeakReference<Server<TextMessage>> server;
 
+    /**
+     * constructs the interactive terminal based-session for users
+     * @param input- from the client
+     * @param output- to the client
+     */
     public TextClient(InputStream input, PrintStream output) {
         this.reader = new InputStreamReader(input);
         this.buffer = new BufferedReader(this.reader);

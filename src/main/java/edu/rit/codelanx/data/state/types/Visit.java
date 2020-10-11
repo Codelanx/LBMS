@@ -20,11 +20,18 @@ import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_IMMUTABLE;
 import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_KEY;
 import static edu.rit.codelanx.data.storage.field.FieldModifier.FM_UNIQUE;
 
+/**
+ * A {@link BasicState} represents a complete Visit
+ * @author sja9291  Spencer Alderman
+ * @author ahd6901  Amy Ha Do
+ * @see BasicState
+ */
 @StorageContainer("visits")
 public class Visit extends BasicState {
 
     /**
-     * String representation of a visit (arrvie/depart)
+     * String representation of a visit
+     *
      * @return string
      */
     @Override
@@ -33,33 +40,28 @@ public class Visit extends BasicState {
         Instant end = this.getEnd();
         String visit;
         String formatted_visit;
-        if (end == null) { //TODO: always false! Make sure this goes out correctly
-            visit="arrive, %d, %s";   //arrive, id, arrive time
-            formatted_visit=String.format(visit, this.getID(), format_time(this.getStart()));
-        }else{
-            visit= "depart, %d, %s";                   //depart, id, end-time, duration
-            formatted_visit=String.format(visit, this.getID(),format_time(end), formatDuration(end, start));
-        }
-
+        visit = "depart, %d, %s, %s";                   //depart, id, end-time, duration
+        formatted_visit = String.format(visit, this.getID(), format_time(end), formatDuration(end, start));
         return formatted_visit;
     }
 
     /**
      * gets the string representation of the visit duration (hr:min:sec)
-     * @param end- end time
+     *
+     * @param end-   end time
      * @param start- start time
      * @return string duration
      */
     //Probably not worth making public just yet, we might want to move it after all
-    private String formatDuration(Instant end, Instant start){
-        Duration dur= Duration.between(start, end);
-        /*int hours= dur.toHoursPart();
-        int mins= dur.toMinutesPart();  //TODO: Fix
-        int seconds= dur.toSecondsPart();
-        return String.format("%d:%d:%d", hours, mins, seconds);*/
+    private String formatDuration(Instant end, Instant start) {
+        Duration dur = Duration.between(start, end);
         return dur.toString();
     }
 
+    /**
+     * gets the visit duration
+     * @return Duration
+     */
     public Duration getDuration() {
         return Duration.between(this.getStart(), this.getEnd());
     }
@@ -75,6 +77,9 @@ public class Visit extends BasicState {
         return formatter.format(time);
     }
 
+    /**
+     * represents a Visit
+     */
     public static class Field {
         public static final DataField<Long> ID;
         public static final DataField<Visitor> VISITOR;
@@ -82,8 +87,12 @@ public class Visit extends BasicState {
         public static final DataField<Instant> END;
         private static final DataField<? super Object>[] VALUES;
 
+        /**
+         * gets visit data
+         * @return visit, visitor, start time, end time.
+         */
         public static DataField<? super Object>[] values() {
-            return new DataField[] { ID, VISITOR, START, END };
+            return new DataField[]{ID, VISITOR, START, END};
         }
 
         static {

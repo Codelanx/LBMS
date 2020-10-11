@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import static edu.rit.codelanx.data.storage.field.FieldModifier.*;
 
+
 @StorageContainer("authors")
 public class Author extends BasicState {
 
