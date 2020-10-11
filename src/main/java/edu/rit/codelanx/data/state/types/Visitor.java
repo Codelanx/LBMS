@@ -67,6 +67,19 @@ public class Visitor extends BasicState {
     //So maybe rethink this part of our design. Because terrorists.
     private final AtomicReference<Instant> visitStart = new AtomicReference<>(null);
 
+    //Storage serialization handling below
+
+    Visitor(DataStorage storage, long id, StateBuilder<Visitor> build) {
+        super(storage, id, build);
+    }
+
+    public Visitor(DataStorage storage, ResultSet sql) throws SQLException {
+        super(storage, sql);
+    }
+
+    public Visitor(DataStorage storage, Map<String, Object> file) {
+        super(storage, file);
+    }
 
     //Behavioral methods here
 
@@ -125,7 +138,11 @@ public class Visitor extends BasicState {
      * @return true if currently in the visit, otherwise, false
      */
     public boolean isVisiting() {
-        return this.visitStart != null;
+        return this.getVisitStart() != null;
+    }
+
+    public Instant getVisitStart() {
+        return this.visitStart.get();
     }
 
     /**

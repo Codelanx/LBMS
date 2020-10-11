@@ -3,6 +3,7 @@ package edu.rit.codelanx.cmd.cmds;
 import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.Transaction;
 import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -12,6 +13,9 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 
@@ -83,6 +87,14 @@ public class ReportCommand extends TextCommand {
             //TODO: Get the amount of fines collected in US Dollars
             //TODO: Get the outstanding amount of uncollected fines in US Dollars
         }
+
+        Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
+                .results()
+                .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
+        Set<Transaction> lateFees = map.get("late fee");
+        Set<Transaction> paidFees = map.get("Paying off balance");
+        int finesCollected = paidFees.size();
+        int outstandingFines = lateFees.size() - finesCollected;
 
         return ResponseFlag.NOT_FINISHED;
     }

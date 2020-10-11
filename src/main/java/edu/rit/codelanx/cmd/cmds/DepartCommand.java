@@ -10,8 +10,11 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static edu.rit.codelanx.cmd.CommandUtils.*;
 
@@ -22,6 +25,11 @@ import static edu.rit.codelanx.cmd.CommandUtils.*;
  * visitor ID is the unique 10-digit ID of the visitor
  */
 public class DepartCommand extends TextCommand {
+
+    private static final DateTimeFormatter TIME_OF_DAY_FORMAT =
+            DateTimeFormatter.ofPattern("HH:mm:ss")
+                    .withLocale( Locale.US )
+                    .withZone( ZoneId.systemDefault());
 
     /**
      * Constructor for the DepartCommand class
@@ -75,12 +83,25 @@ public class DepartCommand extends TextCommand {
         Visitor v = findVisitor(this.server, visitorID);
         if (v == null || !v.isVisiting()) {
             executor.sendMessage(this.getName() + ",invalid-id;");
+            return ResponseFlag.SUCCESS;
         }
-        
-        Optional<? extends Visit> visit =
-                server.getDataStorage().ofLoaded(Visit.class).filter(visit1 -> visit1.getVisitor() == v).findAny();
-        executor.sendMessage(this.getName() + "," + v.getID() + "," + visit.get().toFormattedText());
+        Instant start = v.getVisitStart();
+        Instant end = Instant.now();
+        Duration d = Duration.between(start, end);
+        Visit result = v.endVisit(end);
+
+        String endOutput = TIME_OF_DAY_FORMAT.format(end);
+        String durOutput = this.formatDuration(d);
+
+        executor.sendMessage(this.buildResponse(this.getName(), v.getID() + "", endOutput, durOutput));
 
         return ResponseFlag.SUCCESS;
+    }
+
+    private String formatDuration(Duration d) {
+        long hours = d.toHours();
+        long minutes = d.toMinutes() - (hours * 60);
+        long seconds = d.getSeconds() - (d.toMinutes() * 60);
+        return String.format("%d:%d:%d", hours, minutes, seconds);
     }
 }

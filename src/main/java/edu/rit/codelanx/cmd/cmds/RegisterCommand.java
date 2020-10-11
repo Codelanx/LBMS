@@ -76,6 +76,7 @@ public class RegisterCommand extends TextCommand {
                     .setValue(Visitor.Field.LAST, args[1])
                     .setValue(Visitor.Field.ADDRESS, args[3])
                     .setValue(Visitor.Field.PHONE, args[4])
+                    //TODO: Missing MONEY field
                     .build(this.server.getDataStorage());
             newID.getID();
             executor.renderState(newID);
