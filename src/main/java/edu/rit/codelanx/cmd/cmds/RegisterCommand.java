@@ -15,6 +15,7 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 /**
  * Registers a new visitor so that they can access the library.
@@ -37,7 +38,11 @@ public class RegisterCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return null;
+        return TextParam.create()
+                .argument("first")
+                .argument("last")
+                .argument("address")
+                .argument("phone-number");
     }
 
     /**
@@ -64,31 +69,33 @@ public class RegisterCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         //We use the builder pattern to create a new object in the data storage
 
-        if (args.length < 1) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "visitorID");
-            return ResponseFlag.SUCCESS;
-        } else {
+        //We can assume all input is good - bounds are correct and no conversions to be done
 
-            // Creates a new Visitor id from the arguments
-            Visitor newID = Visitor.create()
-                    .setValue(Visitor.Field.FIRST, args[0])
-                    .setValue(Visitor.Field.LAST, args[1])
-                    .setValue(Visitor.Field.ADDRESS, args[3])
-                    .setValue(Visitor.Field.PHONE, args[4])
-                    //TODO: Missing MONEY field
-                    .build(this.server.getDataStorage());
-            newID.getID();
-            executor.renderState(newID);
-
-            // Checks to see if the new visitor information is valid
-            if (!newID.isValid()) {
-                executor.sendMessage("Invalid number of arguments!");
-                return ResponseFlag.FAILURE;
-            }
-
+        //TODO: Check for a duplicate visitor
+        Visitor current = this.server.getDataStorage().query(Visitor.class)
+                .isEqual(Visitor.Field.FIRST, args[0])
+                //...
+                .results().findAny().orElse(null);
+        if (current != null) {
+            //We already have a visitor with a matching first, last, address, AND phone number
+            executor.sendMessage(this.buildResponse(this.getName(), "duplicate"));
             return ResponseFlag.SUCCESS;
         }
 
+        Instant registeredAt = Instant.now();
+
+        // Creates a new Visitor id from the arguments
+        Visitor newVisitor = Visitor.create()
+                .setValue(Visitor.Field.FIRST, args[0])
+                .setValue(Visitor.Field.LAST, args[1])
+                .setValue(Visitor.Field.ADDRESS, args[3])
+                .setValue(Visitor.Field.PHONE, args[4])
+                .setValue(Visitor.Field.REGISTRATION_DATE, registeredAt)
+                //TODO: Missing MONEY field
+                .build(this.server.getDataStorage());
+
+        executor.renderState(newVisitor);
+        executor.sendMessage(this.buildResponse(this.getName(), newVisitor.getID(), DATE_FORMAT.format(registeredAt)));
+        return ResponseFlag.SUCCESS;
     }
 }

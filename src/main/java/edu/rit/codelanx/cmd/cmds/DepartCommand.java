@@ -12,9 +12,6 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 import static edu.rit.codelanx.cmd.CommandUtils.*;
 
@@ -25,11 +22,6 @@ import static edu.rit.codelanx.cmd.CommandUtils.*;
  * visitor ID is the unique 10-digit ID of the visitor
  */
 public class DepartCommand extends TextCommand {
-
-    private static final DateTimeFormatter TIME_OF_DAY_FORMAT =
-            DateTimeFormatter.ofPattern("HH:mm:ss")
-                    .withLocale( Locale.US )
-                    .withZone( ZoneId.systemDefault());
 
     /**
      * Constructor for the DepartCommand class
@@ -96,12 +88,5 @@ public class DepartCommand extends TextCommand {
         executor.sendMessage(this.buildResponse(this.getName(), v.getID() + "", endOutput, durOutput));
 
         return ResponseFlag.SUCCESS;
-    }
-
-    private String formatDuration(Duration d) {
-        long hours = d.toHours();
-        long minutes = d.toMinutes() - (hours * 60);
-        long seconds = d.getSeconds() - (d.toMinutes() * 60);
-        return String.format("%d:%d:%d", hours, minutes, seconds);
     }
 }
