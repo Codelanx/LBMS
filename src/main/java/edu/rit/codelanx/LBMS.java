@@ -16,19 +16,22 @@ import java.io.IOException;
  */
 public class LBMS {
 
+    //The server we're running
     private final Server<TextMessage> server;
 
+    //starts the server and initializes its storage
     private LBMS() {
         this.server = new TextServer();
         try {
             this.server.getDataStorage().initialize();
+            this.server.getBookStore().initialize();
         } catch (IOException e) {
-            System.err.println("Fatal error while starting LBMS storage");
-            Errors.report(e);
-            throw new Error(e); //Error, because this is a fatal startup issue
+            //because this is a fatal startup issue
+            Errors.reportAndExit("Fatal error while starting LBMS storage", e);
         }
     }
 
+    //start a client for us to access the server with, and display it
     private void access() {
         try (Client<TextMessage> client = new TextClient(System.in, System.out)) {
             client.connect(this.server);
@@ -42,7 +45,7 @@ public class LBMS {
     /**
      * Entrypoint for our program
      *
-     * @param args command-line arguments
+     * @param args command-line arguments (unused)
      */
     public static void main(String... args) {
         LBMS system = new LBMS();

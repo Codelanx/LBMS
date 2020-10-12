@@ -43,7 +43,7 @@ public class ReportCommand extends TextCommand {
     @Override
     protected TextParam.Builder buildParams() {
         return TextParam.create()
-                .argument("days");
+                .argumentOptional("days");
     }
 
     /**

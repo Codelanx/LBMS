@@ -4,7 +4,6 @@ import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.state.types.Transaction;
-import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -38,7 +37,9 @@ public class PayCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return null;
+        return TextParam.create()
+                .argument("visitor-id")
+                .argument("amount");
     }
 
     /**

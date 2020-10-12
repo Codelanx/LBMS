@@ -43,14 +43,14 @@ public abstract class TextCommand implements Command {
         this.server = server;
         TextParam.Builder builder = this.buildParams();
         if (builder == null) {
-            //TODO: Fix this once implemented
-            this.params = null;
-            this.usage = "";
+            throw new IllegalStateException("Did not implement #buildParams correctly - cannot return null");
         } else {
             this.params = builder.build();
             this.usage = builder.buildString();
         }
     }
+
+    //REFACTOR: DRY the below 4 methods
 
     /**
      * Takes a list of tokens to put into a response, delimited by
@@ -65,6 +65,14 @@ public abstract class TextCommand implements Command {
 
     protected String buildResponse(Iterable<?> tokens) {
         return String.join(TOKEN_DELIMITER, StreamSupport.stream(tokens.spliterator(), false).map(Objects::toString).toArray(String[]::new)) + ";";
+    }
+
+    protected String buildListResponse(Object... tokens) {
+        return "{" + String.join(TOKEN_DELIMITER, Arrays.stream(tokens).map(Objects::toString).toArray(String[]::new)) + "}";
+    }
+
+    protected String buildListResponse(Iterable<?> tokens) {
+        return "{" + String.join(TOKEN_DELIMITER, StreamSupport.stream(tokens.spliterator(), false).map(Objects::toString).toArray(String[]::new)) + "}";
     }
 
     /**

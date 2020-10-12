@@ -16,7 +16,6 @@ public interface StorageAdapter {
     public void loadAll() throws IOException;
     public void saveAll() throws IOException;
     public DataStorage getAdaptee();
-    //TODO: Update/save
 
     default public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
         Class<R> type = query.getType();

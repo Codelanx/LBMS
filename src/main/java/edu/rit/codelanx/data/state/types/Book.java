@@ -44,8 +44,8 @@ public class Book extends BasicState {
             ID = DataField.makeIDField(Book.class);
             TITLE = DataField.buildSimple(String.class, "title", FM_IMMUTABLE, FM_KEY);
             ISBN = DataField.buildSimple(String.class, "isbn", FM_IMMUTABLE, FM_KEY);
-            PUBLISHER = DataField.buildSimple(String.class, "publisher", FM_IMMUTABLE); //TODO: add FM_KEY here?
-            PUBLISH_DATE = DataField.buildSimple(Instant.class, "publish_date", FM_IMMUTABLE);
+            PUBLISHER = DataField.buildSimple(String.class, "publisher", FM_IMMUTABLE, FM_KEY);
+            PUBLISH_DATE = DataField.buildSimple(Instant.class, "publish_date", FM_IMMUTABLE, FM_KEY);
             PAGE_COUNT = DataField.buildSimple(Integer.class, "page_count", FM_IMMUTABLE);
             TOTAL_COPIES = DataField.builder(Integer.class)
                     .name("total_copies")
