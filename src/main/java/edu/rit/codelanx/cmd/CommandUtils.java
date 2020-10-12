@@ -31,10 +31,14 @@ public enum CommandUtils {;
     @Deprecated
     public static Visitor findVisitor(Server<TextMessage> server,
                                       long visitorID) {
-        Optional<? extends Visitor> visitorSearch = server.getDataStorage()
+        if (true) {
+            //This method doesn't perform a query, it used an old broken method
+            throw new UnsupportedOperationException("This doesn't do what you think it does!");
+        }
+        Optional<? extends Visitor> visitorSearch = Optional.empty();/*server.getDataStorage()
                 .ofLoaded(Visitor.class) //TODO: Fix
                 .filter(v -> v.getID() == visitorID)
-                .findAny();
+                .findAny();*/
         return visitorSearch.orElse(null);
     }
 
@@ -52,10 +56,15 @@ public enum CommandUtils {;
     @Deprecated
     public static UtilsFlag checkDuplicateVisitor(Server<TextMessage> server,
                                                   long visitorID) {
-        long visitorCount = server.getDataStorage()
+        if (true) {
+            //Note: we never allow adding a duplicate visitor in the first place, it would create an error
+            //Instead, TODO: need to work out a way to detect this without an error (it's in the works under Visitor/IndexAllUnique)
+            throw new UnsupportedOperationException("This method doesn't do what you think it does!");
+        }
+        long visitorCount = 2;/*server.getDataStorage() //this was broken anyhow
                 .ofLoaded(Visitor.class)
                 .filter(v -> v.getID() == visitorID)
-                .count();
+                .count();*/
         if (visitorCount > 1) {
             return UtilsFlag.DUPLICATEVISITOR;
         } else {

@@ -104,10 +104,9 @@ public class BuyCommand extends TextCommand {
 
 
         for (Long id : bookIDs){
-            Optional<? extends Book> bookSearch = server.getDataStorage()
-                    .ofLoaded(Book.class)
-                    .filter(b -> b.getID() == id)
-                    .findAny();
+            Optional<Book> bookSearch = server.getDataStorage().query(Book.class)
+                                .isEqual(Book.Field.ID, id)
+                                .results().findAny();
             if (bookSearch.isPresent()){
                Book b = bookSearch.get();
                b.addCopy(quantity);

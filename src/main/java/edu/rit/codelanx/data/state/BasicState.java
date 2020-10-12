@@ -19,8 +19,8 @@ import java.util.function.Function;
 /**
  * A skeleton implementation for {@link State} which classes can extend from
  *
- * @see State
  * @author sja9291  Spencer Alderman
+ * @see State
  */
 public abstract class BasicState implements State, FileSerializable {
 

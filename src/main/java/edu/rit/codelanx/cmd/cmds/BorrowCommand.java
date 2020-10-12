@@ -111,8 +111,9 @@ public class BorrowCommand extends TextCommand {
         Set<Book> books = new HashSet<>();
         Optional<? extends Book> bookSearch;
         for (final long bookID : bookIDs) {
-            bookSearch =
-                    this.server.getDataStorage().ofLoaded(Book.class).filter(b -> b.getID() == bookID).findAny();
+            bookSearch = this.server.getDataStorage().query(Book.class)
+                                .isEqual(Book.Field.ID, bookID)
+                                .results().findAny();
             if (bookSearch.isPresent()) {
                 books.add(bookSearch.get());
             } else {

@@ -12,18 +12,29 @@ import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.cache.RelativeStorage;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * A concrete {@link DataSource} for loading {@link State} objects specific
+ * to our LBMS implementation, such as Author, Book, Visitor, etc.
+ *
+ * @author sja9291  Spencer Alderman
+ */
 public class LibraryData implements DataSource {
 
-    private final Map<Class<? extends State>, Map<Long, State>> data = new HashMap<>();
+    //the background loader
     private final StorageAdapter adapter;
+    //our indexed storage
     private final RelativeStorage relative;
 
+    /**
+     * Selects an appropriate {@link StorageAdapter} for general LBMS data,
+     * based on the user settings reflected in {@link ConfigKey}
+     *
+     * @see ConfigKey
+     */
     public LibraryData() {
         this(Optional.ofNullable(ConfigKey.STORAGE_TYPE.as(String.class))
                     .filter(s -> !"sql".equalsIgnoreCase(s))
@@ -32,53 +43,73 @@ public class LibraryData implements DataSource {
                     .orElse(SQLStorageAdapter::new));
     }
 
+    /**
+     * Construts a source of LBMS-related data using a {@link StorageAdapter}
+     * that is provided to this concrete {@link DataSource}
+     *
+     * @param adapter The {@link StorageAdapter} to load from
+     */
     public LibraryData(Function<DataSource, StorageAdapter> adapter) {
         this.adapter = adapter.apply(this);
         this.relative = new RelativeStorage(this);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     * @see StorageAdapter#loadAll()
+     */
     @Override
     public void initialize() throws IOException {
         this.adapter.loadAll();
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public StorageAdapter getAdapter() {
         return this.adapter;
     }
 
+
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public RelativeStorage getRelativeStorage() {
         return this.relative;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param type {@inheritDoc}
+     * @param <R> {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> Query<R> query(Class<R> type) {
         return new StateQuery<>(this, type);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param builder {@inheritDoc}
+     * @param <R> {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> R insert(StateBuilder<R> builder) {
         R back = this.adapter.insert(builder);
-        this.modStates(back.getClass()).put(back.getID(), back);
+        //TODO: Ensure RelativeStorage is accurately updated
         return back;
-    }
-
-    //warns you if you try to modify the elements
-    @SuppressWarnings("unchecked") //we control this map, and the (bounded) elements within it
-    private <R extends State> Map<Long, R> getStates(Class<R> type) {
-        return (Map<Long, R>) this.data.computeIfAbsent(type, k -> new HashMap<>());
-    }
-
-    //whilst very similar to the above, this method will warn you if you try to retrieve from it
-    @SuppressWarnings("unchecked")
-    private Map<Long, ? super State> modStates(Class<? extends State> type) {
-        return (Map<Long, ? super State>) this.getStates(type);
     }
 
     @Override
     public <R extends State> Stream<? extends R> ofLoaded(Class<R> type) {
-        return this.getStates(type).values().stream();
+        return this.relative.getStateStorage(type).streamLoaded();
     }
 
     @Override
