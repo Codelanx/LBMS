@@ -62,52 +62,34 @@ public class PayCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
-        //Checking that they have the correct amount of parameters
-        if (numArgs(args, 2) == UtilsFlag.MISSINGPARAMS) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "visitorID;");
-            return ResponseFlag.SUCCESS;
-        }
 
-        //establishes the visitorID in the arguments
-        long visitorID = Long.parseLong(args[1]);
-        //Determines the requested amount
-        BigDecimal amount = new BigDecimal(Double.parseDouble(args[2]));
-        //Gets the Library
-        Library library = this.server.getDataStorage().getLibrary();
 
-        //Finds a visitor
+        //args
+        BigDecimal amount = new BigDecimal(Double.parseDouble(args[1]));
+        long visitorID = Long.parseLong(args[0]);
+
+        //finds the visitor by id
         Visitor visitor = findVisitor(this.server, visitorID);
-        //checks to see if the visitor id exists
-        if (visitor == null) {
-            executor.sendMessage(this.getName() + ",invalid-visitor-id");
-        }
-        //makes sure the visitor's balance is not less that zero
-        else if (visitor.getMoney().compareTo(BigDecimal.ZERO) < 1) {
-            executor.sendMessage(this.getName() + ",outstanding-fine," + visitor.getMoney());
+
+        assert visitor == null;
+        //checks to make sure the id is valid
+        if (!visitor.isValid()) {
+            executor.sendMessage(getName() + ", invalid-visitor-id");
             return ResponseFlag.SUCCESS;
         }
 
-        // checks to make sure the requested amount is not greater than the balance
-        else if (visitor.getMoney().compareTo(amount) < 1) {
-            executor.sendMessage((this.getName() + ",request-larger-than-balance," + visitor.getMoney()));
-            return ResponseFlag.SUCCESS;
-        }
-        //int numOfArgs = args.length;
+        //checks to see if the amount is greater than 0
+        if (amount.compareTo(BigDecimal.ZERO) < 1 || visitor.getMoney().compareTo(amount) < 1) {
+            executor.sendMessage(getName() + ", invalid-amount" + "," + amount + "," + visitor.getMoney());
+            return ResponseFlag.FAILURE;
 
-        // pays the requested amount
-        else {
+        } else {
+            //Performs the transaction
             Transaction.perform(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
+            executor.sendMessage("Success" + visitor.getMoney());
             return ResponseFlag.SUCCESS;
         }
 
-
-        //visitor.updateMoney(amount);
-
-
-
-
-
-        return ResponseFlag.NOT_FINISHED;
     }
+
 }
