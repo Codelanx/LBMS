@@ -1,8 +1,6 @@
 package edu.rit.codelanx.cmd;
 
-/**
- * @author maa1675  Mark Anderson
- */
+@Deprecated
 public enum UtilsFlag {
     MISSINGPARAMS,
     DUPLICATEVISITOR,

@@ -6,7 +6,7 @@ import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
-import edu.rit.codelanx.cmd.UtilsFlag;
+
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Visitor;
@@ -16,8 +16,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static edu.rit.codelanx.cmd.CommandUtils.findVisitor;
-import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 import static java.lang.Long.parseLong;
 
 /**
@@ -68,10 +66,6 @@ public class BorrowCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         if (args.length < 2) {
-
-        }
-        //Checking that the amount of args passed is correct
-        if (numArgs(args, 2) == UtilsFlag.MISSINGPARAMS) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");
             return ResponseFlag.SUCCESS;
@@ -90,9 +84,11 @@ public class BorrowCommand extends TextCommand {
         }
 
         //Finding the visitor with the matching ID in the database
-        Visitor v = findVisitor(this.server, visitorID);
+        Visitor v =
+                this.server.getDataStorage().query(Visitor.class).isEqual(Visitor.Field.ID, visitorID).results().findAny().orElse(null);
         if (v == null) {
             executor.sendMessage(this.getName() + ",invalid-visitor-id;");
+            return ResponseFlag.SUCCESS;
         }
 
         //Query for checkout
