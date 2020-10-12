@@ -43,9 +43,7 @@ public abstract class TextCommand implements Command {
         this.server = server;
         TextParam.Builder builder = this.buildParams();
         if (builder == null) {
-            //TODO: Fix this once implemented
-            this.params = null;
-            this.usage = "";
+            throw new IllegalStateException("Did not implement #buildParams correctly - cannot return null");
         } else {
             this.params = builder.build();
             this.usage = builder.buildString();

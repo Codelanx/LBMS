@@ -63,6 +63,7 @@ public class TextParam {
 
     public static class Builder {
 
+        private static final TextParam[] EMPTY = new TextParam[0];
         private final List<TextParam> params = new LinkedList<>();
 
         public Builder listOptional(String label) {
@@ -88,10 +89,12 @@ public class TextParam {
         }
 
         public String buildString() {
+            if (this.params.isEmpty()) return "";
             return this.params.stream().map(TextParam::toString).collect(Collectors.joining(TextCommand.TOKEN_DELIMITER));
         }
 
         public TextParam[] build() {
+            if (this.params.isEmpty()) return EMPTY;
             return this.params.toArray(new TextParam[0]);
         }
     }
