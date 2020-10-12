@@ -48,8 +48,7 @@ public interface StorageAdapter {
         if (external.getLoader() == this.getAdaptee()) {
             throw new IllegalArgumentException("State was loaded from this adapter");
         }
-        State back = this.insert(StateType.makeBuilder(external.getClass(), external.getIDField(), external.getFields()));
-        return (R) back;
+        return this.insert(new ProxiedStateBuilder<>(external));
     }
 
     /**

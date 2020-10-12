@@ -238,7 +238,7 @@ public class StateQuery<S extends State> implements Query<S> {
         Class<? extends State> type = this.getType();
         State.Type stateType = StateType.fromClass(type);
         StorageContainer container = type.getAnnotation(StorageContainer.class);
-        if (stateType == null || container == null) {
+        if (container == null) {
             throw new IllegalArgumentException("Unknown container for type: " + type.getSimpleName());
         }
         //REFACTOR: Think of a less hacky way to build an sql query here?

@@ -22,7 +22,7 @@ import java.util.function.Function;
  * @author sja9291  Spencer Alderman
  * @see State
  */
-public abstract class BasicState implements State, FileSerializable {
+public abstract class BasicState implements State {
 
     private final AtomicBoolean valid = new AtomicBoolean(false);
     private final long id;

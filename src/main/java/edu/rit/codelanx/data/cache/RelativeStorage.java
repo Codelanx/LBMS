@@ -27,9 +27,6 @@ public class RelativeStorage {
     @SuppressWarnings("unchecked") //one Storage<T> per Class<T>
     public <T extends State> StateStorage<T> getStateStorage(Class<? extends T> stateType) {
         State.Type t = StateType.fromClass(stateType);
-        if (t == null) {
-            throw new IllegalArgumentException("Unknown state type: " + stateType.getName());
-        }
         return (StateStorage<T>) this.states.computeIfAbsent(stateType, k -> new StateStorage<T>(t, this.storage));
     }
 

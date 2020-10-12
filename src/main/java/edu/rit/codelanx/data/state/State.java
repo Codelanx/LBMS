@@ -1,11 +1,15 @@
 package edu.rit.codelanx.data.state;
 
+import com.codelanx.commons.data.FileSerializable;
+import com.codelanx.commons.data.SQLBiFunction;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.cache.field.DataField;
+import edu.rit.codelanx.data.loader.StateBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * A marker for the various operations and data held by an object within our
@@ -13,7 +17,7 @@ import java.util.Map;
  *
  * @author sja9291  Spencer Alderman
  */
-public interface State {
+public interface State extends FileSerializable {
     /**
      * gets the field id
      * @return id of {@link DataField}
@@ -80,21 +84,29 @@ public interface State {
         public <T extends State> Class<T> getConcreteType(); //bit dangerous doing it like this
 
         /**
-         * calls (DataStorage storage, ResultSet set) constructor within the state
-         * @param storage-{@link DataSource}
-         * @param set- {@link ResultSet}
-         * @return of type {@link State}
-         * @throws SQLException when errors occur
+         * Gets the constructor for a new {@link State} via a
+         * {@link StateBuilder} instance
+         *
+         * @return A constructor for the {@link State} relevant to this type
          */
-        public State mapFromSQL(DataSource storage, ResultSet set) throws SQLException;
+        public <T extends State> StateBuildConstructor<T> getBuilderConstructor();
+
+
         /**
-         * calls (DataStorage storage, Map<String, Object> file) constructor within the state
-         * @param storage-{@link DataSource}
-         * @param file- in the form of a map
-         * @return of type {@link State}
-         * @throws SQLException when errors occur
+         * Gets the constructor for a new {@link State} via a building from
+         * an sql {@link ResultSet}
+         *
+         * @return A constructor for the {@link State} relevant to this type
          */
-        public State mapFromFile(DataSource storage, Map<String, Object> file);
+        public <T extends State> StateSQLConstructor<T> getSQLConstructor();
+
+        /**
+         * Gets the constructor for a new {@link State} via a building from
+         * a file's {@link Map Map<String, Object>} representation
+         *
+         * @return A constructor for the {@link State} relevant to this type
+         */
+        public <T extends State> StateFileConstructor<T> getFileConstructor();
 
         /**
          * increments to get the next ID
@@ -102,5 +114,95 @@ public interface State {
          */
         public long getNextID();
 
+    }
+
+    /**
+     * An interface for creating a new {@link State} from a builder
+     *
+     * @param <T> The type of {@link State} to create
+     */
+    @FunctionalInterface
+    public interface StateBuildConstructor<T extends State> {
+
+        /**
+         * Creates a new {@link State}
+         *
+         * @param storage The {@link DataSource} to store the state on
+         * @param id The {@code long} identifier for the state
+         * @param builder A valid {@link StateBuilder}
+         * @return The newly created {@link State}
+         * @see State#getID()
+         * @see StateBuilder
+         */
+        public T create(DataSource storage, long id, StateBuilder<T> builder);
+    }
+
+    /**
+     * An interface for loading a {@link State} from SQL storage
+     *
+     * @param <T> The type of {@link State} to create
+     */
+    @FunctionalInterface
+    public interface StateSQLConstructor<T extends State> extends SQLBiFunction<DataSource, ResultSet, T> {
+
+        /**
+         * Creates a new {@link State}
+         *
+         * @param storage The {@link DataSource} to store the state on
+         * @param sql The {@link ResultSet} to grab {@link DataField} info from
+         * @return The newly created {@link State}
+         * @see DataField
+         */
+        public T create(DataSource storage, ResultSet sql) throws SQLException;
+
+
+        /**
+         * A façade for {@link SQLBiFunction} applications
+         *
+         * {@inheritDoc}
+         * @param storage {@inheritDoc}
+         * @param rs {@inheritDoc}
+         * @return {@inheritDoc}
+         * @see #create(DataSource, ResultSet) for the actual method
+         */
+        @Override
+        default T apply(DataSource storage, ResultSet rs) throws SQLException {
+            return this.create(storage, rs);
+        }
+    }
+
+    /**
+     * An interface for loading a {@link State} from flatfile storage
+     *
+     * @param <T> The type of {@link State} to create
+     */
+    @FunctionalInterface
+    public interface StateFileConstructor<T extends State> extends BiFunction<DataSource, Map<String, Object>, T> {
+
+        /**
+         * Creates a new {@link State}
+         *
+         * @param storage The {@link DataSource} to store the state on
+         * @param file The {@link Map Map<String, Object>} representation of the
+         *             State, from {@link State#serialize()}
+         * @return The newly created {@link State}
+         * @see DataField
+         * @see FileSerializable#serialize()
+         */
+        public T create(DataSource storage, Map<String, Object> file);
+
+        /**
+         * A façade for {@link BiFunction} applications
+         *
+         * {@inheritDoc}
+         * @param storage {@inheritDoc}
+         * @param file {@inheritDoc}
+         * @return {@inheritDoc}
+         * @see #create(DataSource, Map) for the actual method
+         */
+        @Override
+        default T apply(DataSource storage, Map<String, Object> file) {
+            return this.create(storage, file);
+        }
     }
 }

@@ -90,7 +90,7 @@ public class SQLStorageAdapter implements StorageAdapter {
 
     @Override
     public <R extends State> R loadState(long id, Class<R> type) {
-        State.Type stateType = StateType.fromClassStrict(type);
+        State.Type stateType = StateType.fromClass(type);
         return this.db.get().query(rs -> {
             if (rs.next()) {
                 return InputMapper.toState(storage, type, id);
@@ -102,12 +102,12 @@ public class SQLStorageAdapter implements StorageAdapter {
     @Override
     public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
         //TODO: Attempt the local cache before resorting to SQL?
-        State.Type type = StateType.fromClassStrict(query.getType());
+        State.Type type = StateType.fromClass(query.getType());
         try {
             return query.runSQLQuery((stmt, args) -> this.db.get().query(rs -> {
                 List<R> back = new ArrayList<>();
                 while (rs.next()) {
-                    back.add((R) type.mapFromSQL(storage, rs));
+                    back.add(type.<R>getSQLConstructor().create(storage, rs));
                 }
                 return back.stream();
             }, stmt, args).getResponse());
@@ -119,10 +119,6 @@ public class SQLStorageAdapter implements StorageAdapter {
 
     @Override
     public <R extends State, E> Stream<R> loadState(Class<R> type, DataField<E> field, E value) {
-        State.Type stateType = StateType.fromClass(type);
-        if (stateType == null) {
-            throw new IllegalArgumentException("Unknown type: " + type.getName());
-        }
         return this.storage.query(type)
                 .isEqual(field, value)
                 .results();

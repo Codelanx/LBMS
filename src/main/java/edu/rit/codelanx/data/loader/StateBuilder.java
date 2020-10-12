@@ -73,18 +73,13 @@ public abstract class StateBuilder<T extends State> {
 
     protected abstract T buildObj(DataSource storage, long id);
 
-    public static <T extends State> StateBuilder<T> of(StateConstructor<T> constructor, State.Type type, DataField<Long> idField, DataField<?>... fields) {
+    public static <T extends State> StateBuilder<T> of(State.StateBuildConstructor<T> constructor, State.Type type, DataField<Long> idField, DataField<?>... fields) {
         return new StateBuilder<T>(type, idField, fields) {
             @Override
             protected T buildObj(DataSource storage, long id) {
                 return constructor.create(storage, id, this);
             }
         };
-    }
-
-    @FunctionalInterface
-    public interface StateConstructor<T extends State> {
-        public T create(DataSource storage, long id, StateBuilder<T> builder);
     }
 
 }

@@ -1,17 +1,12 @@
 package edu.rit.codelanx.data.state.types;
 
-import com.codelanx.commons.data.SQLBiFunction;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.cache.field.DataField;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiFunction;
 
 public enum StateType implements State.Type {
     BOOK(Book.class, Book::new, Book::new, Book::new),
@@ -26,16 +21,16 @@ public enum StateType implements State.Type {
     ;
 
     private static final StateType[] VALUES = StateType.values();
-    private final AtomicLong autoID = new AtomicLong(1);
+    private final AtomicLong autoID = new AtomicLong(1000000001); //we start with 10-digit ids
     private final Class<? extends State> type;
-    private final StateBuilder.StateConstructor<?> builderBlueprint;
-    private final SQLBiFunction<DataSource, ResultSet, ? extends State> sqlBuild;
-    private final BiFunction<DataSource, Map<String, Object>, ? extends State> fileBuild;
+    private final State.StateBuildConstructor<? extends State> builderBlueprint;
+    private final State.StateSQLConstructor<? extends State> sqlBuild;
+    private final State.StateFileConstructor<? extends State> fileBuild;
 
     private <T extends State> StateType(Class<T> type,
-                 StateBuilder.StateConstructor<T> blueprint,
-                 SQLBiFunction<DataSource, ResultSet, T> sqlBuild,
-                 BiFunction<DataSource, Map<String, Object>, T> fileBuild) {
+                 State.StateBuildConstructor<T> blueprint,
+                 State.StateSQLConstructor<T> sqlBuild,
+                 State.StateFileConstructor<T> fileBuild) {
         this.type = type;
         this.builderBlueprint = blueprint;
         this.sqlBuild = sqlBuild;
@@ -67,39 +62,51 @@ public enum StateType implements State.Type {
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
-    //warnings not suppressed here, this is actually a little dangerous
+    //To fix, we'd have to de-enum. Instead, this will CCE if invalid
+    //Additionally we can forgo the casts externally, the warnings are all here
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends State> Class<T> getConcreteType() {
         return (Class<T>) this.type; //will immediately CCE if invalidly used
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
+    //To fix, we'd have to de-enum. Instead, this will CCE if invalid
+    //Additionally we can forgo the casts externally, the warnings are all here
+    @SuppressWarnings("unchecked")
     @Override
-    public State mapFromSQL(DataSource storage, ResultSet set) throws SQLException {
-        return this.sqlBuild.apply(storage, set);
+    public <T extends State> State.StateBuildConstructor<T> getBuilderConstructor() {
+        return (State.StateBuildConstructor<T>) this.builderBlueprint;
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
+    //To fix, we'd have to de-enum. Instead, this will CCE if invalid
+    //Additionally we can forgo the casts externally, the warnings are all here
+    @SuppressWarnings("unchecked")
     @Override
-    public State mapFromFile(DataSource storage, Map<String, Object> file) {
-        return this.fileBuild.apply(storage, file);
+    public <T extends State> State.StateSQLConstructor<T> getSQLConstructor() {
+        return (State.StateSQLConstructor<T>) this.sqlBuild;
     }
 
-    public static <R extends State> StateBuilder<R> makeBuilder(Class<R> type, DataField<Long> idField, DataField<?>... fields) {
-        StateType st = (StateType) StateType.fromClassStrict(type);
-        return new StateBuilder<R>(st, idField, fields) {
-            @Override
-            protected R buildObj(DataSource storage, long id) {
-                return ((StateConstructor<R>) st.builderBlueprint).create(storage, id, this);
-            }
-        };
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
+    //To fix, we'd have to de-enum. Instead, this will CCE if invalid
+    //Additionally we can forgo the casts externally, the warnings are all here
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends State> State.StateFileConstructor<T> getFileConstructor() {
+        return (State.StateFileConstructor<T>) this.fileBuild;
     }
 
-    public static State.Type fromClass(Class<? extends State> stateType) {
+    public static State.Type fromClassNullable(Class<? extends State> stateType) {
         for (StateType t : VALUES) {
             if (t.type == stateType) {
                 return t;
@@ -108,13 +115,10 @@ public enum StateType implements State.Type {
         return null;
     }
 
-    public static State.Type fromClassStrict(Class<?> type) {
-        State.Type back = null;
-        if (InputMapper.isStateClass(type)) {
-            back = StateType.fromClass((Class<? extends State>) type);
-        }
+    public static <T extends State> State.Type fromClass(Class<T> type) {
+        State.Type back = StateType.fromClassNullable(type);
         if (back == null) {
-            throw new IllegalArgumentException("Cannot locate type for state: " + type.getName());
+            throw new IllegalArgumentException("Unknown type: " + type);
         }
         return back;
     }

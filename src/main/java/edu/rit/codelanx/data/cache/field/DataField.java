@@ -105,9 +105,6 @@ public interface DataField<T> {
 
     public static DataField<Long> makeIDField(Class<? extends State> state) {
         State.Type type = StateType.fromClass(state);
-        if (type == null) {
-            throw new IllegalArgumentException("Unknown type: " + state);
-        }
         return makeIDField(type);
     }
 
