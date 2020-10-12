@@ -2,6 +2,7 @@ package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.state.types.Author;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
@@ -11,8 +12,10 @@ import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 import static java.lang.Long.parseLong;
@@ -104,9 +107,34 @@ public class BuyCommand extends TextCommand {
                     .filter(b -> b.getID() == id)
                     .findAny();
             if (bookSearch.isPresent()){
-               //TODO: How to increment amount of books
+               Book b = bookSearch.get();
+               b.addCopy(quantity);
+            } else {
+                Optional<? extends Book> newBook =
+                        server.getBookStore().query(Book.class).isEqual(Book.Field.ID, id).results().findAny();
+                // TODO: Create a new book and add it to the datastorage
             }
         }
+
+        /*executor.sendMessage(this.buildResponse(this.getName(),
+                bookList.size()));
+        if (bookList.isEmpty()) {
+            return ResponseFlag.SUCCESS;
+        }
+        executor.sendMessage("Results (" + bookList.size() + "):");
+        bookList.stream()
+                .map(book -> {
+                    List<String> authorsForBook =
+                            book.getAuthors().map(Author::getName).collect(Collectors.toList());
+                    String authorOutput =
+                            this.buildResponse(authorsForBook.toString());
+                    authorOutput = "{" + authorOutput + "}";
+                    return this.buildResponse(book.getID(), book.getISBN(),
+                            book.getTitle(), authorOutput,
+                            DATE_FORMAT.format(book.getPublishDate()));
+                })
+                .forEach(executor::sendMessage);*/
+
         return ResponseFlag.NOT_FINISHED;
     }
 }

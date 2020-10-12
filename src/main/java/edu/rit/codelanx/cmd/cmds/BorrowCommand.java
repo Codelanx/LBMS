@@ -100,7 +100,7 @@ public class BorrowCommand extends TextCommand {
                 .query(Checkout.class).isEqual(Checkout.Field.VISITOR, v).results().count();
 
         //Checking they don't or won't have too many books
-        if (checkedOutBooks > 5 || checkedOutBooks + bookIDs.size() > 5){
+        if (checkedOutBooks > 5 || checkedOutBooks + bookIDs.size() > 5) {
             executor.sendMessage(this.getName() + ",book-limit-exceeded;");
         }
 
@@ -125,7 +125,7 @@ public class BorrowCommand extends TextCommand {
             }
         }
 
-        for (Book b : books){
+        for (Book b : books) {
             b.checkout(v);
         }
 

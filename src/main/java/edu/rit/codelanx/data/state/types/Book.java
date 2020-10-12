@@ -86,6 +86,15 @@ public class Book extends BasicState {
                 .setValue(Checkout.Field.AT, Instant.now())
                 .build(this.getLoader());
     }
+
+    /**
+     *  creates a new copy of the book and adds it to the database
+     * @param count of how many books to add
+     */
+    public void addCopy(int count){
+        Field.TOTAL_COPIES.mutate(this, old -> {return (old + count);});
+    }
+
     /** @see BasicState#BasicState(DataStorage, Map) */
     public Book(DataStorage storage, Map<String, Object> file) {
         super(storage, file);

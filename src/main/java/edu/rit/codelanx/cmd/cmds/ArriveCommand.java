@@ -49,64 +49,37 @@ public class ArriveCommand extends TextCommand {
     /**
      * Whenever this command is called, it will begin a new visit.
      *
-     * @param executor  the client that is calling the command
-     * @param args visitorID: the unique 10-digit ID of the visitor
+     * @param executor the client that is calling the command
+     * @param args     visitorID: the unique 10-digit ID of the visitor
      * @return a responseflag that says whether or not the command was
-     *         executed correctly
+     * executed correctly
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
         if (args.length != 1) {
-            //ERROR
-            //handle it
+            executor.sendMessage(this.getName() + "," + "missing-parameters," +
+                    "visitorID");
         }
         Long id = InputOutput.parseLong(args[0]).orElse(null);
         if (id == null) {
-            //we couldn't parse it
-            //ERROR
+            return ResponseFlag.FAILURE;
         }
         //pre: we have a valid id, we need a Visitor
         Visitor visitor = this.server.getDataStorage().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
         if (visitor == null) {
-            //no visitor found by this ID
-            //ERROR
-        }
-        //start a new visit
-        visitor.startVisit(this.server.getDataStorage().getLibrary());
-
-
-        //Checking that they have the correct amount of parameters
-        if (numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "visitorID;");
-            return ResponseFlag.SUCCESS;
-        }
-
-        //Checking that the id passed was a number
-        Long visitorID = CommandUtils.checkVisitorID(args[0]);
-        if (visitorID == -1) {
-            return ResponseFlag.FAILURE;
-        }
-
-        //Finding the visitor with the matching ID in the database
-        Visitor v = findVisitor(this.server, visitorID);
-        if (v == null) {
             executor.sendMessage(this.getName() + ",invalid-id;");
             return ResponseFlag.SUCCESS;
-        }
-
-        if (v.isVisiting()) {
+        } else if (visitor.isVisiting()) {
             executor.sendMessage(this.getName() + ",duplicate;");
             return ResponseFlag.SUCCESS;
         }
-
-        v.startVisit(server.getDataStorage().getLibrary());
-        executor.sendMessage(this.getName() + "," + visitorID + "," +
-                server.getClock().getCurrentTime() + ";");
-
+        boolean visit =
+                visitor.startVisit(this.server.getDataStorage().getLibrary());
+        executor.sendMessage(this.getName() + "," + visitor.getID() + "," +
+                TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()) + ";");
         return ResponseFlag.SUCCESS;
     }
 }

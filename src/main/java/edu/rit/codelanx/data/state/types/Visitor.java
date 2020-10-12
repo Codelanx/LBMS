@@ -47,20 +47,28 @@ public class Visitor extends BasicState {
 
         /**
          * gets the visitor data
+         *
          * @return id, name, address, phone, balance
          */
         public static DataField<? super Object>[] values() {
-            return new DataField[]{ID, FIRST, LAST, ADDRESS, PHONE, REGISTRATION_DATE, MONEY};
+            return new DataField[]{ID, FIRST, LAST, ADDRESS, PHONE,
+                    REGISTRATION_DATE, MONEY};
         }
 
         static {
             ID = DataField.makeIDField(Book.class);
-            FIRST = DataField.buildSimple(String.class, "first", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
-            LAST = DataField.buildSimple(String.class, "last", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
-            ADDRESS = DataField.buildSimple(String.class, "address", FM_IMMUTABLE, FM_COMPOSITE);
-            PHONE = DataField.buildSimple(String.class, "phone", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
-            REGISTRATION_DATE = DataField.buildSimple(Instant.class, "registration_date", FM_IMMUTABLE);
-            MONEY = DataField.buildSimple(BigDecimal.class, "money", FM_IMMUTABLE);
+            FIRST = DataField.buildSimple(String.class, "first", FM_IMMUTABLE
+                    , FM_KEY, FM_COMPOSITE);
+            LAST = DataField.buildSimple(String.class, "last", FM_IMMUTABLE,
+                    FM_KEY, FM_COMPOSITE);
+            ADDRESS = DataField.buildSimple(String.class, "address",
+                    FM_IMMUTABLE, FM_COMPOSITE);
+            PHONE = DataField.buildSimple(String.class, "phone", FM_IMMUTABLE
+                    , FM_KEY, FM_COMPOSITE);
+            REGISTRATION_DATE = DataField.buildSimple(Instant.class,
+                    "registration_date", FM_IMMUTABLE);
+            MONEY = DataField.buildSimple(BigDecimal.class, "money",
+                    FM_IMMUTABLE);
             VALUES = Field.values();
         }
     }
@@ -71,15 +79,19 @@ public class Visitor extends BasicState {
         //mapping keys
     }
 
-    //keeps track of an ongoing visit. If it ends, a `Visit` is added to the data
-    //Consequently if the library explodes in an act of terrorism, we won't have a log of that visit
+    //keeps track of an ongoing visit. If it ends, a `Visit` is added to the
+    // data
+    //Consequently if the library explodes in an act of terrorism, we won't
+    // have a log of that visit
     //So maybe rethink this part of our design. Because terrorists.
-    private final AtomicReference<Instant> visitStart = new AtomicReference<>(null);
+    private final AtomicReference<Instant> visitStart =
+            new AtomicReference<>(null);
 
     //Behavioral methods here
 
     /**
      * gets the visitor's first name
+     *
      * @return string first name
      */
     public String getFirstName() {
@@ -88,13 +100,16 @@ public class Visitor extends BasicState {
 
     /**
      * gets the visitor's last name
+     *
      * @return string last name
      */
     public String getLastName() {
         return Field.LAST.get(this);
     }
+
     /**
      * gets the visitor's address
+     *
      * @return string address
      */
     public String getAddress() {
@@ -103,6 +118,7 @@ public class Visitor extends BasicState {
 
     /**
      * gets the visitor phone number
+     *
      * @return string phone number
      */
     public String getPhone() {
@@ -111,6 +127,7 @@ public class Visitor extends BasicState {
 
     /**
      * gets the amount of money the visitor currently owed
+     *
      * @return money decimal
      */
     public BigDecimal getMoney() {
@@ -119,6 +136,7 @@ public class Visitor extends BasicState {
 
     /**
      * starts the visit if it's within the library is currently open
+     *
      * @param library {@link Library} to be check for open status
      * @return true if successfully start a visit, otherwise, false
      */
@@ -130,6 +148,7 @@ public class Visitor extends BasicState {
 
     /**
      * checks if the visitor is in a visit or not
+     *
      * @return true if currently in the visit, otherwise, false
      */
     public boolean isVisiting() {
@@ -142,6 +161,7 @@ public class Visitor extends BasicState {
 
     /**
      * ends the visit
+     *
      * @param endTime of the visit
      * @return true if successfully ends a visit. Otherwise, false.
      */
@@ -157,6 +177,7 @@ public class Visitor extends BasicState {
 
     /**
      * gets the visitor id
+     *
      * @return id of long type
      */
     @Override
@@ -165,7 +186,8 @@ public class Visitor extends BasicState {
     }
 
     /**
-     *  gets visitor info
+     * gets visitor info
+     *
      * @return DataField of ID, FIRST, LAST, ADDRESS, PHONE, MONEY
      */
     @Override
@@ -175,6 +197,7 @@ public class Visitor extends BasicState {
 
     /**
      * gets he current state
+     *
      * @return visitor state
      */
     @Override
@@ -192,9 +215,12 @@ public class Visitor extends BasicState {
         String visitor;
         String formatted_visitor;
         //arrive| visitorID, visit date+ time
-        visitor = "Visitor ID: %d| First name: %s| Last Name: %s| Address: %s| Phone: %s| Ballance: %.2f";
-        formatted_visitor = String.format(visitor, this.getID(), this.getFirstName(), this.getLastName(),
-                this.getAddress(), this.getPhone(), this.getMoney().doubleValue());
+        visitor = "Visitor ID: %d| First name: %s| Last Name: %s| Address: " +
+                "%s| Phone: %s| Ballance: %.2f";
+        formatted_visitor = String.format(visitor, this.getID(),
+                this.getFirstName(), this.getLastName(),
+                this.getAddress(), this.getPhone(),
+                this.getMoney().doubleValue());
         return formatted_visitor;
     }
 
@@ -206,13 +232,15 @@ public class Visitor extends BasicState {
      * @return string representation of time
      */
     public String format_time(Instant time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(Locale.US).withZone(ZoneId.systemDefault());
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(Locale.US).withZone(ZoneId.systemDefault());
         String str_time = formatter.format(time);
         return str_time;
     }
 
     /**
      * updates the visitor balance
+     *
      * @param amount of money to set to
      * @param reason for the new update
      * @return visitor's new balance
@@ -228,15 +256,18 @@ public class Visitor extends BasicState {
 
     /**
      * creates new visitor
+     *
      * @return builder
      */
     //Creational handling below
     public static StateBuilder<Visitor> create() {
-        return StateBuilder.of(Visitor::new, StateType.VISITOR, Field.ID, Field.VALUES);
+        return StateBuilder.of(Visitor::new, StateType.VISITOR, Field.ID,
+                Field.VALUES);
     }
 
     /**
      * gets personal information of the user
+     *
      * @return visitor id, name, address, phone, balance
      */
     @Override
@@ -247,17 +278,23 @@ public class Visitor extends BasicState {
 
     //Storage serialization handling below
 
-    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
+    /**
+     * @see BasicState#BasicState(DataStorage, long, StateBuilder)
+     */
     Visitor(DataStorage storage, long id, StateBuilder<Visitor> build) {
         super(storage, id, build);
     }
 
-    /** @see BasicState#BasicState(DataStorage, ResultSet) */
+    /**
+     * @see BasicState#BasicState(DataStorage, ResultSet)
+     */
     public Visitor(DataStorage storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
 
-    /** @see BasicState#BasicState(DataStorage, Map) */
+    /**
+     * @see BasicState#BasicState(DataStorage, Map)
+     */
     public Visitor(DataStorage storage, Map<String, Object> file) {
         super(storage, file);
     }
