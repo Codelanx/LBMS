@@ -13,7 +13,7 @@ import java.util.Map;
 import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 
 /**
- * represents a book's list of authors.
+ * A {@link BasicState} represents a book's list of authors.
  *
  * @author sja9291  Spencer Alderman
  */
@@ -27,7 +27,10 @@ public class AuthorListing extends BasicState {
         public static final DataField<Book> BOOK;
         private static final DataField<? super Object>[] VALUES;
 
-
+        /**
+         * gets the author's listing essential data
+         * @return ID, Author, Book
+         */
         public static DataField<? super Object>[] values() {
             return new DataField[] { ID, AUTHOR, BOOK };
         }
@@ -39,50 +42,80 @@ public class AuthorListing extends BasicState {
             VALUES = Field.values();
         }
     }
-
+    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
     AuthorListing(DataStorage loader, long id, StateBuilder<AuthorListing> builder) {
         super(loader, id, builder);
     }
+    /** @see BasicState#BasicState(DataStorage, ResultSet) */
     public AuthorListing(DataStorage loader, ResultSet sql) throws SQLException {
         super(loader, sql);
     }
+    /** @see BasicState#BasicState(DataStorage, Map) */
     public AuthorListing(DataStorage loader, Map<String, Object> file) {
         super(loader, file);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<Long> getIDField() {
         return Field.ID;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<? super Object>[] getFields() {
         return Field.values();
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Type getType() {
         return StateType.AUTHOR_LISTING;
     }
 
+    /**
+     * gets the author of the book
+     * @return {@link Author}
+     */
     public Author getAuthor() {
         return Field.AUTHOR.get(this);
     }
 
+    /**
+     * gets the book
+     * @return {@link Book}
+     */
     public Book getBook() {
         return Field.BOOK.get(this);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public String toFormattedText() {
         return this.getAuthor().toFormattedText();
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     public static StateBuilder<AuthorListing> create() {
         return StateBuilder.of(AuthorListing::new, StateType.AUTHOR_LISTING, Field.ID, Field.VALUES);
     }
