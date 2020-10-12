@@ -76,6 +76,7 @@ public class ReportCommand extends TextCommand {
                 .count();
 
 
+        // Gathers the number of visitors registered
         long numVisitors = this.server.getDataStorage().query(Visitor.class)
                 .results()
                 .count();
@@ -97,11 +98,10 @@ public class ReportCommand extends TextCommand {
         String avgOutput = this.formatDuration(avg);
 
 
-        //TODO get the number of books purchased
-        Library numPurchased = this.server.getDataStorage().ofLoaded(Library.class).findAny().orElse(null);
-        //executor.sendMessage();
-
-
+        // Counts the number of books purchased
+        long numPurchased = this.server.getDataStorage().query(Library.class)
+                .results()
+                .count();
 
 
         Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
