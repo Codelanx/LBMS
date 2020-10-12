@@ -111,7 +111,7 @@ public class ReportCommand extends TextCommand {
         int amountPaidFees = map.getOrDefault(Transaction.Reason.PAYING_LATE_FEE.getReason(), Collections.emptySet()).size();
         int outstandingFines = amountLateFees - amountPaidFees;
 
-        executor.sendMessage(DATE_FORMAT.format(curDate)
+        executor.sendMessage("Date Generated: " + DATE_FORMAT.format(curDate)
                 + "\n Number of Books: " + books
                 + "\n Number of Visitors: " + numVisitors
                 + "\n Average Length of Visit: " + avgOutput
