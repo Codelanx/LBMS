@@ -102,8 +102,11 @@ public class Checkout extends BasicState {
 
     /**
      * returns the borrowed Book to the library
+     *
+     * @return A {@link BigDecimal} describing a fine applied if late, or
+     *         {@code null} if no fine was applied
      */
-    public void returnBook() {
+    public BigDecimal returnBook() {
         if (this.wasReturned()) {
             throw new IllegalStateException("Book already returned");
         }
@@ -111,9 +114,10 @@ public class Checkout extends BasicState {
         //TODO: Determine if a fine should be applied
         if (false) {
             //TODO: And the amount (negative because we're taking from them)
-            Transaction.perform(this.getVisitor(), BigDecimal.valueOf(-1D), Transaction.Reason.CHARGING_LATE_FEE);
+            return Transaction.perform(this.getVisitor(), BigDecimal.valueOf(-1D), Transaction.Reason.CHARGING_LATE_FEE);
         }
         Field.RETURNED.set(this, true);
+        return null;
     }
 
     /**
