@@ -19,12 +19,30 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Returns a book that was previously checked out
+ *
+ * @author sja9291  Spencer Alderman
+ * @see TextCommand - for document link to LBMS command specification
+ */
 public class ReturnCommand extends TextCommand {
 
+    /**
+     * {@inheritDoc}
+     * @param server {@inheritDoc}
+     */
     public ReturnCommand(Server<TextMessage> server) {
         super(server);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Command format (minus {@link #getName}): visitor-id, id[, id...]
+     * where id == book ID (requested output is request output I suppose)
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     protected TextParam.Builder buildParams() {
         return TextParam.create()
@@ -32,11 +50,27 @@ public class ReturnCommand extends TextCommand {
                 .list("id", 1);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "return";
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Returns any given {@link Book books} for a respective {@link Visitor}
+     * who had previously checked them out
+     *
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0] - Visitor ID
+     *                  args[1+] - Book IDs to be returned
+     * @return {@inheritDoc}
+     */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         Optional<Visitor> optVisitor = InputOutput.parseLong(args[0])
