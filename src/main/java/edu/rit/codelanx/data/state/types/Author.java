@@ -14,7 +14,11 @@ import java.util.stream.Stream;
 
 import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 
-
+/**
+ * A {@link BasicState} represents an author
+ * @author sja9291  Spencer Alderman
+ * @see BasicState
+ */
 @StorageContainer("authors")
 public class Author extends BasicState {
 
@@ -33,63 +37,75 @@ public class Author extends BasicState {
             VALUES = Field.values();
         }
     }
-
+    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
     Author(DataStorage storage, long id, StateBuilder<Author> author) {
         super(storage, id, author);
     }
 
-    /**
-     * {@inheritDoc}
-     * @param storage {@inheritDoc}
-     * @param sql {@inheritDoc}
-     * @throws SQLException {@inheritDoc}
-     */
+    /** @see BasicState#BasicState(DataStorage, ResultSet) */
     public Author(DataStorage storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
 
-    /**
-     * {@inheritDoc}
-     * @param storage {@inheritDoc}
-     * @param file {@inheritDoc}
-     */
+    /** @see BasicState#BasicState(DataStorage, Map) */
     public Author(DataStorage storage, Map<String, Object> file) {
         super(storage, file);
     }
 
-    //TODO: Document
+    /**
+     * gets the author's name
+     * @return string name
+     */
     public String getName() {
         return Field.NAME.get(this);
     }
 
-    //TODO: Document
+    /**
+     * gets the author's books
+     * @return stream of books
+     */
     public Stream<Book> getBooks() {
         return this.getLoader().query(AuthorListing.class)
                 .isEqual(AuthorListing.Field.AUTHOR, this)
                 .results().map(AuthorListing::getBook);
     }
 
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<Long> getIDField() {
         return Field.ID;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<? super Object>[] getFields() {
         return Field.values();
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Type getType() {
         return StateType.AUTHOR;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public String toFormattedText() {
 
@@ -97,7 +113,10 @@ public class Author extends BasicState {
         String formatted_author= String.format(author, this.getName(), this.getBooks().toString());
         return formatted_author;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     public static StateBuilder<Author> create() {
         return StateBuilder.of(Author::new, StateType.AUTHOR, Field.ID, Field.VALUES);
     }
