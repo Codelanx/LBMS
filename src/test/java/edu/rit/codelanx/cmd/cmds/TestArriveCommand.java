@@ -38,7 +38,7 @@ public class TestArriveCommand {
     public void duplicateVisitStart() {
         // TODO: Register new visitor, call arrive,visitorID; twice
         // Should send arrive,duplicate; and Responseflag.Success
-        // TODO: Doesn't Work
+        // Works
     }
 
     @Test

@@ -50,6 +50,10 @@ public class ArriveCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
+        if (!this.server.getDataStorage().getLibrary().isOpen()){
+            executor.sendMessage(this.getName() + "," + "library-closed;");
+            return ResponseFlag.FAILURE;
+        }
         if (args.length != 1) {
             executor.sendMessage(this.getName() + "," + "missing-parameters," +
                     "visitorID");
@@ -70,10 +74,8 @@ public class ArriveCommand extends TextCommand {
             executor.sendMessage(this.getName() + ",duplicate;");
             return ResponseFlag.SUCCESS;
         }
-        if (!visitor.startVisit(this.server.getDataStorage().getLibrary())) {
-            executor.sendMessage(this.buildResponse("")); //TODO: Error for closed library
-            return ResponseFlag.SUCCESS;
-        }
+
+        boolean visit = visitor.startVisit(this.server.getDataStorage().getLibrary());
         executor.sendMessage(this.getName() + "," + visitor.getID() + "," +
                 TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()) + ";");
         return ResponseFlag.SUCCESS;

@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Visit;
@@ -59,33 +60,34 @@ public class DepartCommand extends TextCommand {
                                   String... args) {
 
         //Checking that they have the correct amount of parameters
-        if (numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {
+        if (args.length != 1) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");
             return ResponseFlag.SUCCESS;
         }
 
-        //Checking that the id passed was a number
-        Long visitorID = checkVisitorID(args[0]);
-        if (visitorID == -1) {
+        Long id = InputOutput.parseLong(args[0]).orElse(null);
+        if (id == null) {
             return ResponseFlag.FAILURE;
         }
-
-        //Finding the visitor with the matching ID in the database
-        Visitor v = findVisitor(this.server, visitorID);
-        if (v == null || !v.isVisiting()) {
+        //pre: we have a valid id, we need a Visitor
+        Visitor visitor = this.server.getDataStorage().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, id)
+                .results().findAny().orElse(null);
+        if (visitor == null || !visitor.isVisiting()) {
             executor.sendMessage(this.getName() + ",invalid-id;");
             return ResponseFlag.SUCCESS;
         }
-        Instant start = v.getVisitStart();
+
+        Instant start = visitor.getVisitStart();
         Instant end = Instant.now();
         Duration d = Duration.between(start, end);
-        Visit result = v.endVisit(end);
 
         String endOutput = TIME_OF_DAY_FORMAT.format(end);
         String durOutput = this.formatDuration(d);
 
-        executor.sendMessage(this.buildResponse(this.getName(), v.getID(), endOutput, durOutput));
+        executor.sendMessage(this.buildResponse(this.getName(), visitor.getID(),
+                endOutput, durOutput));
 
         return ResponseFlag.SUCCESS;
     }

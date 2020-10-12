@@ -139,7 +139,9 @@ public class Visitor extends BasicState {
      * @return true if successfully start a visit, otherwise, false
      */
     public boolean startVisit(Library library) {
-        if (!library.isOpen()) return false;
+        if (!library.isOpen()){
+            return false;
+        }
         this.visitStart.set(Instant.now());
         return true;
     }
