@@ -28,7 +28,8 @@ public enum TextCommandMap {
     PAY(PayCommand::new),
     REGISTER(RegisterCommand::new),
     REPORT(ReportCommand::new),
-    SEARCH(SearchCommand::new)
+    SEARCH(SearchCommand::new),
+    RETURN(ReturnCommand::new),
     ;
 
     private static final TextCommandMap[] VALUES = TextCommandMap.values();
