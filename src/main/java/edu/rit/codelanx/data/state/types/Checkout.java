@@ -16,6 +16,12 @@ import java.util.Map;
 import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_IMMUTABLE;
 import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_KEY;
 
+/**
+ * A {@link BasicState} represents a Checkout action
+ * @author sja9291  Spencer Alderman
+ * @author ahd6901  Amy Ha Do
+ * @see BasicState
+ */
 @StorageContainer("checkouts")
 public class Checkout extends BasicState {
 
@@ -40,40 +46,63 @@ public class Checkout extends BasicState {
             VALUES = Field.values();
         }
     }
-
+    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
     Checkout(DataStorage storage, long id, StateBuilder<Checkout> builder) {
         super(storage, id, builder);
     }
-
+    /** @see BasicState#BasicState(DataStorage, ResultSet) */
     public Checkout(DataStorage storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
-
+    /** @see BasicState#BasicState(DataStorage, Map) */
     public Checkout(DataStorage storage, Map<String, Object> file) {
         super(storage, file);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     protected DataField<? super Object>[] getFieldsUnsafe() {
         return Checkout.Field.VALUES;
     }
 
+    /**
+     * gets the visitor who perform the checkout
+     * @return the involved {@link Visitor}
+     */
     public Visitor getVisitor() {
         return Checkout.Field.VISITOR.get(this);
     }
 
+    /**
+     * gets the books that being checked out
+     * @return checkout {@link Book}
+     */
     public Book getBook() {
         return Checkout.Field.BOOK.get(this);
     }
 
+    /**
+     * gets the checkout time
+     * @return time of type {@link Instant}
+     */
     public Instant getBorrowedAt() {
         return Checkout.Field.AT.get(this);
     }
 
+    /**
+     * gets the time the book was returned
+     * @return returning time of type {@link Instant}
+     */
     public boolean wasReturned() {
         return Field.RETURNED.get(this);
     }
 
+    /**
+     * returns the borrowed Book to the library
+     */
     public void returnBook() {
         if (this.wasReturned()) {
             throw new IllegalStateException("Book already returned");
@@ -87,21 +116,34 @@ public class Checkout extends BasicState {
         Field.RETURNED.set(this, true);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<Long> getIDField() {
         return Checkout.Field.ID;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<? super Object>[] getFields() {
         return Checkout.Field.values();
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Type getType() {
         return StateType.CHECKOUT;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public String toFormattedText() {
         String checkout= "Book Checkout: %s| Visitor ID: %d| at: %s| has been returned: %b";
@@ -110,7 +152,10 @@ public class Checkout extends BasicState {
 
         return getFields().toString();
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     public static StateBuilder<Checkout> create() {
         return StateBuilder.of(Checkout::new, StateType.CHECKOUT, Field.ID, Field.VALUES);
     }
