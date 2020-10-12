@@ -25,7 +25,7 @@ public enum CommandUtils {;
     public static Visitor findVisitor(Server<TextMessage> server,
                                       long visitorID) {
         Optional<? extends Visitor> visitorSearch = server.getDataStorage()
-                .ofLoaded(Visitor.class)
+                .ofLoaded(Visitor.class) //TODO: Fix
                 .filter(v -> v.getID() == visitorID)
                 .findAny();
         return visitorSearch.orElse(null);

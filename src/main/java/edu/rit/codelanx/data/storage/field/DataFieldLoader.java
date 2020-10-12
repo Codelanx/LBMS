@@ -67,7 +67,11 @@ public class DataFieldLoader<T> implements DataField<T> {
 
     @Override
     public T get(State state) {
-        return this.values.getOrDefault(state, this.getInitializer().getDefaultValue());
+        T back = this.values.get(state);
+        if (back == null) { //TODO: Need to allow nulls and checking if defaults for states
+            back = this.getInitializer().getDefaultValue();
+        }
+        return back;
     }
 
     @Override

@@ -192,9 +192,9 @@ public class Visitor extends BasicState {
         String visitor;
         String formatted_visitor;
         //arrive| visitorID, visit date+ time
-        visitor = "Visitor ID: %d| First name: %s| Last Name: %s| Address: %s| Phone: %s| Ballance: %d";
-        formatted_visitor = String.format(visitor, this.getID(),this.getFirstName(), this.getLastName(),
-                this.getAddress(), this.getPhone(), this.getMoney());
+        visitor = "Visitor ID: %d| First name: %s| Last Name: %s| Address: %s| Phone: %s| Ballance: %.2f";
+        formatted_visitor = String.format(visitor, this.getID(), this.getFirstName(), this.getLastName(),
+                this.getAddress(), this.getPhone(), this.getMoney().doubleValue());
         return formatted_visitor;
     }
 

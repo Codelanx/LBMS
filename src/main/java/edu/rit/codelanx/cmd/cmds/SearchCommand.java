@@ -84,24 +84,12 @@ public class SearchCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
         int numOfArgs = args.length;
-        String title = "", publisher = "", sortOrder = "", isbn = "";
-        String[] authors = {};
-
         //Going through the args and assigning them to their variables
-        for (int i = 0; i < numOfArgs; i++) {
-            if (i == 0) {
-                title = args[0];
-            }
-            if (i == 1) {
-                authors = args[i].split(",");
-            } else if (i == 2) {
-                isbn = args[i];
-            } else if (i == 3) {
-                publisher = args[i];
-            } else if (i == 4) {
-                sortOrder = args[i];
-            }
-        }
+        String title = args[0],
+                isbn = args[2],
+                publisher = args[3],
+                sortOrder = args[4];
+        String[] authors = args[1].split(TextCommand.TOKEN_DELIMITER);
 
         Query<Book> query = this.server.getBookStore().query(Book.class);
         //Going through the query fields and adding them if they are there
@@ -138,6 +126,12 @@ public class SearchCommand extends TextCommand {
             bookList.sort(Comparator.comparing(Book::getPublishDate).reversed());
         }
 
+        //this.getName() + "," + 0 + ";"
+        executor.sendMessage(this.buildResponse(this.getName(), bookList.size()));
+        if (bookList.isEmpty()) {
+            return ResponseFlag.SUCCESS;
+        }
+        executor.sendMessage("Results (" + bookList.size() + "):");
         bookList.stream()
                 .map(book -> {
                     List<String> authorsForBook =
