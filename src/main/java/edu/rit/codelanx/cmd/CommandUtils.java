@@ -10,6 +10,10 @@ import java.util.Optional;
 
 import static java.lang.Long.parseLong;
 
+/**
+ * @author maa1675  Mark Anderson
+ * @author sja9291  Spencer Alderman    small fixes
+ */
 @Deprecated
 public enum CommandUtils {;
 
