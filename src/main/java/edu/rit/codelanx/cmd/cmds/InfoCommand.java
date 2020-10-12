@@ -78,15 +78,16 @@ public class InfoCommand extends TextCommand {
         long numOfBooks = this.server.getDataStorage().query(Book.class)
                 .results()
                 .count();
-
-        // gets the number of copies for each book
-        Book numOfCopies = this.server.getDataStorage().query(Book.class)
+        Book bookInfo = this.server.getDataStorage().query(Book.class)
                 .results()
                 .findAny()
                 .orElse(null);
 
-        numOfCopies.getTotalCopies();
 
+        // gets the number of copies for each book
+        long numOfCopies = this.server.getDataStorage().query(Book.class)
+                .results()
+                .count();
         List<Author> authors = this.server.getDataStorage().query(Author.class)
                 .results()
                 .collect(Collectors.toList());
@@ -95,22 +96,26 @@ public class InfoCommand extends TextCommand {
 
         List<Book> result = null; //TODO: end result of our query
 
-        switch (args[4].toLowerCase()) {
-            case "publish-date":
-                result.sort(Comparator.comparing(Book::getPublishDate));
-                break;
-            case "book-status":
-                result.sort(Comparator.comparing(Book::getAvailableCopies));
-                break;
-            default:
-                //TODO: Print error about unknown sort order
-                //no break, falls through
-            case "title":
-                result.sort(Comparator.comparing(Book::getTitle));
-                break;
+        if (args.length == 4){
+            switch (args[4].toLowerCase()) {
+                case "publish-date":
+                    result.sort(Comparator.comparing(Book::getPublishDate));
+                    break;
+                case "book-status":
+                    result.sort(Comparator.comparing(Book::getAvailableCopies));
+                    break;
+                default:
+                    executor.sendMessage(getName() + ",invalid-sort-order");
+                    //no break, falls through
+                case "title":
+                    result.sort(Comparator.comparing(Book::getTitle));
+                    break;
+            }
+
         }
+        assert bookInfo != null;
         executor.sendMessage(numOfBooks
-                + "\n" + numOfCopies);
+                + "\n" + numOfCopies + bookInfo.getID() + bookInfo.getPublisher() + args[4]);
 
         return ResponseFlag.SUCCESS;
     }
