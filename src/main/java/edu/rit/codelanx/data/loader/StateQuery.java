@@ -221,6 +221,7 @@ public class StateQuery<S extends State> implements Query<S> {
     Stream<S> locateLocal(StateStorage<S> storage) {
         Stream<S> cached = this.comparisons.stream()
                 .map(Comparison::findStates)
+                .filter(Objects::nonNull)
                 .findFirst().orElse(null);
         if (cached != null) {
             return cached;

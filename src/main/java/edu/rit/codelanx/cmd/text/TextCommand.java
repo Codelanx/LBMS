@@ -21,7 +21,6 @@ TODO:     - Good input
 TODO:     - Other weird bad inputs / edge cases (e.g. duplicates)
 TODO:
  */
-
 public abstract class TextCommand implements Command {
 
     public static final String TOKEN_DELIMITER = ",";
