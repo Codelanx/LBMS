@@ -1,12 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.BasicState;
-import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.state.types.Book;
-import edu.rit.codelanx.data.state.types.StateType;
-import edu.rit.codelanx.data.state.types.Visit;
-import edu.rit.codelanx.data.storage.field.DataField;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;

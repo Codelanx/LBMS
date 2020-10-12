@@ -3,7 +3,7 @@ package edu.rit.codelanx.data.loader;
 import com.codelanx.commons.data.SQLBiFunction;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.storage.field.DataField;
+import edu.rit.codelanx.data.cache.field.DataField;
 import edu.rit.codelanx.util.Errors;
 
 import java.math.BigDecimal;

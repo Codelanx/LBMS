@@ -7,8 +7,8 @@ import edu.rit.codelanx.ConfigKey;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;
-import edu.rit.codelanx.data.storage.StateStorage;
-import edu.rit.codelanx.data.storage.field.DataField;
+import edu.rit.codelanx.data.cache.StateStorage;
+import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.io.File;
 import java.io.IOException;

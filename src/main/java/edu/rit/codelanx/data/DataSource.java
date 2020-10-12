@@ -5,7 +5,7 @@ import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.types.Library;
-import edu.rit.codelanx.data.storage.RelativeStorage;
+import edu.rit.codelanx.data.cache.RelativeStorage;
 
 import java.io.IOException;
 import java.util.stream.Stream;

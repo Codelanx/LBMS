@@ -6,7 +6,7 @@ import edu.rit.codelanx.data.state.types.Author;
 import edu.rit.codelanx.data.state.types.AuthorListing;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Library;
-import edu.rit.codelanx.data.storage.field.DataField;
+import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.io.IOException;
 import java.io.InputStream;

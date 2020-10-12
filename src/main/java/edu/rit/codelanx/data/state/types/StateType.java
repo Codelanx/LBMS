@@ -5,7 +5,7 @@ import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.storage.field.DataField;
+import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -3,8 +3,8 @@ package edu.rit.codelanx.data.state.types;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
-import edu.rit.codelanx.data.storage.StorageContainer;
-import edu.rit.codelanx.data.storage.field.DataField;
+import edu.rit.codelanx.data.cache.StorageContainer;
+import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -13,8 +13,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 
-import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_IMMUTABLE;
-import static edu.rit.codelanx.data.storage.field.FieldIndicies.FM_KEY;
+import static edu.rit.codelanx.data.cache.field.FieldIndicies.FM_IMMUTABLE;
+import static edu.rit.codelanx.data.cache.field.FieldIndicies.FM_KEY;
 
 /**
  * A {@link BasicState} represents a Checkout action

@@ -1,4 +1,4 @@
-package edu.rit.codelanx.data.storage;
+package edu.rit.codelanx.data.cache;
 
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;

@@ -3,8 +3,8 @@ package edu.rit.codelanx.data.state.types;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
-import edu.rit.codelanx.data.storage.StorageContainer;
-import edu.rit.codelanx.data.storage.field.DataField;
+import edu.rit.codelanx.data.cache.StorageContainer;
+import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
+import static edu.rit.codelanx.data.cache.field.FieldIndicies.*;
 
 //There should only ever be one of these initially, but just in case there's multiple...
 /**

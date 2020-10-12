@@ -1,4 +1,4 @@
-package edu.rit.codelanx.data.storage;
+package edu.rit.codelanx.data.cache;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

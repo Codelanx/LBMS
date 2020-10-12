@@ -1,8 +1,8 @@
-package edu.rit.codelanx.data.storage.field.decorator;
+package edu.rit.codelanx.data.cache.field.decorator;
 
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.storage.field.DataField;
-import edu.rit.codelanx.data.storage.field.FieldIndicies;
+import edu.rit.codelanx.data.cache.field.DataField;
+import edu.rit.codelanx.data.cache.field.FieldIndicies;
 
 public class IndexMapping<S extends State, E> extends FieldIndex<E> {
 

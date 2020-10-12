@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.loader;
 
-import edu.rit.codelanx.data.storage.field.DataField;
+import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.util.Arrays;
 import java.util.function.Predicate;

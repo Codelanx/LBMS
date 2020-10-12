@@ -1,7 +1,7 @@
 package edu.rit.codelanx.data.state;
 
 import edu.rit.codelanx.data.DataSource;
-import edu.rit.codelanx.data.storage.field.DataField;
+import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
