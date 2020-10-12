@@ -3,13 +3,19 @@ package edu.rit.codelanx.cmd.cmds;
 import edu.rit.codelanx.cmd.*;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.loader.Query;
+import edu.rit.codelanx.data.state.types.Author;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Searches for books that may be purchased by the library and added to its
@@ -56,12 +62,12 @@ public class SearchCommand extends TextCommand {
      * Whenever this command is called, it will search books that can be
      * purchased by the library (and added to its collection).
      *
-     * @param executor  the client that is calling the command
-     * @param args title: title of the book
-     *                  authors: comma-separated list of authors of the book
-     *                  isbn: International Standard Book NUmber for the book
-     *                  publisher: name of the book's publisher
-     *                  sortorder: way to sort the results of the search
+     * @param executor the client that is calling the command
+     * @param args     title: title of the book
+     *                 authors: comma-separated list of authors of the book
+     *                 isbn: International Standard Book NUmber for the book
+     *                 publisher: name of the book's publisher
+     *                 sortorder: way to sort the results of the search
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
@@ -70,72 +76,81 @@ public class SearchCommand extends TextCommand {
                                   String... args) {
         //args == {title, authors, isbn, publisher, sort-order}
         //if optional and omitted, value is null
-        //if value is a list, value.split(TextCommand.TOKEN_DELIMITER) will provide the subarguments of that argument
+        //if value is a list, value.split(TextCommand.TOKEN_DELIMITER) will
+        // provide the subarguments of that argument
 
         //Checking that the amount of arguments is correct
         if (CommandUtils.numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {
             return ResponseFlag.FAILURE;
         }
         int numOfArgs = args.length;
-        String title, publisher, sortOrder, isbn = "";
+        String title = "", publisher = "", sortOrder = "", isbn = "";
         String[] authors = {};
-        if (numOfArgs == 1) {
-            title = args[0];
-            Optional<? extends Book> bookSearch =
-                    this.server.getDataStorage().ofLoaded(Book.class).filter(b -> b.getTitle().equals(title)).findAny();
-        }
+
         //Going through the args and assigning them to their variables
-        for (int i = 1; i < numOfArgs; i++) {
-            if (i == 1){
+        for (int i = 0; i < numOfArgs; i++) {
+            if (i == 0) {
+                title = args[0];
+            }
+            if (i == 1) {
                 authors = args[i].split(",");
-            } else if (i == 2){
+            } else if (i == 2) {
                 isbn = args[i];
-            } else if (i == 3){
+            } else if (i == 3) {
                 publisher = args[i];
-            } else if (i == 4){
+            } else if (i == 4) {
                 sortOrder = args[i];
             }
         }
-        this.server.getDataStorage().query(Book.class)
-                .isEqual(Book.Field.TITLE, "hohohoho")
-                .results();
-
-        /*//TODO: Search for the books in the database using the given args
-        List<Book> bookList = server.getDataStorage().query(Book.class)
-        .isEqual()
-         */
-
-        //TODO: Create a string of results and send it to the executor
-        /*StringBuilder result =
-                new StringBuilder(this.getName() + "," + bookList.size() + ",\n");
-        for (Book b : bookList){
-            result.append(b.getID()).append(",").append(b.getISBN()).append(
-                    ",").append(b.getTitle()).append(",").append(b.getAuthors()).append(",").append(b.getPublishDate()).append("\n");
-        }
-        executor.sendMessage(result);
-        */
 
         Query<Book> query = this.server.getBookStore().query(Book.class);
-        String isbnIsATakenVariableNameGDI = args[2];
-        if (args[2] != null && !args[2].equals("*")) {
-            query = query.isEqual(Book.Field.ISBN, args[2]);
+        //Going through the query fields and adding them if they are there
+        if (!title.isEmpty() && !title.equals("*")) {
+            query.isEqual(Book.Field.TITLE, title);
+        }
+        if (authors.length > 0 && !authors[0].equals("*")) {
+            for (String authorString : authors) {
+                Author a = this.server.getDataStorage().query(Author.class)
+                        .isEqual(Author.Field.NAME, authorString)
+                        .results()
+                        .findAny()
+                        .orElse(null);
+                if (a != null) {
+                    query.isEqual(Book.Field.ID, a.getID());
+                } else {
+                    return ResponseFlag.FAILURE;
+                }
+            }
+        }
+        if (!isbn.isEmpty() && !isbn.equals("*")) {
+            query.isEqual(Book.Field.ISBN, isbn);
+        }
+        if (!publisher.isEmpty() && !publisher.equals("*")) {
+            query.isEqual(Book.Field.PUBLISHER, publisher);
         }
 
+        List<Book> bookList =
+                query.results().collect(Collectors.toList());
 
-        //TODO: From spencer
+        if (sortOrder.equals("") || sortOrder.equals("*") || sortOrder.equals("title")) {
+            bookList.sort(Comparator.comparing(Book::getTitle));
+        } else {
+            bookList.sort(Comparator.comparing(Book::getPublishDate).reversed());
+        }
 
-        Book b = this.server.getBookStore().query(Book.class)
-                .isEqual(Book.Field.TITLE, "huck finn")
-                .results()
-                .findAny().orElse(null);
-        if (b == null) {
-            //TODO: book not found in the remote book store
-            return ResponseFlag.SUCCESS;
-        }
-        Book ours = b;//b.findOn(this.server.getDataStorage()); //TODO: Make a valid #findOn command
-        if (ours == null) {
-            this.server.getDataStorage().getRelativeStorage().addState(b);
-        }
-        return ResponseFlag.NOT_FINISHED;
+        bookList.stream()
+                .map(book -> {
+                    List<String> authorsForBook =
+                            book.getAuthors().map(Author::getName).collect(Collectors.toList());
+                    String authorOutput =
+                            this.buildResponse(authorsForBook.toString());
+                    authorOutput = "{" + authorOutput + "}";
+                    return this.buildResponse(book.getID(), book.getISBN(),
+                            book.getTitle(), authorOutput,
+                            DATE_FORMAT.format(book.getPublishDate()));
+                })
+                .forEach(executor::sendMessage);
+
+        return ResponseFlag.SUCCESS;
     }
 }

@@ -125,7 +125,6 @@ public class BorrowCommand extends TextCommand {
             }
         }
 
-        //TODO: Make sure that this is all that's needed
         for (Book b : books){
             b.checkout(v);
         }
