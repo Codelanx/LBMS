@@ -6,6 +6,7 @@ import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.util.Errors;
+import edu.rit.codelanx.util.Validate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -96,8 +97,10 @@ Add a prompt (e.g.):
                 this.message(server, new TextMessage(line)); //otherwise, send it off
             } catch (Throwable t) {
                 this.output.println("Server encountered error while processing latest request");
-                Errors.report(t);
                 if (this.output == System.out) {
+                    Errors.report(t, this.output);
+                } else {
+                    Errors.report(t);
                     System.err.flush();
                 }
             }
@@ -130,6 +133,7 @@ Add a prompt (e.g.):
     @Override
     public void renderState(State... states) {
         Arrays.stream(states)
+                .peek(s -> Validate.nonNull(s, "Cannot render a null state"))
                 .map(State::toFormattedText)
                 .forEach(this.output::println); //final code version
     }

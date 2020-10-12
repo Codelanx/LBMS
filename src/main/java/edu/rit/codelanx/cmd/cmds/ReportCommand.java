@@ -1,8 +1,11 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.types.*;
+import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.Library;
+import edu.rit.codelanx.data.state.types.Transaction;
+import edu.rit.codelanx.data.state.types.Visit;
+import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -11,13 +14,11 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
 import java.util.Collections;
+import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 
 /**
  * Reports various statistics about library usage for a period covering a
@@ -58,8 +59,7 @@ public class ReportCommand extends TextCommand {
      * usage of the library over a set period of time.
      *
      * @param executor  the client that is calling the command
-     * @param args report: name of the command to be run
-     *                  days: the number of days that the report should cover
+     * @param args      days: the number of days that the report should cover
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
@@ -107,21 +107,16 @@ public class ReportCommand extends TextCommand {
         Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
                 .results()
                 .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
-        Set<Transaction> paidFees = map.get(Transaction.Reason.PAYING_LATE_FEE.getReason());
-        Set<Transaction> lateFees = map.get(Transaction.Reason.CHARGING_LATE_FEE.getReason());
-        if (lateFees == null) {
-            lateFees = Collections.emptySet();
-        }
         int amountLateFees = map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();
-        int finesCollected = paidFees.size();
-        int outstandingFines = lateFees.size() - finesCollected;
+        int amountPaidFees = map.getOrDefault(Transaction.Reason.PAYING_LATE_FEE.getReason(), Collections.emptySet()).size();
+        int outstandingFines = amountLateFees - amountPaidFees;
 
         executor.sendMessage(DATE_FORMAT.format(curDate)
                 + "\n Number of Books: " + books
                 + "\n Number of Visitors: " + numVisitors
                 + "\n Average Length of Visit: " + avgOutput
                 + "\n Number of Books Purchased: " + numPurchased //test
-                + "\n Fines Collected: " + finesCollected
+                + "\n Fines Collected: " + amountPaidFees
                 + "\n Fines Outstanding: " + outstandingFines);
 
 

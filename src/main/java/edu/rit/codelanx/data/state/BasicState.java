@@ -17,7 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 /**
- * an abstract of type {@link State} that provides baseline functionalities of a state.
+ * A skeleton implementation for {@link State} which classes can extend from
+ *
  * @see State
  * @author sja9291  Spencer Alderman
  */
@@ -39,9 +40,11 @@ public abstract class BasicState implements State, FileSerializable {
         this.id = id;
         DataField<?> idField = this.getIDField();
         idField.initialize(this, id);
-        DataField<?>[] fields = this.getFieldsUnsafe(); //id field should be the first indexed field
-        for (int i = 0; i < fields.length; i++) { //but just in case we'll iterate them all
-            if (fields[i] == idField) continue;
+        //id field should be the first indexed field
+        DataField<?>[] fields = this.getFieldsUnsafe();
+        //but just in case we'll iterate them all
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i] == idField) continue; //skip id field
             fields[i].initialize(this, builder.getValue(fields[i]));
         }
     }

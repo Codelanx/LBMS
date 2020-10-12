@@ -35,7 +35,7 @@ public abstract class TextCommand implements Command {
         TIME_OF_DAY_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss")
                         .withLocale( Locale.US )
                         .withZone( ZoneId.systemDefault());
-        DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy:MM:dd")
+        DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd")
                 .withLocale( Locale.US )
                 .withZone( ZoneId.systemDefault());
     }
