@@ -88,51 +88,83 @@ public class Visit extends BasicState {
             VALUES = Author.Field.values();
         }
     }
-
+    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
     Visit(DataStorage storage, long id, StateBuilder<Visit> builder) {
         super(storage, id, builder);
     }
 
+    /** @see BasicState#BasicState(DataStorage, ResultSet) */
     public Visit(DataStorage storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
 
+    /** @see BasicState#BasicState(DataStorage, Map) */
     public Visit(DataStorage storage, Map<String, Object> file) {
         super(storage, file);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
     }
 
+    /**
+     * gets the visitor of this visit
+     * @return {@link Visitor}
+     */
     public Visitor getVisitor() {
         return Field.VISITOR.get(this);
     }
 
+    /**
+     * gets the time the visit begins
+     * @return begin time type {@link Instant}
+     */
     public Instant getStart() {
         return Field.START.get(this);
     }
 
+    /**
+     * gets the time the visit ends
+     * @return end time {@link Instant}
+     */
     public Instant getEnd() {
         return Field.END.get(this);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<Long> getIDField() {
         return Field.ID;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<? super Object>[] getFields() {
         return Field.values();
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Type getType() {
         return StateType.VISIT;
     }
 
+    /**
+     * creates a visit
+     * @return {@link StateBuilder} of Visit
+     */
     public static StateBuilder<Visit> create() {
         return StateBuilder.of(Visit::new, StateType.VISIT, Field.ID, Field.VALUES);
     }

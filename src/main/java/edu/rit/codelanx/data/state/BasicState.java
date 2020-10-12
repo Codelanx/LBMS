@@ -100,18 +100,32 @@ public abstract class BasicState implements State, FileSerializable {
         return this.id;
     }
 
+    /**
+     * gets the confidential data that should not be printed out
+     * @return {@link DataField} of sensitive data
+     */
     protected abstract DataField<? super Object>[] getFieldsUnsafe();
-    
+
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataStorage getLoader() {
         return this.loader;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public boolean isValid() {
         return this.valid.get();
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void unload() {
         this.valid.set(false);
@@ -122,6 +136,11 @@ public abstract class BasicState implements State, FileSerializable {
         }
     }
 
+    /**
+     * comapares two state object
+     * @param o-object to be compared to
+     * @return true if both equals.Otherwise, false.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -130,11 +149,19 @@ public abstract class BasicState implements State, FileSerializable {
         return this.getID() == that.getID();
     }
 
+    /**
+     * generates the hashcode based on state ID
+     * @return hashcode integer.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(this.getID());
     }
 
+    /**
+     * serialize files
+     * @return map of states
+     */
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> back = new LinkedHashMap<>();
