@@ -64,10 +64,39 @@ public interface State {
      * Interface for types
      */
     public interface Type {
+        /**
+         * gets the name of the state
+         * @return string name in lower case
+         */
         public String getName();
+        /**
+         * gets the state concrete type
+         * @param <T> extends {@link State}
+         * @return the type
+         */
         public <T extends State> Class<T> getConcreteType(); //bit dangerous doing it like this
+
+        /**
+         * calls (DataStorage storage, ResultSet set) constructor within the state
+         * @param storage-{@link DataStorage}
+         * @param set- {@link ResultSet}
+         * @return of type {@link State}
+         * @throws SQLException when errors occur
+         */
         public State mapFromSQL(DataStorage storage, ResultSet set) throws SQLException;
+        /**
+         * calls (DataStorage storage, Map<String, Object> file) constructor within the state
+         * @param storage-{@link DataStorage}
+         * @param file- in the form of a map
+         * @return of type {@link State}
+         * @throws SQLException when errors occur
+         */
         public State mapFromFile(DataStorage storage, Map<String, Object> file);
+
+        /**
+         * increments to get the next ID
+         * @return next ID of type long
+         */
         public long getNextID();
 
     }

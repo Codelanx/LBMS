@@ -16,19 +16,26 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 
 //There should only ever be one of these initially, but just in case there's multiple...
+/**
+ * A {@link BasicState} represents a Library
+ * @author sja9291  Spencer Alderman
+ * @author ahd6901  Amy Ha Do
+ * @see BasicState
+ */
 @StorageContainer("libraries")
 public class Library extends BasicState {
 
     private final AtomicBoolean open = new AtomicBoolean(false);
-
+    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
     Library(DataStorage loader, long id, StateBuilder<Library> builder) {
         super(loader, id, builder);
     }
 
+    /** @see BasicState#BasicState(DataStorage, ResultSet) */
     public Library(DataStorage loader, ResultSet sql) throws SQLException {
         super(loader, sql);
     }
-
+    /** @see BasicState#BasicState(DataStorage, Map) */
     public Library(DataStorage loader, Map<String, Object> file) {
         super(loader, file);
     }
@@ -49,26 +56,42 @@ public class Library extends BasicState {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<Long> getIDField() {
         return Field.ID;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataField<? super Object>[] getFields() {
         return Field.values();
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Type getType() {
         return StateType.LIBRARY;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public String toFormattedText() {
         String lib="Library ID: %s| Is Open: %b";
@@ -76,6 +99,9 @@ public class Library extends BasicState {
         return formatted_lib;
     }
 
+    /**
+     * opens the library so visitors can make visits
+     */
     public void open() {
         if (!this.open.compareAndSet(false, true)) {
             return; //already open
@@ -83,6 +109,9 @@ public class Library extends BasicState {
         //TODO: Anything else?
     }
 
+    /**
+     * closes the library, stops all visits
+     */
     public void close() {
         if (!this.open.compareAndSet(true, false)) {
             return; //already closed

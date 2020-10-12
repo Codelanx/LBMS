@@ -44,28 +44,45 @@ public enum StateType implements State.Type {
     public void setAutoIncrementID(long value) {
         this.autoID.set(value);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public long getNextID() {
         return this.autoID.getAndIncrement();
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public String getName() {
         return this.name().toLowerCase();
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     //warnings not suppressed here, this is actually a little dangerous
     @Override
     public <T extends State> Class<T> getConcreteType() {
         return (Class<T>) this.type; //will immediately CCE if invalidly used
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public State mapFromSQL(DataStorage storage, ResultSet set) throws SQLException {
         return this.sqlBuild.apply(storage, set);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public State mapFromFile(DataStorage storage, Map<String, Object> file) {
         return this.fileBuild.apply(storage, file);
