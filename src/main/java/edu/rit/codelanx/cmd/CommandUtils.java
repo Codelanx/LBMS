@@ -10,9 +10,11 @@ import java.util.Optional;
 
 import static java.lang.Long.parseLong;
 
+@Deprecated
 public enum CommandUtils {;
 
     //Checking that a visitorID is valid
+    @Deprecated
     public static Long checkVisitorID(String visitorID) {
         try {
             return parseLong(visitorID);
@@ -22,6 +24,7 @@ public enum CommandUtils {;
     }
 
     //Searching for a visitor in the database
+    @Deprecated
     public static Visitor findVisitor(Server<TextMessage> server,
                                       long visitorID) {
         Optional<? extends Visitor> visitorSearch = server.getDataStorage()
@@ -32,6 +35,7 @@ public enum CommandUtils {;
     }
 
     //Checking the amount of arguments for a command
+    @Deprecated
     public static UtilsFlag numArgs(String[] args, int expected) {
         if (args.length < expected) {
             return UtilsFlag.MISSINGPARAMS;
@@ -41,6 +45,7 @@ public enum CommandUtils {;
     }
 
     //Checking that the visitor isn't in the database already
+    @Deprecated
     public static UtilsFlag checkDuplicateVisitor(Server<TextMessage> server,
                                                   long visitorID) {
         long visitorCount = server.getDataStorage()
@@ -54,23 +59,7 @@ public enum CommandUtils {;
         }
     }
 
-    //Checks that a visitor is not already visiting the library
-    public static UtilsFlag alreadyVisiting(Server<TextMessage> server, long visitorID) {
-        Optional<? extends Visitor> visitorSearch = server.getDataStorage()
-                .ofLoaded(Visitor.class)
-                .filter(v -> v.getID() == visitorID)
-                .findAny();
-        if (visitorSearch.isPresent()) {
-            Visitor visitor = visitorSearch.get();
-            if (visitor.isVisiting()) {
-                return UtilsFlag.ALREADYVISITING;
-            } else {
-                return UtilsFlag.CORRECT;
-            }
-        }
-        return UtilsFlag.CORRECT;
-    }
-
+    @Deprecated
     public static List<Object> checkTimeAdvance(String[] args){
         String daysString = args[0];
         UtilsFlag resultFlag;
