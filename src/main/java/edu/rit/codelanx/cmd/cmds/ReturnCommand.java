@@ -39,7 +39,7 @@ public class ReturnCommand extends TextCommand {
      * {@inheritDoc}
      *
      * Command format (minus {@link #getName}): visitor-id, id[, id...]
-     * where id == book ID (requested output is request output I suppose)
+     * where id == book ID (requested output is requested output I suppose)
      *
      * @return {@inheritDoc}
      */
