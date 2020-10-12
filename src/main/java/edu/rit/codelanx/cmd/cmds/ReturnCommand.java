@@ -64,31 +64,37 @@ public class ReturnCommand extends TextCommand {
                 failed.add(args[i]);
             }
         }
-        //now, make sure the ids that we parsed are valid books
-        Set<Book> books = this.server.getDataStorage().query(Book.class)
-                .isAny(Book.Field.ID, ids)
-                .results()
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        if (books.size() != ids.size()) {
-            //don't have time for fast disjoint sets, so...
-            books.stream().map(Book::getID).forEach(ids::remove);
-            //ids is now a set of invalid ids
-            ids.stream().map(Object::toString).forEach(failed::add);
+        Set<Book> books = null;
+        if (failed.isEmpty()) {
+            //now, make sure the ids that we parsed are valid books
+            books = this.server.getDataStorage().query(Book.class)
+                    .isAny(Book.Field.ID, ids)
+                    .results()
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            if (books.size() != ids.size()) {
+                //don't have time for fast disjoint sets, so...
+                books.stream().map(Book::getID).forEach(ids::remove);
+                //ids is now a set of invalid ids
+                ids.stream().map(Object::toString).forEach(failed::add);
+            }
         }
-        //Make sure the books are actually checked out
-        List<Checkout> checkouts = this.server.getDataStorage().query(Checkout.class)
-                .isEqual(Checkout.Field.VISITOR, visitor)
-                .isAny(Checkout.Field.BOOK, books)
-                .isEqual(Checkout.Field.RETURNED, false)
-                .results()
-                .collect(Collectors.toList());
-        if (checkouts.size() != books.size()) {
-            //again, invalid books because they weren't checks out
-            checkouts.stream().map(Checkout::getBook).forEach(books::remove);
-            //books is now the invalid copies
-            books.stream().map(Book::getID)
-                    .map(Object::toString)
-                    .forEach(failed::add);
+        List<Checkout> checkouts = null;
+        if (failed.isEmpty()) {
+            //Make sure the books are actually checked out
+            checkouts = this.server.getDataStorage().query(Checkout.class)
+                    .isEqual(Checkout.Field.VISITOR, visitor)
+                    .isAny(Checkout.Field.BOOK, books)
+                    .isEqual(Checkout.Field.RETURNED, false)
+                    .results()
+                    .collect(Collectors.toList());
+            if (checkouts.size() != books.size()) {
+                //again, invalid books because they weren't checks out
+                checkouts.stream().map(Checkout::getBook).forEach(books::remove);
+                //books is now the invalid copies
+                books.stream().map(Book::getID)
+                        .map(Object::toString)
+                        .forEach(failed::add);
+            }
         }
         if (!failed.isEmpty()) {
             failed.add(0, this.getName());
@@ -112,7 +118,7 @@ public class ReturnCommand extends TextCommand {
         }
         fined.add(0, this.getName());
         fined.add(1, "overdue");
-        fined.add(2, String.format("$%.2d", sum.doubleValue()));
+        fined.add(2, String.format("$%.2f", sum.doubleValue()));
         executor.sendMessage(this.buildResponse(fined));
         return ResponseFlag.SUCCESS;
     }
