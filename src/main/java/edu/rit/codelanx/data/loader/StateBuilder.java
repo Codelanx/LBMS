@@ -65,7 +65,7 @@ public abstract class StateBuilder<T extends State> {
                 .allMatch(f -> this.getValue(f) != null);
     }
 
-    //TODO: HMMMM I DISLIKE THIS BEING HERE
+    //REFACTOR: HMMMM I DISLIKE THIS BEING HERE
     public void apply(PreparedStatement stmt) throws SQLException {
         for (int i = 1; i < this.fields.length; i++) {
             stmt.setObject(i, this.getValue(this.fields[i]));

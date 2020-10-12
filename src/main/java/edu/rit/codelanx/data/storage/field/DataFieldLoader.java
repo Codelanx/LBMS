@@ -43,7 +43,7 @@ public class DataFieldLoader<T> implements DataField<T> {
 
     @Override
     @SuppressWarnings("unchecked") //in this case, (T) will fast fail
-    public void initialize(State state, Object value) { //TODO: Need to ensure we're passing the right type here, or otherwise mapping it
+    public void initialize(State state, Object value) {
         if (value.getClass() != this.getType()) {
             throw new ClassCastException("Unsupported type: " + value.getClass());
         }

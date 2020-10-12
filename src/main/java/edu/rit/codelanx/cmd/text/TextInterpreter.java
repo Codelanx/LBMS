@@ -11,6 +11,7 @@ import edu.rit.codelanx.util.Validate;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+//TODO: Double check if commands need to disable when the library is closed
 public class TextInterpreter implements Interpreter {
 
     private final Server<TextMessage> server;

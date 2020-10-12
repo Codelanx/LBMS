@@ -28,6 +28,9 @@ public class Clock {
         this.currentTimer = TICKER.scheduleAtFixedRate(this::tick, 0, CHECK_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
+    //REFACTOR:
+    // This should utilize an #addEvent or some such, to completely
+    // decouple Clock from Library
     private void tick() {
         int hour = this.getCurrentTime().get(ChronoField.HOUR_OF_DAY);
         boolean shouldBeOpen = hour >= OPEN_TIME_24HR && hour < CLOSE_TIME_24HR;
@@ -36,14 +39,6 @@ public class Clock {
         } else if (!shouldBeOpen && this.open.compareAndSet(true, false)) {
             this.server.getDataStorage().ofLoaded(Library.class).forEach(Library::close);
         }
-    }
-
-    //TODO: Improvement upon the above, decouples the Library from Clock
-    //supply events to a queue
-    //place in PriorityQueue based on Duration, not instant or ChronoField
-    public void addEvent(ChronoField compare, int value, Runnable onEvent) {
-        Instant now = this.getCurrentTime();
-        int field = now.get(compare);
     }
 
     public void stop() {

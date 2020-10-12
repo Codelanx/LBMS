@@ -226,7 +226,7 @@ public class StateQuery<S extends State> implements Query<S> {
         if (cached != null) {
             return cached;
         }
-        //TODO: old code below, can be made faster by using keys properly etc
+        //REFACTOR: old code below, can be made faster by using keys properly etc
         return storage.streamLoaded()
                 .filter(s -> this.getComparisons().stream().allMatch(c -> c.test(s)));
     }
@@ -241,7 +241,7 @@ public class StateQuery<S extends State> implements Query<S> {
         if (stateType == null || container == null) {
             throw new IllegalArgumentException("Unknown container for type: " + type.getSimpleName());
         }
-        //TODO Think of a less hacky way to build an sql query here?
+        //REFACTOR: Think of a less hacky way to build an sql query here?
         String sqlWhere = this.getComparisons().stream()
                 .map(Comparison::toPreparedSQL)
                 .collect(Collectors.joining());

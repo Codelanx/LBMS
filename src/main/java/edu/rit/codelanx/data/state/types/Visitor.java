@@ -39,8 +39,6 @@ public class Visitor extends BasicState {
         public static final DataField<String> PHONE;
         public static final DataField<Instant> REGISTRATION_DATE;
         public static final DataField<BigDecimal> MONEY;
-        //TODO: What was the below used for?
-        //public static final DataField<Instant> REGISTRATION_DATE;
 
 
         private static final DataField<? super Object>[] VALUES;

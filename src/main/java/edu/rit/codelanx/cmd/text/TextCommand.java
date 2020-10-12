@@ -52,6 +52,8 @@ public abstract class TextCommand implements Command {
         }
     }
 
+    //REFACTOR: DRY the below 4 methods
+
     /**
      * Takes a list of tokens to put into a response, delimited by
      * {@link TextCommand#TOKEN_DELIMITER}
@@ -65,6 +67,14 @@ public abstract class TextCommand implements Command {
 
     protected String buildResponse(Iterable<?> tokens) {
         return String.join(TOKEN_DELIMITER, StreamSupport.stream(tokens.spliterator(), false).map(Objects::toString).toArray(String[]::new)) + ";";
+    }
+
+    protected String buildListResponse(Object... tokens) {
+        return "{" + String.join(TOKEN_DELIMITER, Arrays.stream(tokens).map(Objects::toString).toArray(String[]::new)) + "}";
+    }
+
+    protected String buildListResponse(Iterable<?> tokens) {
+        return "{" + String.join(TOKEN_DELIMITER, StreamSupport.stream(tokens.spliterator(), false).map(Objects::toString).toArray(String[]::new)) + "}";
     }
 
     /**

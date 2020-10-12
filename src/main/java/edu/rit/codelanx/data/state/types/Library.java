@@ -106,7 +106,6 @@ public class Library extends BasicState {
         if (!this.open.compareAndSet(false, true)) {
             return; //already open
         }
-        //TODO: Anything else?
     }
 
     /**

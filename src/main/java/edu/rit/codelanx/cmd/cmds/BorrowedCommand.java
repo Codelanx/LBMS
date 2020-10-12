@@ -33,7 +33,7 @@ public class BorrowedCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return null;
+        return TextParam.create().argument("visitor-id");
     }
 
     /**

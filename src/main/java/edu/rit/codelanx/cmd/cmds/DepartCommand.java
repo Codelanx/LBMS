@@ -34,7 +34,7 @@ public class DepartCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return null;
+        return TextParam.create().argument("visitor-id");
     }
 
     /**

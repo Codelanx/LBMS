@@ -35,7 +35,7 @@ public class ArriveCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return null;
+        return TextParam.create().argument("visitor-id");
     }
 
     /**

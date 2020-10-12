@@ -28,20 +28,6 @@ import java.util.stream.IntStream;
  */
 public class TextClient implements Client<TextMessage> {
 
-/*
-TODO:
-
-Console output:
-
-Add a prompt (e.g.):
-        $>> input
-        output
-        output
-        $>> input2
-        output
-        output
- */
-
     private static final String PROMPT_PREFIX = "$-> ";
     private final InputStreamReader reader;
     private final BufferedReader buffer;

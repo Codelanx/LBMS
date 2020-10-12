@@ -38,7 +38,7 @@ public class AdvanceCommand extends TextCommand {
     protected TextParam.Builder buildParams() {
         return TextParam.create()
                 .argument("number-of-days")
-                .argument("number-of-hours");
+                .argumentOptional("number-of-hours");
     }
 
     /**

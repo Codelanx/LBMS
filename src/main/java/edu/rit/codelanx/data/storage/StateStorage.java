@@ -28,7 +28,6 @@ public class StateStorage<T extends State> {
     }
 
     public T getByID(long id) {
-        //TODO: Load if not loaded
         return this.loaded.computeIfAbsent(id, k -> {
             return this.storage.getAdapter().loadState(k, this.concreteType);
         });
@@ -97,7 +96,7 @@ public class StateStorage<T extends State> {
 
     public void remove(T state) {
         this.storage.getAdapter().remove(state);
-        this.doRelease(state); //TODO: potential race condition
+        this.doRelease(state); //REFACTOR: potential race condition
     }
 
     public void forAllLoaded(Consumer<T> consumer) {

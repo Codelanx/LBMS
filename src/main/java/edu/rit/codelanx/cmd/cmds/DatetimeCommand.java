@@ -28,7 +28,7 @@ public class DatetimeCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return null;
+        return TextParam.create(); //no args
     }
 
     /**
