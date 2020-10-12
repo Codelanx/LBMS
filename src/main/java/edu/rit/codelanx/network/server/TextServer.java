@@ -18,7 +18,7 @@ import edu.rit.codelanx.network.io.TextMessage;
  */
 public class TextServer implements Server<TextMessage> {
 
-    private final DataSource storage; //stores the library's data
+    private final DataSource library; //stores the library's data
     private final DataSource bookStore; //stores the book store's data
     private final Clock clock; //passes the time
     private final Interpreter commands; //the command interpreter
@@ -28,7 +28,7 @@ public class TextServer implements Server<TextMessage> {
      */
     public TextServer() {
         this.bookStore = new LibraryData(BookStoreAdapter::new);
-        this.storage = new LibraryData();
+        this.library = new LibraryData();
         this.commands = new TextInterpreter(this);
         this.clock = new Clock(this);
     }
@@ -48,7 +48,7 @@ public class TextServer implements Server<TextMessage> {
      */
     @Override
     public DataSource getDataStorage() {
-        return this.storage;
+        return this.library;
     }
 
     /**
