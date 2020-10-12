@@ -214,7 +214,7 @@ public class Visitor extends BasicState {
         String formatted_visitor;
         //arrive| visitorID, visit date+ time
         visitor = "Visitor ID: %d| First name: %s| Last Name: %s| Address: " +
-                "%s| Phone: %s| Ballance: %.2f";
+                "%s| Phone: %s| Balance: %.2f";
         formatted_visitor = String.format(visitor, this.getID(),
                 this.getFirstName(), this.getLastName(),
                 this.getAddress(), this.getPhone(),
