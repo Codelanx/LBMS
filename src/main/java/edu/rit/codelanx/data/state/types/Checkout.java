@@ -37,7 +37,7 @@ public class Checkout extends BasicState {
             BOOK = DataField.buildFromState(Book.class, "book", Book.Field.ID, FM_IMMUTABLE, FM_KEY);
             AT = DataField.buildSimple(Instant.class, "at", FM_IMMUTABLE);
             RETURNED = DataField.buildSimple(Boolean.class, "returned");
-            VALUES = Author.Field.values();
+            VALUES = Field.values();
         }
     }
 

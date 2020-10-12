@@ -85,7 +85,7 @@ public class Visit extends BasicState {
             VISITOR = DataField.buildFromState(Visitor.class, "visitor", Visitor.Field.ID, FM_IMMUTABLE, FM_KEY);
             START = DataField.buildSimple(Instant.class, "start", FM_IMMUTABLE);
             END = DataField.buildSimple(Instant.class, "end", FM_IMMUTABLE);
-            VALUES = Author.Field.values();
+            VALUES = Field.values();
         }
     }
     /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */

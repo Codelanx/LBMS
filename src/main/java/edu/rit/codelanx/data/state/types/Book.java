@@ -47,7 +47,7 @@ public class Book extends BasicState {
                     .name("checked_out")
                     .giveDefaultValue(() -> 0)
                     .build();
-            VALUES = Book.Field.values();
+            VALUES = Field.values();
         }
     }
 

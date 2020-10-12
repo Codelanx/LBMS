@@ -36,7 +36,7 @@ public class Transaction extends BasicState {
             VISITOR = DataField.buildFromState(Visitor.class, "visitor", Visitor.Field.ID, FM_IMMUTABLE, FM_KEY);
             REASON = DataField.buildSimple(String.class, "reason", FM_IMMUTABLE, FM_KEY);
             MONEY = DataField.buildSimple(BigDecimal.class, "money", FM_IMMUTABLE);
-            VALUES = Library.Field.values();
+            VALUES = Field.values();
         }
     }
 
