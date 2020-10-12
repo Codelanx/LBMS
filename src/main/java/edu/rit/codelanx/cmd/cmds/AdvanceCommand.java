@@ -9,6 +9,7 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,7 +65,7 @@ public class AdvanceCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         //Checking that they have the correct amount of parameters
-        if (CommandUtils.numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {
+        if (args.length < 1 || args.length > 2) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "numberofdays,numberofhours;");
             return ResponseFlag.SUCCESS;
@@ -72,20 +73,35 @@ public class AdvanceCommand extends TextCommand {
 
         //Checking the hours and days passed in to make sure they are within
         // their parameters
-        List<Object> result = CommandUtils.checkTimeAdvance(args);
-        if (result.get(0) == UtilsFlag.ERROR) {
-            return ResponseFlag.FAILURE;
-        } else if (result.get(0) == UtilsFlag.INVALIDDAYS) {
-            executor.sendMessage(this.getName() + ",invalid-number-of-days," + args[0]);
+        int daysInt;
+        int hoursInt;
+        try {
+            daysInt = Integer.parseInt(args[0]);
+            if (daysInt > 7 || daysInt < 0){
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e){
+            executor.sendMessage(this.getName() + ",invalid-number-of" +
+                    "-days," + args[0]);
             return ResponseFlag.SUCCESS;
-        } else if (result.get(0) == UtilsFlag.INVALIDHOURS) {
-            executor.sendMessage(this.getName() + ",invalid-number-of-hours," + args[1]);
-            return ResponseFlag.SUCCESS;
-        } else {
-            server.getClock().advanceTime((int) result.get(1),
-                    (int) result.get(2));
         }
 
+        //Seeing if they gave us days and hours or just hours
+        if (args.length == 2) {
+            try {
+                hoursInt = Integer.parseInt(args[1]);
+                if (hoursInt > 23 || hoursInt < 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (NumberFormatException e) {
+                executor.sendMessage(this.getName() + ",invalid-number-of" +
+                        "-hours," + args[1]);
+                return ResponseFlag.SUCCESS;
+            }
+        } else {
+            hoursInt = 0;
+        }
+        this.server.getClock().advanceTime(daysInt, hoursInt);
         executor.sendMessage(this.getName() + "success;");
         return ResponseFlag.SUCCESS;
     }

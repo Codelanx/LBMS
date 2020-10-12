@@ -71,6 +71,7 @@ public class ArriveCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
+
         boolean visit =
                 visitor.startVisit(this.server.getDataStorage().getLibrary());
         executor.sendMessage(this.getName() + "," + visitor.getID() + "," +
