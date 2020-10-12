@@ -1,20 +1,13 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.cmd.CommandUtils;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
-import edu.rit.codelanx.cmd.UtilsFlag;
-
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.state.types.Visitor;
 import com.codelanx.commons.util.InputOutput;
-
-
-import static edu.rit.codelanx.cmd.CommandUtils.findVisitor;
-import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 
 /**
  * Begins a new visit by a registered visitor.
@@ -60,6 +53,7 @@ public class ArriveCommand extends TextCommand {
         if (args.length != 1) {
             executor.sendMessage(this.getName() + "," + "missing-parameters," +
                     "visitorID");
+            return ResponseFlag.SUCCESS;
         }
         Long id = InputOutput.parseLong(args[0]).orElse(null);
         if (id == null) {
@@ -76,6 +70,7 @@ public class ArriveCommand extends TextCommand {
             executor.sendMessage(this.getName() + ",duplicate;");
             return ResponseFlag.SUCCESS;
         }
+
         boolean visit =
                 visitor.startVisit(this.server.getDataStorage().getLibrary());
         executor.sendMessage(this.getName() + "," + visitor.getID() + "," +

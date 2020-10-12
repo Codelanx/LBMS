@@ -1,36 +1,50 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.CommandExecutor;
-import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 public class TestArriveCommand {
 
-    private @Mock Server<TextMessage> serv;
-    private @Mock CommandExecutor exec;
+    private @Mock
+    Server<TextMessage> servMock;
+    private @Mock
+    CommandExecutor execMock;
 
     @Test
-    public void testNoInput(){
-        ArriveCommand cmd = new ArriveCommand(this.serv);
-        Assertions.assertSame(ResponseFlag.MISSING_ARGS,
-                cmd.onExecute(this.exec));
-        Mockito.verify(this.exec).sendMessage("arrive,missing-parameters," +
-                "visitorID");
+    public void testNoInput() {
+        // TODO: Call arrive;
+        // Should send arrive,missing-params,visitor-id; and ResponseFlag.Success;
+        // Works
     }
 
     @Test
-    public void happyPath(){
-        String first = "Mark", last = "Anderson", address = "99 Route 66",
-                phone = "518-867-5309";
-        RegisterCommand cmd = new RegisterCommand(this.serv);
-        cmd.onExecute(this.exec, first, last, address, phone);
-        ArriveCommand arrcmd = new ArriveCommand(this.serv);
-        arrcmd.onExecute(this.exec, "1");
+    public void tooMuchInput() {
+        // TODO: Register new visitor, try to pass in 2 or more args to arrive
+        // Should send arrive,invalid-id; and ResponseFlag.Success
+        // Works
+    }
 
+    @Test
+    public void wrongIDType() {
+        // TODO: Register new visitor, try to pass in a letter as visitorID
+        // Should send ResponseFlag.Failure
+        // Works
+    }
+
+    @Test
+    public void duplicateVisitStart() {
+        // TODO: Register new visitor, call arrive,visitorID; twice
+        // Should send arrive,duplicate; and Responseflag.Success
+        // TODO: Doesn't Work
+    }
+
+    @Test
+    public void happyPath() {
+        //TODO: Register new visitor, call arrive,visitorID;
+        //Should send arrive,visitorID,time; and ResponseFlag.Success
+        //Works
     }
 }
