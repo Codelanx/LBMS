@@ -1,7 +1,5 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.cmd.CommandUtils;
-import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -9,8 +7,6 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * For simulation purposes. This method will advance the simulated date of the

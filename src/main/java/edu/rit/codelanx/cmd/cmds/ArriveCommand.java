@@ -70,10 +70,10 @@ public class ArriveCommand extends TextCommand {
             executor.sendMessage(this.getName() + ",duplicate;");
             return ResponseFlag.SUCCESS;
         }
-
-
-        boolean visit =
-                visitor.startVisit(this.server.getDataStorage().getLibrary());
+        if (!visitor.startVisit(this.server.getDataStorage().getLibrary())) {
+            executor.sendMessage(this.buildResponse("")); //TODO: Error for closed library
+            return ResponseFlag.SUCCESS;
+        }
         executor.sendMessage(this.getName() + "," + visitor.getID() + "," +
                 TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()) + ";");
         return ResponseFlag.SUCCESS;
