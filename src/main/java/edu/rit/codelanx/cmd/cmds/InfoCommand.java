@@ -46,7 +46,13 @@ public class InfoCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return null;
+
+        return TextParam.create()
+                .argument("title")
+                .argument("authors")
+                .argument("isbn")
+                .argument("publisher")
+                .argument("sort order");
     }
 
     /**
@@ -78,6 +84,15 @@ public class InfoCommand extends TextCommand {
             executor.sendMessage(this.getName() + ",missing-parameters");
             return ResponseFlag.SUCCESS;
         }
+
+        Book book = this.server.getDataStorage().query(Book.class).results().findAny().orElse(null);
+        book.getTotalCopies();
+        book.getID();
+        //book.get
+
+
+
+        /**
         // queries for books
         Book book = this.server.getDataStorage().query(Book.class).results().findAny().orElse(null);
 
@@ -110,7 +125,7 @@ public class InfoCommand extends TextCommand {
         } else {
             executor.sendMessage("incorrect parameter");
         }
-
+        */
 
 
 

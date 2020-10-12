@@ -9,6 +9,9 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +41,8 @@ public class ReportCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return null;
+        return TextParam.create()
+                .argument("days");
     }
 
     /**
@@ -62,52 +66,68 @@ public class ReportCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
-        if (numArgs(args, 1) == UtilsFlag. MISSINGPARAMS) {
-            executor.sendMessage(this.getName() + ",missing-parameters");
-            return ResponseFlag.SUCCESS;
+
+        //Gets the date
+        Instant curDate = Instant.now();
+
+        //Finds all the books
+        long books = this.server.getDataStorage().query(Book.class)
+                .results()
+                .count();
+
+
+        long numVisitors = this.server.getDataStorage().query(Visitor.class)
+                .results()
+                .count();
+
+
+        //Uses summary statistics to get the average time of visits
+        LongSummaryStatistics stats = this.server.getDataStorage().query(Visit.class) //Query<Visit>
+                .results() //Stream<Visit>
+                .map(visit -> Duration.between(visit.getStart(), visit.getEnd())) //Stream<Duration>
+                .mapToLong(Duration::getSeconds)//Stream<Long>
+                .summaryStatistics();
+        double average = stats.getAverage(); //average duration of a visit
+        long amount = stats.getCount(); //total number of visits
+        long total = stats.getSum(); //total amount of time over all visits combined
+
+
+
+        Duration avg = Duration.ofSeconds((long) average);
+        String avgOutput = this.formatDuration(avg);
+
+
+        //TODO get the number of books purchased
+        Library numPurchased = this.server.getDataStorage().ofLoaded(Library.class).findAny().orElse(null);
+        //executor.sendMessage();
+
+
+
+
+        Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
+                .results()
+                .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
+        Set<Transaction> paidFees = map.get(Transaction.Reason.PAYING_LATE_FEE.getReason());
+        Set<Transaction> lateFees = map.get(Transaction.Reason.CHARGING_LATE_FEE.getReason());
+        if (lateFees == null) {
+            lateFees = Collections.emptySet();
         }
+        int amountLateFees = map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();
+        int finesCollected = paidFees.size();
+        int outstandingFines = lateFees.size() - finesCollected;
 
-        else {
-
-
-            //Gets the date
-            executor.sendMessage(getName() + "," + server.getClock().getCurrentTime() + ";");
-
-            //Finds all the books
-            Book books = this.server.getDataStorage().ofLoaded(Book.class).findAny().orElse(null);
-            executor.renderState(books);
-
-            //TODO fix
-            Visitor numVisitors = this.server.getDataStorage().ofLoaded(Visitor.class).findAny().orElse(null);
-            executor.renderState(numVisitors);
-
-            // Gets the duration of all the visits
-            Visit avgVisit = this.server.getDataStorage().ofLoaded(Visit.class).findAny().orElse(null);
-            executor.sendMessage(avgVisit.getDuration().toString());
-
-            //TODO get the number of books purchased
-            Library numPurchased = this.server.getDataStorage().ofLoaded(Library.class).findAny().orElse(null);
-            //executor.sendMessage();
+        executor.sendMessage(DATE_FORMAT.format(curDate)
+                + "\n Number of Books: " + books
+                + "\n Number of Visitors: " + numVisitors
+                + "\n Average Length of Visit: " + avgOutput
+                + "\n Number of Books Purchased: " + numPurchased //test
+                + "\n Fines Collected: " + finesCollected
+                + "\n Fines Outstanding: " + outstandingFines);
 
 
-            Visitor getTotalFines = this.server.getDataStorage().ofLoaded(Visitor.class).findAny().orElse(null);
+        return ResponseFlag.SUCCESS;
 
 
-            Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
-                    .results()
-                    .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
-            Set<Transaction> paidFees = map.get(Transaction.Reason.PAYING_LATE_FEE.getReason());
-            Set<Transaction> lateFees = map.get(Transaction.Reason.CHARGING_LATE_FEE.getReason());
-            if (lateFees == null) {
-                lateFees = Collections.emptySet();
-            }
-            int amountLateFees = map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();
-            int finesCollected = paidFees.size();
-            int outstandingFines = lateFees.size() - finesCollected;
-
-            return ResponseFlag.NOT_FINISHED;
-
-        }
 
     }
 }
