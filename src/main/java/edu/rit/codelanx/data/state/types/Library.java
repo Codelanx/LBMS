@@ -25,6 +25,7 @@ import static edu.rit.codelanx.data.storage.field.FieldIndicies.*;
 @StorageContainer("libraries")
 public class Library extends BasicState {
 
+    //If the library is open to run commands / transactions / etc
     private final AtomicBoolean open = new AtomicBoolean(false);
     /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
     Library(DataStorage loader, long id, StateBuilder<Library> builder) {
