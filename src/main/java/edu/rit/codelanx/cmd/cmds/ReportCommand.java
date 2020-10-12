@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  * days is the number of days that the report should include in its
  * statistics. If omitted the report should include statistics using all data
  * collecting since the beginning of the simulation.
+ * @author cb4501 Connor Bonitati
  */
 public class ReportCommand extends TextCommand {
 

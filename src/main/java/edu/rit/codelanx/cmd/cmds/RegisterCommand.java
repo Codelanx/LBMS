@@ -19,6 +19,7 @@ import java.time.Instant;
  * last name is the last name of the visitor.
  * address is the address of the visitor.
  * phone-number is the phone number of the visitor.
+ * @author cb4501 Connor Bonitati
  */
 public class RegisterCommand extends TextCommand {
 

@@ -70,6 +70,7 @@ public class InfoCommand extends TextCommand {
      *                              database
      * @return a responseflag that says whether or not the command was
      * executed correctly
+     * @author cb4501 Connor Bonitati
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
@@ -113,7 +114,6 @@ public class InfoCommand extends TextCommand {
             }
 
         }
-        assert bookInfo != null;
         executor.sendMessage(numOfBooks
                 + "\n" + numOfCopies + bookInfo.getID() + bookInfo.getPublisher() + args[4]);
 

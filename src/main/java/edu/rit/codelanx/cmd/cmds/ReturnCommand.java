@@ -20,16 +20,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Returns a book that was previously checked out
- *
+ * Returns a book borrowed by a library visitor
+ * <p>
+ * Request Format: return,visitor ID, id[,ids]
+ * visitor ID is the unique 10-digit ID of the visitor.
+ * id is the ID of the book as assigned in the most recent borrowed books query.
+ * ids is a comma-separated list of the IDs of additional books to return.
  * @author sja9291  Spencer Alderman
  * @see TextCommand - for document link to LBMS command specification
  */
 public class ReturnCommand extends TextCommand {
 
     /**
-     * {@inheritDoc}
-     * @param server {@inheritDoc}
+     * Constructor for the RegisterCommand class
+     * @param server the server that the command is to be run on
      */
     public ReturnCommand(Server<TextMessage> server) {
         super(server);
@@ -50,26 +54,28 @@ public class ReturnCommand extends TextCommand {
                 .list("id", 1);
     }
 
+
     /**
-     * {@inheritDoc}
-     * @return {@inheritDoc}
+     * @link edu.rit.codelanx.cmd.Command#getName()
      */
     @Override
     public String getName() {
         return "return";
     }
 
+
     /**
-     * {@inheritDoc}
+     *  Whenever this command is called, it will return a borrowed book back to the library
+     *  using a visitors id
      *
-     * Returns any given {@link Book books} for a respective {@link Visitor}
-     * who had previously checked them out
-     *
-     * @param executor  {@inheritDoc}
-     * @param args      {@inheritDoc}
+     * @param executor the client that is calling the command
+     * @param args      visitor ID: the unique 10-digit ID of the visitor
+     *                  id: the ID of the book borrowed
+     *                  ids: the comma-separated list of the IDs od additional books to return
      *                  args[0] - Visitor ID
      *                  args[1+] - Book IDs to be returned
-     * @return {@inheritDoc}
+     * @return a responseflag that says whether or not the command was
+     * executed correctly
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
