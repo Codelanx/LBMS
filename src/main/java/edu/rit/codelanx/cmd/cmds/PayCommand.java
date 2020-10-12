@@ -97,7 +97,7 @@ public class PayCommand extends TextCommand {
 
         // pays the requested amount
         else {
-            library.transact(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
+            Transaction.perform(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
             return ResponseFlag.SUCCESS;
         }
 

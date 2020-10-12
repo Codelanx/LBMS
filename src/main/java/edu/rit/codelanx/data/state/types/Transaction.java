@@ -128,6 +128,36 @@ public class Transaction extends BasicState {
     }
 
     /**
+     * Façade method for performing a transaction, correctly logging and
+     * updating the money
+     *
+     * @param visitor The {@link Visitor} to update
+     * @param amount The amount to <em>add</em> to their balance
+     * @param reason A built-in {@link Reason} for consistency
+     * @return The new balance for the passed in {@code visitor}
+     * @see Visitor#updateMoney(BigDecimal, String)
+     */
+    public static BigDecimal perform(Visitor visitor, BigDecimal amount, Reason reason) {
+        return visitor.updateMoney(amount, reason.getReason());
+    }
+
+    /**
+     * Façade method for performing a transaction, correctly logging and
+     * updating the money
+     *
+     * @param library The {@link Library} to add to
+     * @param visitor The {@link Visitor} to remove from
+     * @param amount The amount to <em>add</em> to their balance
+     * @param reason A built-in {@link Reason} for consistency
+     * @return The new balance for the passed in {@code library}
+     * @see Visitor#updateMoney(BigDecimal, String)
+     */
+    public static BigDecimal perform(Library library, Visitor visitor, BigDecimal amount, Reason reason) {
+        visitor.updateMoney(amount.negate(), reason.getReason());
+        return library.updateMoney(amount);
+    }
+
+    /**
      * build the Transaction State
      * @return {@link StateBuilder} of {@link Transaction}
      */

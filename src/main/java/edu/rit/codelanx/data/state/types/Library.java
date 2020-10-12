@@ -122,23 +122,13 @@ public class Library extends BasicState {
                 .forAllLoaded(vis -> vis.endVisit(at));
     }
 
-    @Deprecated
-    public void transact(Visitor visitor, BigDecimal amount, String reason) {
-        visitor.updateMoney(amount, reason);
-        Field.MONEY.mutate(this, amount::add);
-    }
-
-    public void transact(Visitor visitor, BigDecimal amount, Transaction.Reason reason) {
-        visitor.updateMoney(amount, reason.getReason());
-        Field.MONEY.mutate(this, amount::add);
-    }
-
     public boolean isOpen() {
         return this.open.get();
     }
 
+    //adds the given amount to the current balance
     BigDecimal updateMoney(BigDecimal amount) {
-        return Field.MONEY.set(this, amount);
+        return Field.MONEY.mutate(this, amount::add);
     }
 
     public static StateBuilder<Library> create() {
