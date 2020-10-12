@@ -1,7 +1,7 @@
 package edu.rit.codelanx.data.state.types;
 
 import com.codelanx.commons.data.SQLBiFunction;
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.State;
@@ -29,13 +29,13 @@ public enum StateType implements State.Type {
     private final AtomicLong autoID = new AtomicLong(1);
     private final Class<? extends State> type;
     private final StateBuilder.StateConstructor<?> builderBlueprint;
-    private final SQLBiFunction<DataStorage, ResultSet, ? extends State> sqlBuild;
-    private final BiFunction<DataStorage, Map<String, Object>, ? extends State> fileBuild;
+    private final SQLBiFunction<DataSource, ResultSet, ? extends State> sqlBuild;
+    private final BiFunction<DataSource, Map<String, Object>, ? extends State> fileBuild;
 
     private <T extends State> StateType(Class<T> type,
                  StateBuilder.StateConstructor<T> blueprint,
-                 SQLBiFunction<DataStorage, ResultSet, T> sqlBuild,
-                 BiFunction<DataStorage, Map<String, Object>, T> fileBuild) {
+                 SQLBiFunction<DataSource, ResultSet, T> sqlBuild,
+                 BiFunction<DataSource, Map<String, Object>, T> fileBuild) {
         this.type = type;
         this.builderBlueprint = blueprint;
         this.sqlBuild = sqlBuild;
@@ -77,7 +77,7 @@ public enum StateType implements State.Type {
      * @return {@inheritDoc}
      */
     @Override
-    public State mapFromSQL(DataStorage storage, ResultSet set) throws SQLException {
+    public State mapFromSQL(DataSource storage, ResultSet set) throws SQLException {
         return this.sqlBuild.apply(storage, set);
     }
     /**
@@ -85,7 +85,7 @@ public enum StateType implements State.Type {
      * @return {@inheritDoc}
      */
     @Override
-    public State mapFromFile(DataStorage storage, Map<String, Object> file) {
+    public State mapFromFile(DataSource storage, Map<String, Object> file) {
         return this.fileBuild.apply(storage, file);
     }
 
@@ -93,7 +93,7 @@ public enum StateType implements State.Type {
         StateType st = (StateType) StateType.fromClassStrict(type);
         return new StateBuilder<R>(st, idField, fields) {
             @Override
-            protected R buildObj(DataStorage storage, long id) {
+            protected R buildObj(DataSource storage, long id) {
                 return ((StateConstructor<R>) st.builderBlueprint).create(storage, id, this);
             }
         };

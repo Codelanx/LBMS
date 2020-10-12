@@ -10,7 +10,7 @@ import edu.rit.codelanx.data.storage.RelativeStorage;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-public interface DataStorage { //DataSource
+public interface DataSource { //DataSource
 
     /**
      * Returns all of the stored data relevant to the given {@link Class type}.

@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.storage.StorageContainer;
@@ -88,18 +88,18 @@ public class Visit extends BasicState {
             VALUES = Field.values();
         }
     }
-    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
-    Visit(DataStorage storage, long id, StateBuilder<Visit> builder) {
+    /** @see BasicState#BasicState(DataSource, long, StateBuilder)  */
+    Visit(DataSource storage, long id, StateBuilder<Visit> builder) {
         super(storage, id, builder);
     }
 
-    /** @see BasicState#BasicState(DataStorage, ResultSet) */
-    public Visit(DataStorage storage, ResultSet sql) throws SQLException {
+    /** @see BasicState#BasicState(DataSource, ResultSet) */
+    public Visit(DataSource storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
 
-    /** @see BasicState#BasicState(DataStorage, Map) */
-    public Visit(DataStorage storage, Map<String, Object> file) {
+    /** @see BasicState#BasicState(DataSource, Map) */
+    public Visit(DataSource storage, Map<String, Object> file) {
         super(storage, file);
     }
 

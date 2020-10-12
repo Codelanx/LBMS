@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.state;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.storage.field.DataField;
 
 import java.sql.ResultSet;
@@ -40,9 +40,9 @@ public interface State {
 
     /**
      * gets the data storage
-     * @return {@link DataStorage}
+     * @return {@link DataSource}
      */
-    public DataStorage getLoader();
+    public DataSource getLoader();
 
     /**
      * checks for the validity of the current state
@@ -81,20 +81,20 @@ public interface State {
 
         /**
          * calls (DataStorage storage, ResultSet set) constructor within the state
-         * @param storage-{@link DataStorage}
+         * @param storage-{@link DataSource}
          * @param set- {@link ResultSet}
          * @return of type {@link State}
          * @throws SQLException when errors occur
          */
-        public State mapFromSQL(DataStorage storage, ResultSet set) throws SQLException;
+        public State mapFromSQL(DataSource storage, ResultSet set) throws SQLException;
         /**
          * calls (DataStorage storage, Map<String, Object> file) constructor within the state
-         * @param storage-{@link DataStorage}
+         * @param storage-{@link DataSource}
          * @param file- in the form of a map
          * @return of type {@link State}
          * @throws SQLException when errors occur
          */
-        public State mapFromFile(DataStorage storage, Map<String, Object> file);
+        public State mapFromFile(DataSource storage, Map<String, Object> file);
 
         /**
          * increments to get the next ID

@@ -1,6 +1,6 @@
 package edu.rit.codelanx.util;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.types.Book;
 
@@ -21,7 +21,7 @@ public enum BookParser {;
 
     //9780674028678,"The Race Between Education and Technology",{Claudia Dale Goldin, Lawrence F. Katz},"Harvard University Press",2008,488
     //9781591987628,"Build-a-Skill Instant Books: Synonyms and Antonyms, Gr. Kâ€“1, eBook",{Trisha Callella},"Creative Teaching Press",2007-01-01,32
-    public static List<Book> parseBooks(DataStorage storage) {
+    public static List<Book> parseBooks(DataSource storage) {
         List<Book> back = new ArrayList<>();
         try (InputStreamReader isr = new InputStreamReader(BookParser.class.getResourceAsStream(BOOKS_FILE));
              BufferedReader br = new BufferedReader(isr)) {

@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.storage.StorageContainer;
@@ -43,16 +43,16 @@ public class Transaction extends BasicState {
             VALUES = Field.values();
         }
     }
-    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
-    Transaction(DataStorage storage, long id, StateBuilder<Transaction> builder) {
+    /** @see BasicState#BasicState(DataSource, long, StateBuilder)  */
+    Transaction(DataSource storage, long id, StateBuilder<Transaction> builder) {
         super(storage, id, builder);
     }
-    /** @see BasicState#BasicState(DataStorage, ResultSet) */
-    public Transaction(DataStorage storage, ResultSet sql) throws SQLException {
+    /** @see BasicState#BasicState(DataSource, ResultSet) */
+    public Transaction(DataSource storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
-    /** @see BasicState#BasicState(DataStorage, Map) */
-    public Transaction(DataStorage storage, Map<String, Object> file) {
+    /** @see BasicState#BasicState(DataSource, Map) */
+    public Transaction(DataSource storage, Map<String, Object> file) {
         super(storage, file);
     }
 

@@ -3,10 +3,9 @@ package edu.rit.codelanx.data.loader;
 import com.codelanx.commons.data.ResultRow;
 import com.codelanx.commons.data.SQLDataType;
 import com.codelanx.commons.data.SQLResponse;
-import com.codelanx.commons.data.types.MySQL;
 import com.codelanx.commons.util.cache.Cache;
 import edu.rit.codelanx.ConfigKey;
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.StateType;
 import edu.rit.codelanx.data.state.types.Library;
@@ -26,9 +25,9 @@ public class SQLStorageAdapter implements StorageAdapter {
 
     private final Cache<? extends SQLDataType> db;
     private final Library lib;
-    private final DataStorage storage;
+    private final DataSource storage;
 
-    public SQLStorageAdapter(DataStorage storage) {
+    public SQLStorageAdapter(DataSource storage) {
         this.storage = storage;
         this.db = ConfigKey.newDBCache();
         SQLResponse<Library> resp = this.db.get().query(rs -> {
@@ -85,7 +84,7 @@ public class SQLStorageAdapter implements StorageAdapter {
     }
 
     @Override
-    public DataStorage getAdaptee() {
+    public DataSource getAdaptee() {
         return this.storage;
     }
 

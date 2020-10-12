@@ -2,7 +2,7 @@ package edu.rit.codelanx.data.state;
 
 import com.codelanx.commons.data.FileSerializable;
 import com.codelanx.commons.data.SQLFunction;
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.storage.field.DataField;
@@ -26,16 +26,16 @@ public abstract class BasicState implements State, FileSerializable {
 
     private final AtomicBoolean valid = new AtomicBoolean(false);
     private final long id;
-    private final DataStorage loader;
+    private final DataSource loader;
     private final Map<DataField<?>, Object> values = new HashMap<>();
 
     /**
      * construct the state from State buil
-     * @param loader {@link DataStorage}
+     * @param loader {@link DataSource}
      * @param id long type
      * @param builder {@link StateBuilder}
      */
-    public BasicState(DataStorage loader, long id, StateBuilder<?> builder) {
+    public BasicState(DataSource loader, long id, StateBuilder<?> builder) {
         this.loader = loader;
         this.id = id;
         DataField<?> idField = this.getIDField();
@@ -51,27 +51,27 @@ public abstract class BasicState implements State, FileSerializable {
 
     /**
      * constructs the state from file input.
-     * @param loader {@link DataStorage}
+     * @param loader {@link DataSource}
      * @param file- to get input from
      */
-    public BasicState(DataStorage loader, Map<String, Object> file) {
+    public BasicState(DataSource loader, Map<String, Object> file) {
         this.loader = loader;
         this.id = this.init(loader, f -> InputMapper.getObject(file, f.getName()));
     }
 
     /**
      * takes input from sql database and constructs the state
-     * @param loader {@link DataStorage}
+     * @param loader {@link DataSource}
      * @param sql {@link ResultSet}
      * @throws SQLException when errors occur
      */
-    public BasicState(DataStorage loader, ResultSet sql) throws SQLException {
+    public BasicState(DataSource loader, ResultSet sql) throws SQLException {
         this.loader = loader;
         this.id = this.initSQL(loader, f -> InputMapper.getObject(f.getType(), sql, f.getName()));
     }
 
     //helper method to initialize the id/data fields
-    private long initSQL(DataStorage loader, SQLFunction<DataField<?>, Object> mapper) throws SQLException {
+    private long initSQL(DataSource loader, SQLFunction<DataField<?>, Object> mapper) throws SQLException {
         long id = InputMapper.toType(Long.class, mapper.apply(this.getIDField()));
         for (DataField<? super Object> f : this.getFieldsUnsafe()) {
             if (f == (DataField<?>) this.getIDField()) continue;
@@ -83,7 +83,7 @@ public abstract class BasicState implements State, FileSerializable {
     }
 
     //same as #initSQL without the SQLException
-    private long init(DataStorage loader, Function<DataField<?>, Object> mapper) {
+    private long init(DataSource loader, Function<DataField<?>, Object> mapper) {
         try {
             return this.initSQL(loader, mapper::apply);
         } catch (SQLException ex) { //Should never happen - mapper::apply does not produce SQLException
@@ -111,7 +111,7 @@ public abstract class BasicState implements State, FileSerializable {
      * @return {@inheritDoc}
      */
     @Override
-    public DataStorage getLoader() {
+    public DataSource getLoader() {
         return this.loader;
     }
     /**

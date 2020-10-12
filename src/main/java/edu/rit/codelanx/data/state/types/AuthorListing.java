@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.storage.StorageContainer;
@@ -42,16 +42,16 @@ public class AuthorListing extends BasicState {
             VALUES = Field.values();
         }
     }
-    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
-    AuthorListing(DataStorage loader, long id, StateBuilder<AuthorListing> builder) {
+    /** @see BasicState#BasicState(DataSource, long, StateBuilder)  */
+    AuthorListing(DataSource loader, long id, StateBuilder<AuthorListing> builder) {
         super(loader, id, builder);
     }
-    /** @see BasicState#BasicState(DataStorage, ResultSet) */
-    public AuthorListing(DataStorage loader, ResultSet sql) throws SQLException {
+    /** @see BasicState#BasicState(DataSource, ResultSet) */
+    public AuthorListing(DataSource loader, ResultSet sql) throws SQLException {
         super(loader, sql);
     }
-    /** @see BasicState#BasicState(DataStorage, Map) */
-    public AuthorListing(DataStorage loader, Map<String, Object> file) {
+    /** @see BasicState#BasicState(DataSource, Map) */
+    public AuthorListing(DataSource loader, Map<String, Object> file) {
         super(loader, file);
     }
 

@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.storage.StorageContainer;
@@ -46,16 +46,16 @@ public class Checkout extends BasicState {
             VALUES = Field.values();
         }
     }
-    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
-    Checkout(DataStorage storage, long id, StateBuilder<Checkout> builder) {
+    /** @see BasicState#BasicState(DataSource, long, StateBuilder)  */
+    Checkout(DataSource storage, long id, StateBuilder<Checkout> builder) {
         super(storage, id, builder);
     }
-    /** @see BasicState#BasicState(DataStorage, ResultSet) */
-    public Checkout(DataStorage storage, ResultSet sql) throws SQLException {
+    /** @see BasicState#BasicState(DataSource, ResultSet) */
+    public Checkout(DataSource storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
-    /** @see BasicState#BasicState(DataStorage, Map) */
-    public Checkout(DataStorage storage, Map<String, Object> file) {
+    /** @see BasicState#BasicState(DataSource, Map) */
+    public Checkout(DataSource storage, Map<String, Object> file) {
         super(storage, file);
     }
 

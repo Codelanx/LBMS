@@ -1,9 +1,8 @@
 package edu.rit.codelanx.data.loader;
 
 import com.codelanx.commons.data.SQLBiFunction;
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.state.types.StateType;
 import edu.rit.codelanx.data.storage.field.DataField;
 import edu.rit.codelanx.util.Errors;
 
@@ -15,7 +14,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public enum InputMapper {;
 
@@ -59,11 +57,11 @@ public enum InputMapper {;
         return ((Timestamp) value).toInstant();
     }
 
-    public static <T extends State> T toState(DataStorage storage, Class<T> type, long id) {
+    public static <T extends State> T toState(DataSource storage, Class<T> type, long id) {
         return storage.getRelativeStorage().getStateStorage(type).getByID(id);
     }
 
-    public static <T extends State, E> T toState(DataStorage storage, Class<T> type, DataField<E> field, E value) {
+    public static <T extends State, E> T toState(DataSource storage, Class<T> type, DataField<E> field, E value) {
         if (!field.isUnique()) {
             throw new IllegalStateException("Cannot map a to a unique State based on the provided field, field is not unique");
         }
@@ -81,7 +79,7 @@ public enum InputMapper {;
         return (T) value; //will CCE if mismatched at this point
     }
 
-    public static <T> T toTypeOrState(DataStorage storage, Class<T> type, Object value) {
+    public static <T> T toTypeOrState(DataSource storage, Class<T> type, Object value) {
         if (InputMapper.isStateClass(type)) {
             if (!(value instanceof Number)) {
                 throw new IllegalArgumentException("Cannot interpret ID for " + type.getSimpleName() + ": " + value);

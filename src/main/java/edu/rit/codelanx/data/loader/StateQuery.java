@@ -1,7 +1,7 @@
 package edu.rit.codelanx.data.loader;
 
 import com.codelanx.commons.data.SQLBiFunction;
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.StateType;
 import edu.rit.codelanx.data.storage.StateStorage;
@@ -22,12 +22,12 @@ import java.util.stream.StreamSupport;
 
 public class StateQuery<S extends State> implements Query<S> {
 
-    private final DataStorage storage;
+    private final DataSource storage;
     private final Class<S> type;
     private final List<Comparison<?>> comparisons = new ArrayList<>();
     private final List<Predicate<S>> postFixes = new ArrayList<>();
 
-    public StateQuery(DataStorage storage, Class<S> type) {
+    public StateQuery(DataSource storage, Class<S> type) {
         this.storage = storage;
         this.type = type;
     }

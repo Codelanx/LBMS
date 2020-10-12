@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.storage.field;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.StateType;
@@ -37,7 +37,7 @@ public interface DataField<T> {
 
     public Stream<? extends State> findStatesByValue(T key);
 
-    default public T getFromSQL(ResultSet sql, DataStorage from) throws SQLException {
+    default public T getFromSQL(ResultSet sql, DataSource from) throws SQLException {
         Class<T> type = this.getType();
         return InputMapper.toTypeOrState(from, type, InputMapper.getObject(type, sql, this.getName()));
     }

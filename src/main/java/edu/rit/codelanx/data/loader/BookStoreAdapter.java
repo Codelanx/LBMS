@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.loader;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Author;
 import edu.rit.codelanx.data.state.types.AuthorListing;
@@ -24,7 +24,7 @@ public class BookStoreAdapter extends FFStorageAdapter {
         KNOWN_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(Author.class, AuthorListing.class, Book.class)));
     }
 
-    public BookStoreAdapter(DataStorage storage) {
+    public BookStoreAdapter(DataSource storage) {
         super(storage, "json"); //TODO: this is invalid, needs a proper valuue / fix for the parent
     }
 

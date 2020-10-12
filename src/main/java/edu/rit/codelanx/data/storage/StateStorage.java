@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.storage;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.storage.field.DataField;
 
@@ -19,9 +19,9 @@ public class StateStorage<T extends State> {
     private final Map<Long, T> loaded = new WeakHashMap<>();
     private final State.Type type;
     private final Class<T> concreteType;
-    private final DataStorage storage;
+    private final DataSource storage;
 
-    public StateStorage(State.Type type, DataStorage storage) {
+    public StateStorage(State.Type type, DataSource storage) {
         this.type = type;
         this.concreteType = this.type.getConcreteType();
         this.storage = storage;

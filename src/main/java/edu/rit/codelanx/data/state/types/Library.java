@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.storage.StorageContainer;
@@ -27,17 +27,17 @@ public class Library extends BasicState {
 
     //If the library is open to run commands / transactions / etc
     private final AtomicBoolean open = new AtomicBoolean(false);
-    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
-    Library(DataStorage loader, long id, StateBuilder<Library> builder) {
+    /** @see BasicState#BasicState(DataSource, long, StateBuilder)  */
+    Library(DataSource loader, long id, StateBuilder<Library> builder) {
         super(loader, id, builder);
     }
 
-    /** @see BasicState#BasicState(DataStorage, ResultSet) */
-    public Library(DataStorage loader, ResultSet sql) throws SQLException {
+    /** @see BasicState#BasicState(DataSource, ResultSet) */
+    public Library(DataSource loader, ResultSet sql) throws SQLException {
         super(loader, sql);
     }
-    /** @see BasicState#BasicState(DataStorage, Map) */
-    public Library(DataStorage loader, Map<String, Object> file) {
+    /** @see BasicState#BasicState(DataSource, Map) */
+    public Library(DataSource loader, Map<String, Object> file) {
         super(loader, file);
     }
 

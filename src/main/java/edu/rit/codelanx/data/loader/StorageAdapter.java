@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.loader;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.state.types.StateType;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 /**
- * An adapter for a {@link DataStorage} backed by some specific file or service
+ * An adapter for a {@link DataSource} backed by some specific file or service
  *
  * @author sja9291  Spencer Alderman
  */
@@ -36,8 +36,8 @@ public interface StorageAdapter {
     public <R extends State> R insert(StateBuilder<R> builder);
 
     /**
-     * Adds a state loaded from an external {@link DataStorage}, and adds it to
-     * the {@link DataStorage} backed by this adapter
+     * Adds a state loaded from an external {@link DataSource}, and adds it to
+     * the {@link DataSource} backed by this adapter
      *
      * @param external The {@link State} to insert into our source data
      * @param <R> The type of {@link State} to insert
@@ -67,13 +67,13 @@ public interface StorageAdapter {
     public void saveAll() throws IOException;
 
     /**
-     * Returns the {@link DataStorage} that this adapter is applied to
+     * Returns the {@link DataSource} that this adapter is applied to
      *
      * REFACTOR: Better descriptions
      *
-     * @return The {@link DataStorage} that we supply data for
+     * @return The {@link DataSource} that we supply data for
      */
-    public DataStorage getAdaptee();
+    public DataSource getAdaptee();
 
     /**
      * Loads the given states from storage if necessary, returning all valid

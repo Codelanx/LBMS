@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.storage.StorageContainer;
@@ -58,12 +58,12 @@ public class Book extends BasicState {
             VALUES = Field.values();
         }
     }
-    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
-    Book(DataStorage adapter, long id, StateBuilder<Book> builder) {
+    /** @see BasicState#BasicState(DataSource, long, StateBuilder)  */
+    Book(DataSource adapter, long id, StateBuilder<Book> builder) {
         super(adapter, id, builder);
     }
-    /** @see BasicState#BasicState(DataStorage, ResultSet) */
-    public Book(DataStorage storage, ResultSet sql) throws SQLException {
+    /** @see BasicState#BasicState(DataSource, ResultSet) */
+    public Book(DataSource storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
 
@@ -95,8 +95,8 @@ public class Book extends BasicState {
         Field.TOTAL_COPIES.mutate(this, old -> {return (old + count);});
     }
 
-    /** @see BasicState#BasicState(DataStorage, Map) */
-    public Book(DataStorage storage, Map<String, Object> file) {
+    /** @see BasicState#BasicState(DataSource, Map) */
+    public Book(DataSource storage, Map<String, Object> file) {
         super(storage, file);
     }
 

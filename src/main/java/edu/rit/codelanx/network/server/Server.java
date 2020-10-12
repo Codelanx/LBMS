@@ -1,6 +1,6 @@
 package edu.rit.codelanx.network.server;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.util.Clock;
 import edu.rit.codelanx.cmd.Interpreter;
@@ -28,26 +28,26 @@ public interface Server<T extends Message<?>> extends Messenger<T> {
     public Interpreter getInterpreter();
 
     /**
-     * Returns the {@link DataStorage} which holds all of the library's
+     * Returns the {@link DataSource} which holds all of the library's
      * data, relevant to customers and books owned within the library
      *
-     * @return A {@link DataStorage} responsible for holding the library's
+     * @return A {@link DataSource} responsible for holding the library's
      *         current data
-     * @see DataStorage
+     * @see DataSource
      */
-    public DataStorage getDataStorage();
+    public DataSource getDataStorage();
 
     /**
-     * Returns the {@link DataStorage} which refences the "Book Store", aka
+     * Returns the {@link DataSource} which refences the "Book Store", aka
      * an emulated online shop which you can query in a similar fashion to
      * {@link #getDataStorage()}, and which provides the available books to
      * be added to a {@link Library}, as they are represented in the
      * {@code books.txt} resource
      *
-     * @return A {@link DataStorage} responsible for parsing and providing
+     * @return A {@link DataSource} responsible for parsing and providing
      *         references to available data to add to our {@link Library}
-     * @see DataStorage
+     * @see DataSource
      */
-    public DataStorage getBookStore();
+    public DataSource getBookStore();
     public Clock getClock();
 }

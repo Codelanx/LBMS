@@ -1,8 +1,7 @@
 package edu.rit.codelanx.data.loader;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
-import edu.rit.codelanx.data.state.types.StateType;
 import edu.rit.codelanx.data.storage.field.DataField;
 
 import java.sql.PreparedStatement;
@@ -47,7 +46,7 @@ public abstract class StateBuilder<T extends State> {
         return this;
     }
 
-    public final T build(DataStorage storage) {
+    public final T build(DataSource storage) {
         if (!this.isValid()) {
             String missing = Arrays.stream(this.fields)
                     .filter(f -> f != this.idField)
@@ -72,12 +71,12 @@ public abstract class StateBuilder<T extends State> {
         }
     }
 
-    protected abstract T buildObj(DataStorage storage, long id);
+    protected abstract T buildObj(DataSource storage, long id);
 
     public static <T extends State> StateBuilder<T> of(StateConstructor<T> constructor, State.Type type, DataField<Long> idField, DataField<?>... fields) {
         return new StateBuilder<T>(type, idField, fields) {
             @Override
-            protected T buildObj(DataStorage storage, long id) {
+            protected T buildObj(DataSource storage, long id) {
                 return constructor.create(storage, id, this);
             }
         };
@@ -85,7 +84,7 @@ public abstract class StateBuilder<T extends State> {
 
     @FunctionalInterface
     public interface StateConstructor<T extends State> {
-        public T create(DataStorage storage, long id, StateBuilder<T> builder);
+        public T create(DataSource storage, long id, StateBuilder<T> builder);
     }
 
 }

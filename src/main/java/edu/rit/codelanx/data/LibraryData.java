@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class LibraryData implements DataStorage {
+public class LibraryData implements DataSource {
 
     private final Map<Class<? extends State>, Map<Long, State>> data = new HashMap<>();
     private final StorageAdapter adapter;
@@ -28,11 +28,11 @@ public class LibraryData implements DataStorage {
         this(Optional.ofNullable(ConfigKey.STORAGE_TYPE.as(String.class))
                     .filter(s -> !"sql".equalsIgnoreCase(s))
                     //hackaround with a type witness
-                    .<Function<DataStorage, StorageAdapter>>map(s -> data -> new FFStorageAdapter(data, s))
+                    .<Function<DataSource, StorageAdapter>>map(s -> data -> new FFStorageAdapter(data, s))
                     .orElse(SQLStorageAdapter::new));
     }
 
-    public LibraryData(Function<DataStorage, StorageAdapter> adapter) {
+    public LibraryData(Function<DataSource, StorageAdapter> adapter) {
         this.adapter = adapter.apply(this);
         this.relative = new RelativeStorage(this);
     }

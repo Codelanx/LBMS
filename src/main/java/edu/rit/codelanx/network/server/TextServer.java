@@ -6,7 +6,7 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.data.LibraryData;
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
 
@@ -18,8 +18,8 @@ import edu.rit.codelanx.network.io.TextMessage;
  */
 public class TextServer implements Server<TextMessage> {
 
-    private final DataStorage storage; //stores the library's data
-    private final DataStorage bookStore; //stores the book store's data
+    private final DataSource storage; //stores the library's data
+    private final DataSource bookStore; //stores the book store's data
     private final Clock clock; //passes the time
     private final Interpreter commands; //the command interpreter
 
@@ -47,7 +47,7 @@ public class TextServer implements Server<TextMessage> {
      * @return {@inheritDoc}
      */
     @Override
-    public DataStorage getDataStorage() {
+    public DataSource getDataStorage() {
         return this.storage;
     }
 
@@ -56,7 +56,7 @@ public class TextServer implements Server<TextMessage> {
      * @return {@inheritDoc}
      */
     @Override
-    public DataStorage getBookStore() {
+    public DataSource getBookStore() {
         return this.bookStore;
     }
 

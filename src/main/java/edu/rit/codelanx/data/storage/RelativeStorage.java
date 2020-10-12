@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.storage;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.StateType;
 
@@ -10,9 +10,9 @@ import java.util.Map;
 public class RelativeStorage {
 
     private final Map<Class<?>, StateStorage<?>> states = new HashMap<>();
-    private final DataStorage storage;
+    private final DataSource storage;
 
-    public RelativeStorage(DataStorage storage) {
+    public RelativeStorage(DataSource storage) {
         this.storage = storage;
         for (State.Type type : StateType.values()) {
             this.states.put(type.getConcreteType(), new StateStorage<>(type, storage));

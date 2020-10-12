@@ -4,7 +4,7 @@ import com.codelanx.commons.data.FileDataType;
 import com.codelanx.commons.data.types.Json;
 import com.codelanx.commons.data.types.XML;
 import edu.rit.codelanx.ConfigKey;
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.storage.StateStorage;
@@ -26,15 +26,15 @@ public class FFStorageAdapter implements StorageAdapter {
     private static final String DATA_FILE_NAME = "data";
     private static final Pattern FF_DATA_SEARCH = Pattern.compile(DATA_FILE_NAME + "\\d*\\.(json|yml)");
     private final Class<? extends FileDataType> type;
-    private final DataStorage storage;
+    private final DataSource storage;
     private volatile Library library;
 
-    protected FFStorageAdapter(DataStorage storage) {
+    protected FFStorageAdapter(DataSource storage) {
         this.storage = storage;
         this.type = null;
     }
 
-    public FFStorageAdapter(DataStorage storage, String type) {
+    public FFStorageAdapter(DataSource storage, String type) {
         this.type = FileDataType.fromString(type);
         this.storage = storage;
         if (this.type == null) {
@@ -45,7 +45,7 @@ public class FFStorageAdapter implements StorageAdapter {
     }
 
     @Override
-    public DataStorage getAdaptee() {
+    public DataSource getAdaptee() {
         return this.storage;
     }
 

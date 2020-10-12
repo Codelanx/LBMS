@@ -1,6 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
-import edu.rit.codelanx.data.DataStorage;
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.storage.StorageContainer;
@@ -8,7 +8,6 @@ import edu.rit.codelanx.data.storage.field.DataField;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -37,18 +36,18 @@ public class Author extends BasicState {
             VALUES = Field.values();
         }
     }
-    /** @see BasicState#BasicState(DataStorage, long, StateBuilder)  */
-    Author(DataStorage storage, long id, StateBuilder<Author> author) {
+    /** @see BasicState#BasicState(DataSource, long, StateBuilder)  */
+    Author(DataSource storage, long id, StateBuilder<Author> author) {
         super(storage, id, author);
     }
 
-    /** @see BasicState#BasicState(DataStorage, ResultSet) */
-    public Author(DataStorage storage, ResultSet sql) throws SQLException {
+    /** @see BasicState#BasicState(DataSource, ResultSet) */
+    public Author(DataSource storage, ResultSet sql) throws SQLException {
         super(storage, sql);
     }
 
-    /** @see BasicState#BasicState(DataStorage, Map) */
-    public Author(DataStorage storage, Map<String, Object> file) {
+    /** @see BasicState#BasicState(DataSource, Map) */
+    public Author(DataSource storage, Map<String, Object> file) {
         super(storage, file);
     }
 
