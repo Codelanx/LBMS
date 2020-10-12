@@ -54,10 +54,11 @@ public class DatetimeCommand extends TextCommand {
 
         //Checking that no other arguments were passed in
         if (args.length > 0) {
-            return ResponseFlag.FAILURE;
+            return ResponseFlag.SUCCESS;
         }
+
         //Getting the current time from the server's clock
-        executor.sendMessage(this.getName() + "," + server.getClock().getCurrentTime() + ";");
+        executor.sendMessage(this.getName() + "," + DATE_FORMAT.format(server.getClock().getCurrentTime()) + "," + TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()) + ";");
 
         return ResponseFlag.SUCCESS;
     }
