@@ -8,7 +8,10 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * provides interface for data processing of a state
+ * A marker for the various operations and data held by an object within our
+ * system
+ *
+ * @author sja9291  Spencer Alderman
  */
 public interface State {
     /**

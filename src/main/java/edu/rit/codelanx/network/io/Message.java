@@ -1,14 +1,17 @@
 package edu.rit.codelanx.network.io;
 
 /**
- * Interface represents either response or request
- * @param <T> type of message
+ * Interface for sending data between {@link Messenger} objects
+ *
+ * @param <T> The type of the data being sent
  * @author sja9291  Spencer Alderman
  */
 public interface Message<T> {
+
     /**
-     * request for message data
-     * @return request/response content when called
+     * The data contained in this {@link Message}
+     *
+     * @return The relevantly-typed data
      */
     public T getData();
 }

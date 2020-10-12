@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.Scanner;
 import java.util.stream.IntStream;
 
 /**
@@ -23,7 +22,6 @@ import java.util.stream.IntStream;
  *
  * @author sja9291  Spencer Alderman
  * @author ahd6901  Amy Ha Do
- *
  * @see Client
  */
 public class TextClient implements Client<TextMessage> {
@@ -94,8 +92,10 @@ public class TextClient implements Client<TextMessage> {
     }
 
     /**
-     * terminates the application when called
-     * @throws Exception- when errors occur
+     * Terminates the application when called, freeing the buffers given to us
+     * initially
+     *
+     * @throws Exception {@inheritDoc}
      */
     @Override
     public void close() throws Exception {
@@ -104,7 +104,8 @@ public class TextClient implements Client<TextMessage> {
     }
 
     /**
-     * print out the message to user via terminal
+     * Prints the given message to the provided output {@link #buffer}
+     *
      * @param message- to be printed out
      */
     @Override

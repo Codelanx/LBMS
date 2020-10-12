@@ -1,6 +1,7 @@
 package edu.rit.codelanx.data.loader;
 
 import com.codelanx.commons.data.ResultRow;
+import com.codelanx.commons.data.SQLDataType;
 import com.codelanx.commons.data.SQLResponse;
 import com.codelanx.commons.data.types.MySQL;
 import com.codelanx.commons.util.cache.Cache;
@@ -23,13 +24,13 @@ import java.util.stream.Stream;
 
 public class SQLStorageAdapter implements StorageAdapter {
 
-    private final Cache<MySQL> db;
+    private final Cache<? extends SQLDataType> db;
     private final Library lib;
     private final DataStorage storage;
 
     public SQLStorageAdapter(DataStorage storage) {
         this.storage = storage;
-        this.db = MySQL.newCache(ConfigKey.getSQLPreferences(), ConfigKey.SQL_KEEPALIVE_MS.as(long.class));
+        this.db = ConfigKey.newDBCache();
         SQLResponse<Library> resp = this.db.get().query(rs -> {
             if (rs.next()) { //select the first available result, since we're not multi-library
                 return new Library(storage, rs);

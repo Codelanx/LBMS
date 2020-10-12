@@ -10,9 +10,9 @@ import java.io.IOException;
 /**
  * Provides an interface for a user to interact with our system
  *
- * @author sja9291  Spencer Alderman
- *
  * @param <T> The type of messages being exchanged
+ *
+ * @author sja9291  Spencer Alderman
  */
 public interface Client<T extends Message<?>> extends CommandExecutor, Messenger<T>, AutoCloseable {
 

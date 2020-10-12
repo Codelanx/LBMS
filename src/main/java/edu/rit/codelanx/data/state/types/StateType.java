@@ -5,6 +5,7 @@ import edu.rit.codelanx.data.DataStorage;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.State;
+import edu.rit.codelanx.data.storage.field.DataField;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -86,6 +87,16 @@ public enum StateType implements State.Type {
     @Override
     public State mapFromFile(DataStorage storage, Map<String, Object> file) {
         return this.fileBuild.apply(storage, file);
+    }
+
+    public static <R extends State> StateBuilder<R> makeBuilder(Class<R> type, DataField<Long> idField, DataField<?>... fields) {
+        StateType st = (StateType) StateType.fromClassStrict(type);
+        return new StateBuilder<R>(st, idField, fields) {
+            @Override
+            protected R buildObj(DataStorage storage, long id) {
+                return ((StateConstructor<R>) st.builderBlueprint).create(storage, id, this);
+            }
+        };
     }
 
     public static State.Type fromClass(Class<? extends State> stateType) {
