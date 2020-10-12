@@ -127,6 +127,10 @@ public class Book extends BasicState {
         return Field.CHECKED_OUT.get(this);
     }
 
+    public int getAvailableCopies() {
+        return this.getTotalCopies() - this.getCheckedOut();
+    }
+
     @Override
     public Type getType() {
         return StateType.BOOK;

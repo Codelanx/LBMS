@@ -94,7 +94,7 @@ public class SearchCommand extends TextCommand {
         Query<Book> query = this.server.getBookStore().query(Book.class);
         //Going through the query fields and adding them if they are there
         if (!title.isEmpty() && !title.equals("*")) {
-            query.isEqual(Book.Field.TITLE, title);
+            query = query.isEqual(Book.Field.TITLE, title);
         }
         if (authors.length > 0 && !authors[0].equals("*")) {
             for (String authorString : authors) {
@@ -104,21 +104,20 @@ public class SearchCommand extends TextCommand {
                         .findAny()
                         .orElse(null);
                 if (a != null) {
-                    query.isEqual(Book.Field.ID, a.getID());
+                    query = query.isEqual(Book.Field.ID, a.getID());
                 } else {
                     return ResponseFlag.FAILURE;
                 }
             }
         }
         if (!isbn.isEmpty() && !isbn.equals("*")) {
-            query.isEqual(Book.Field.ISBN, isbn);
+            query = query.isEqual(Book.Field.ISBN, isbn);
         }
         if (!publisher.isEmpty() && !publisher.equals("*")) {
-            query.isEqual(Book.Field.PUBLISHER, publisher);
+            query = query.isEqual(Book.Field.PUBLISHER, publisher);
         }
 
-        List<Book> bookList =
-                query.results().collect(Collectors.toList());
+        List<Book> bookList = query.results().collect(Collectors.toList());
 
         if (sortOrder.equals("") || sortOrder.equals("*") || sortOrder.equals("title")) {
             bookList.sort(Comparator.comparing(Book::getTitle));

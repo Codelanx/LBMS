@@ -14,6 +14,7 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -47,13 +48,12 @@ public class InfoCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-
         return TextParam.create()
                 .argument("title")
-                .argument("authors")
-                .argument("isbn")
-                .argument("publisher")
-                .argument("sort order");
+                .list("authors", 1)
+                .argumentOptional("isbn")
+                .argumentOptional("publisher")
+                .argumentOptional("sort order");
     }
 
     /**
@@ -69,13 +69,12 @@ public class InfoCommand extends TextCommand {
      * that are available to be borrowed and owned by the library.
      *
      * @param executor  the client that is calling the command
-     * @param args info: the name of the command to be run
-     *                  title: title of the book to be searched
+     * @param args      title: title of the book to be searched
      *                  authors: the comma-separated list of authors of the book
      *                  isbn: the ISBN number for the book
      *                  publisher: the publisher of the book
      *                  sort order: way to sort the result of searching the
-     *                  database
+     *                              database
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
@@ -101,6 +100,22 @@ public class InfoCommand extends TextCommand {
 
         //TODO sorting implementation
 
+        List<Book> result = null; //TODO: end result of our query
+
+        switch (args[4].toLowerCase()) {
+            case "publish-date":
+                result.sort(Comparator.comparing(Book::getPublishDate));
+                break;
+            case "book-status":
+                result.sort(Comparator.comparing(Book::getAvailableCopies));
+                break;
+            default:
+                //TODO: Print error about unknown sort order
+                //no break, falls through
+            case "title":
+                result.sort(Comparator.comparing(Book::getTitle));
+                break;
+        }
         executor.sendMessage(numOfBooks
                 + "\n" + numOfCopies);
 
