@@ -67,7 +67,7 @@ public class Clock {
      * Resume the event timer if it was stopped
      */
     public void resume() {
-        Validate.isTrue(this.currentTimer != null, "Cannot resume a running clock!", IllegalArgumentException.class);
+        Validate.isTrue(this.currentTimer == null, "Cannot resume a running clock!", IllegalArgumentException.class);
         this.currentTimer = TICKER.scheduleAtFixedRate(this::tick, 0, CHECK_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
 
