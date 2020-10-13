@@ -107,7 +107,8 @@ public class TextInterpreter implements Interpreter {
             }
         }
         if (buff.length() > 0) {
-            back.add(buff.toString());
+            String ex = buff.toString();
+            back.add(ex.equals(INPUT_WILDCARD) ? OUTPUT_WILDCARD : ex);
         }
         return back.toArray(new String[0]);
     }
@@ -169,11 +170,9 @@ public class TextInterpreter implements Interpreter {
                 //Ignore excess arguments
                 copyLength = newArgs.length;
             } else {
-                //Check to see if the remaining arguments are optional
-                long req = Arrays.stream(command.params, args.length, command.params.length)
-                        .filter(p -> !p.isRequired())
-                        .count();
-                if (req > 0) { //if not...
+                //Check to see if any of the remaining arguments are required
+                if (Arrays.stream(command.params, args.length, command.params.length)
+                        .anyMatch(TextParam::isRequired)) {
                     throw new IllegalArgumentException("Missed required arguments");
                 }
                 copyLength = args.length;
