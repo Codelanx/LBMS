@@ -76,10 +76,10 @@ public class SearchCommand extends TextCommand {
         // provide the subarguments of that argument
 
         //Checking that the amount of arguments is correct
-        if (CommandUtils.numArgs(args, 1) == UtilsFlag.MISSINGPARAMS) {
+        if (args.length < 2) {
             return ResponseFlag.FAILURE;
         }
-        int numOfArgs = args.length;
+
         //Going through the args and assigning them to their variables
         String title = args[0],
                 isbn = args[2],

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  * days is the number of days that the report should include in its
  * statistics. If omitted the report should include statistics using all data
  * collecting since the beginning of the simulation.
+ *
  * @author cb4501 Connor Bonitati
  */
 public class ReportCommand extends TextCommand {
@@ -59,8 +60,8 @@ public class ReportCommand extends TextCommand {
      * Whenever this command is called, it will return a report about the
      * usage of the library over a set period of time.
      *
-     * @param executor  the client that is calling the command
-     * @param args      days: the number of days that the report should cover
+     * @param executor the client that is calling the command
+     * @param args     days: the number of days that the report should cover
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
@@ -84,15 +85,17 @@ public class ReportCommand extends TextCommand {
 
 
         //Uses summary statistics to get the average time of visits
-        LongSummaryStatistics stats = this.server.getLibraryData().query(Visit.class) //Query<Visit>
+        LongSummaryStatistics stats =
+                this.server.getLibraryData().query(Visit.class) //Query<Visit>
                 .results() //Stream<Visit>
-                .map(visit -> Duration.between(visit.getStart(), visit.getEnd())) //Stream<Duration>
+                .map(visit -> Duration.between(visit.getStart(),
+                        visit.getEnd())) //Stream<Duration>
                 .mapToLong(Duration::getSeconds)//Stream<Long>
                 .summaryStatistics();
         double average = stats.getAverage(); //average duration of a visit
         long amount = stats.getCount(); //total number of visits
-        long total = stats.getSum(); //total amount of time over all visits combined
-
+        long total = stats.getSum(); //total amount of time over all visits
+        // combined
 
 
         Duration avg = Duration.ofSeconds((long) average);
@@ -105,11 +108,15 @@ public class ReportCommand extends TextCommand {
                 .count();
 
 
-        Map<String, Set<Transaction>> map = this.server.getLibraryData().query(Transaction.class)
+        Map<String, Set<Transaction>> map =
+                this.server.getLibraryData().query(Transaction.class)
                 .results()
-                .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
-        int amountLateFees = map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();
-        int amountPaidFees = map.getOrDefault(Transaction.Reason.PAYING_LATE_FEE.getReason(), Collections.emptySet()).size();
+                .collect(Collectors.groupingBy(Transaction::getReason,
+                        Collectors.toSet()));
+        int amountLateFees =
+                map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();
+        int amountPaidFees =
+                map.getOrDefault(Transaction.Reason.PAYING_LATE_FEE.getReason(), Collections.emptySet()).size();
         int outstandingFines = amountLateFees - amountPaidFees;
 
         executor.sendMessage(getName()
@@ -123,7 +130,6 @@ public class ReportCommand extends TextCommand {
 
 
         return ResponseFlag.SUCCESS;
-
 
 
     }

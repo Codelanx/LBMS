@@ -1,7 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.state.types.Author;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -9,11 +9,13 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 import static java.lang.Long.parseLong;
 
 /**
@@ -59,10 +61,10 @@ public class BuyCommand extends TextCommand {
      * returned from the last search and add them to the library's database
      * of books
      *
-     * @param executor  the client that is calling the command
-     * @param args quantity: number of copies of each book to purchase
-     *                  id(s): 1 or more book IDs to be purchased (separated
-     *                      by commas).
+     * @param executor the client that is calling the command
+     * @param args     quantity: number of copies of each book to purchase
+     *                 id(s): 1 or more book IDs to be purchased (separated
+     *                 by commas).
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
@@ -70,7 +72,7 @@ public class BuyCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
         //Checking that the amount of args passed is correct
-        if (numArgs(args, 2) == UtilsFlag.MISSINGPARAMS) {
+        if (args.length < 2) {
             executor.sendMessage(this.getName() + ",missing-parameters," +
                     "visitorID;");
             return ResponseFlag.SUCCESS;
@@ -80,11 +82,11 @@ public class BuyCommand extends TextCommand {
         int quantity;
         try {
             quantity = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return ResponseFlag.FAILURE;
         }
 
-        if (quantity == 0){
+        if (quantity == 0) {
             executor.sendMessage(this.getName() + ",success," + quantity + ";");
         }
 
@@ -99,21 +101,31 @@ public class BuyCommand extends TextCommand {
         }
 
 
-        for (Long id : bookIDs){
-            Optional<Book> bookSearch = server.getLibraryData().query(Book.class)
-                                .isEqual(Book.Field.ID, id)
-                                .results().findAny();
-            if (bookSearch.isPresent()){
-               Book b = bookSearch.get();
-               b.addCopy(quantity);
+        List<Book> bookList = new ArrayList<>();
+        for (Long id : bookIDs) {
+            Optional<Book> bookSearch =
+                    server.getLibraryData().query(Book.class)
+                    .isEqual(Book.Field.ID, id)
+                    .results().findAny();
+            if (bookSearch.isPresent()) {
+                Book b = bookSearch.get();
+                b.addCopy(quantity);
+                bookList.add(b);
             } else {
-                Optional<? extends Book> newBook =
+                Optional<Book> newBook =
                         server.getBookStore().query(Book.class).isEqual(Book.Field.ID, id).results().findAny();
-                // TODO: Create a new book and add it to the datastorage
+                if (newBook.isPresent()) {
+                    Book b = newBook.get();
+                    this.server.getLibraryData().insert(b);
+                    b.addCopy(1 - quantity);
+                    bookList.add(b);
+                } else {
+                    return ResponseFlag.FAILURE;
+                }
             }
         }
 
-        /*executor.sendMessage(this.buildResponse(this.getName(),
+        executor.sendMessage(this.buildResponse(this.getName(),
                 bookList.size()));
         if (bookList.isEmpty()) {
             return ResponseFlag.SUCCESS;
@@ -130,8 +142,8 @@ public class BuyCommand extends TextCommand {
                             book.getTitle(), authorOutput,
                             DATE_FORMAT.format(book.getPublishDate()));
                 })
-                .forEach(executor::sendMessage);*/
+                .forEach(executor::sendMessage);
 
-        return ResponseFlag.NOT_FINISHED;
+        return ResponseFlag.SUCCESS;
     }
 }

@@ -71,7 +71,7 @@ public class DepartCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
         //pre: we have a valid id, we need a Visitor
-        Visitor visitor = this.server.getDataStorage().query(Visitor.class)
+        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
         if (visitor == null || !visitor.isVisiting()) {
