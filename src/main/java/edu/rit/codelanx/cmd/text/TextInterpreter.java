@@ -164,19 +164,20 @@ public class TextInterpreter implements Interpreter {
             sized = args;
         } else {
             //Map mismatched array sizes
-            String[] newArgs = new String[command.params.length];
-            int copyLength; //how much we can copy from args
+            int copyLength = args.length; //how much we can copy from args
             if (args.length > command.params.length) {
-                //Ignore excess arguments
-                copyLength = newArgs.length;
+                if (!command.params[command.params.length - 1].isList()) {
+                    //Ignore excess arguments if not a list
+                    copyLength = command.params.length;
+                }
             } else {
                 //Check to see if any of the remaining arguments are required
                 if (Arrays.stream(command.params, args.length, command.params.length)
                         .anyMatch(TextParam::isRequired)) {
                     throw new IllegalArgumentException("Missed required arguments");
                 }
-                copyLength = args.length;
             }
+            String[] newArgs = new String[copyLength];
             //copy the input available
             System.arraycopy(args, 0, newArgs, 0, copyLength);
             if (args.length < newArgs.length) {
