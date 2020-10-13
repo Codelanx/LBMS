@@ -42,10 +42,10 @@ public abstract class TextCommand implements Command {
     public static final DateTimeFormatter DATE_FORMAT;
     /** The {@link Server} this command is run on */
     protected final Server<TextMessage> server;
+    /** Our {@link TextParam parameters} for command inputs, to verify inputs */
+    protected final TextParam[] params;
     //The usage string, minus #getName
     private final String usage;
-    /** Our {@link TextParam parameters} for command inputs, to verify inputs */
-    final TextParam[] params;
 
     static {
         //initialize our formatters
