@@ -77,7 +77,9 @@ public class AdvanceCommand extends TextCommand {
         for (int i = 0; i < args.length; i++){
             if (args[i].isEmpty()) {
                 argMap.put(i, this.params[i].getLabel());
-                incorrectArgs = true;
+                if (i == 0){
+                    incorrectArgs = true;
+                }
             }
         }
 
@@ -88,13 +90,6 @@ public class AdvanceCommand extends TextCommand {
             }
             executor.sendMessage(this.buildResponse(this.getName(),
                     "missing-parameters",response));
-            return ResponseFlag.SUCCESS;
-        }
-
-        //Checking that they have the correct amount of parameters
-        if (args.length < 1 || args.length > 2) {
-            executor.sendMessage(this.buildResponse(this.getName(), "missing" +
-                    "-parameters", "numberofdays" , "numberofhours"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -110,7 +105,7 @@ public class AdvanceCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
         this.server.getClock().advanceTime(days.get(), hours.orElse(0));
-        executor.sendMessage(this.getName() + "success;");
+        executor.sendMessage(buildResponse(this.getName(),"success;"));
         return ResponseFlag.SUCCESS;
     }
 }
