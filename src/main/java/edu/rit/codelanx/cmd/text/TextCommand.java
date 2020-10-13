@@ -123,6 +123,22 @@ public abstract class TextCommand implements Command {
     protected abstract TextParam.Builder buildParams();
 
     /**
+     * Returns the {@link TextParam} objects that identify the expected
+     * arguments for this command
+     *
+     * @return An array of {@link TextParam}, indexed by their expected argument
+     */
+    @Deprecated //:
+    // Because this method will allow mutating the underlying array, we want
+    // to discourage using this method. However, concrete commands outside
+    // of this package require access to the parameter list, and without
+    // the presence of threading issues, there's no reason to copy the array
+    // so long as we're diligent in not mutating it
+    public TextParam[] getParameters() {
+        return this.params;
+    }
+
+    /**
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
