@@ -1,8 +1,11 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.cache.field.DataField;
 import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.state.types.Author;
+import edu.rit.codelanx.data.state.types.AuthorListing;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -10,9 +13,16 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -30,6 +40,21 @@ import java.util.stream.Collectors;
  * available for check out.
  */
 public class InfoCommand extends TextCommand {
+
+    //a map of Book#Field objects to their index in args
+    private static final Map<DataField<?>, Integer> FIELD_INDICIES;
+
+    private static final String[] AUTHOR_WILDCARD = new String[] {""};
+
+    static {
+        Map<DataField<?>, Integer> set = new HashMap<>();
+        set.put(Book.Field.TITLE, 0);
+        set.put(Book.Field.TITLE, 1);
+        set.put(Book.Field.ISBN, 2);
+        set.put(Book.Field.PUBLISHER, 3);
+        set.put(Book.Field.TITLE, 4);
+        FIELD_INDICIES = Collections.unmodifiableMap(set);
+    }
 
     /**
      * Constructor for the InfoCommand class
@@ -75,61 +100,62 @@ public class InfoCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
-
-        if (args.length < 2) {
-            executor.sendMessage(buildResponse(this.getName(), "missing" +
-                            "-parameters",
-                    "title,authors,isbn,publisher,sortOrder"));
-            return ResponseFlag.SUCCESS;
+        String[] authors = TextInterpreter.splitInput(args[1]);
+        if (Arrays.stream(authors).anyMatch(String::isEmpty)) {
+            authors = AUTHOR_WILDCARD;
         }
-
-        //Going through the args and assigning them to their variables
-        String title = args[0],
-                isbn = args[2],
-                publisher = args[3],
-                sortOrder = args[4];
-        String[] authors = args[1].split(TextCommand.TOKEN_DELIMITER);
-
-        Query<Book> query = this.server.getLibraryData().query(Book.class);
-        //Going through the query fields and adding them if they are there
-        if (!title.isEmpty() && !title.equals("*")) {
-            query = query.isEqual(Book.Field.TITLE, title);
-        }
-        if (authors.length > 0 && !authors[0].equals("*")) {
-            for (String authorString : authors) {
-                Author a = this.server.getLibraryData().query(Author.class)
-                        .isEqual(Author.Field.NAME, authorString)
+        Set<Long> filterIDs = null;
+        if (authors != AUTHOR_WILDCARD) {
+            List<Author> found = this.server.getLibraryData().query(Author.class)
+                    .isAny(Author.Field.NAME, authors)
+                    .results()
+                    .collect(Collectors.toList());
+            if (!found.isEmpty()) {
+                //no results can possibly be found otherwise
+                filterIDs = this.server.getLibraryData()
+                        .query(AuthorListing.class)
+                        .isAny(AuthorListing.Field.AUTHOR, found)
                         .results()
-                        .findAny()
-                        .orElse(null);
-                if (a != null) {
-                    query = query.isEqual(Book.Field.ID, a.getID());
-                } else {
-                    return ResponseFlag.FAILURE;
-                }
+                        .map(AuthorListing::getBook)
+                        .map(Book::getID)
+                        .collect(Collectors.toSet());
             }
         }
-        if (!isbn.isEmpty() && !isbn.equals("*")) {
-            query = query.isEqual(Book.Field.ISBN, isbn);
+        Set<Long> idFilter = filterIDs;
+        //at this point, if filterIDs is null, no authors were searched
+        //if filterIDs is empty, no listings were found for the authors
+        //otherwise, our books are restricted to the contents of filterIDs
+        Query<Book> query = this.server.getLibraryData().query(Book.class);
+        //REFACTOR: DRY these blocks of code
+        //Going through the query fields and adding them if they are there
+        if (!args[0].isEmpty()) {
+            query = query.isEqual(Book.Field.TITLE, args[0]);
         }
-        if (!publisher.isEmpty() && !publisher.equals("*")) {
-            query = query.isEqual(Book.Field.PUBLISHER, publisher);
+        if (!args[2].isEmpty()) {
+            query = query.isEqual(Book.Field.ISBN, args[2]);
         }
-
-        List<Book> bookList;
-
-        switch (sortOrder) {
+        if (!args[3].isEmpty()) {
+            query = query.isEqual(Book.Field.PUBLISHER, args[3]);
+        }
+        Stream<Book> res;
+        if (filterIDs != null) { //if filtering by authors...
+            res = filterIDs.isEmpty()
+                    ? Stream.empty() //no possible results now
+                    : query.results().filter(b -> !idFilter.contains(b.getID()));
+        } else {
+            res = query.results();
+        }
+        switch (args[4].toLowerCase()) { //sort-order
+            case "":
             case "title":
-                bookList = query.results().collect(Collectors.toList());
-                bookList.sort(Comparator.comparing(Book::getTitle));
+                res = res.sorted(Comparator.comparing(Book::getTitle));
                 break;
             case "publish-date":
-                bookList = query.results().collect(Collectors.toList());
-                bookList.sort(Comparator.comparing(Book::getPublishDate).reversed());
+                res = res.sorted(Comparator.comparing(Book::getPublishDate).reversed());
                 break;
             case "book-status":
-                bookList =
-                        query.results().filter(Book::isValid).collect(Collectors.toList());
+                res = res.filter(book -> book.getAvailableCopies() > 0)
+                        .sorted(Comparator.comparing(Book::getAvailableCopies));
                 break;
             default:
                 executor.sendMessage(buildResponse(this.getName(),"invalid" +
@@ -137,22 +163,20 @@ public class InfoCommand extends TextCommand {
                 return ResponseFlag.SUCCESS;
         }
 
-        executor.sendMessage(this.buildResponse(this.getName(),
-                bookList.size()));
+        List<Book> bookList = res.collect(Collectors.toList());
+        executor.sendMessage(this.buildResponse(this.getName(), bookList.size()));
         if (bookList.isEmpty()) {
             return ResponseFlag.SUCCESS;
         }
-        executor.sendMessage("Results (" + bookList.size() + "):");
         bookList.stream()
                 .map(book -> {
                     List<String> authorsForBook =
                             book.getAuthors().map(Author::getName).collect(Collectors.toList());
                     String authorOutput =
                             this.buildListResponse(authorsForBook.toString());
-                    return this.buildResponse(book.getAvailableCopies(),
-                            book.getID(), book.getTitle(),
-                            authorOutput, book.getPublisher(),
-                            book.getPublishDate(), book.getPageCount());
+                    return this.buildResponse(book.getAvailableCopies(), book.getISBN(), book.getTitle(),
+                            authorOutput, book.getPublisher(), DATE_FORMAT.format(book.getPublishDate()),
+                            book.getPageCount());
                 })
                 .forEach(executor::sendMessage);
         return ResponseFlag.SUCCESS;

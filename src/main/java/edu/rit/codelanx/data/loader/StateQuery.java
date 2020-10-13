@@ -166,6 +166,7 @@ public class StateQuery<S extends State> implements Query<S> {
                 //TODO:     However, I want to avoid over-generifying
                 return (Stream<S>) this.getDataField().findStatesByValue(this.getValue());
             }
+            //TODO: Basically, return anything indexed
             return null;
         }
 

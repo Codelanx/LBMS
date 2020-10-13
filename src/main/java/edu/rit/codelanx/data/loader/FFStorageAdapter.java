@@ -5,6 +5,7 @@ import com.codelanx.commons.data.types.Json;
 import com.codelanx.commons.data.types.XML;
 import edu.rit.codelanx.ConfigKey;
 import edu.rit.codelanx.data.DataSource;
+import edu.rit.codelanx.data.cache.StorageContainer;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.cache.StateStorage;
@@ -25,8 +26,9 @@ import java.util.stream.Stream;
 
 public class FFStorageAdapter implements StorageAdapter {
 
-    private static final String DATA_FILE_NAME = "data";
-    private static final Pattern FF_DATA_SEARCH = Pattern.compile(DATA_FILE_NAME + "\\d*\\.(json|yml)");
+    private static final File BACKUP_FOLDER = new File("backup");
+    private static final File DATA_FOLDER = new File("data");
+    private static final Pattern FF_DATA_SEARCH = Pattern.compile("(.*)\\d*\\.(json|yml)");
     private final Class<? extends FileDataType> type;
     private final DataSource storage;
     private volatile Library library;
@@ -90,8 +92,19 @@ public class FFStorageAdapter implements StorageAdapter {
         if (this.library != null) {
             throw new IllegalStateException("File contents already loaded!");
         }
+        DATA_FOLDER.mkdir();
+        BACKUP_FOLDER.mkdir();
         String ext = (this.type == Json.class ? ".json" : ".yml");
-        File ref = new File(DATA_FILE_NAME + ext); //only supporting json/yml flatfiles
+        //TODO: Rewrite to use individual data files
+        for (State.Type type : StateType.values()) {
+            StorageContainer container = type.getConcreteType().getAnnotation(StorageContainer.class);
+            if (container == null) {
+                throw new IllegalStateException(type.getConcreteType() + " is missing @StorageContainer annotation");
+            }
+            File ref = new File(container.value() + ext);
+
+        }
+        File ref = new File(DATA_FOLDER + ext); //only supporting json/yml flatfiles
         if (!ref.exists()) {
             this.library = Library.create()
                     .setValue(Library.Field.MONEY, BigDecimal.ZERO)
@@ -136,21 +149,28 @@ public class FFStorageAdapter implements StorageAdapter {
         if (!ref.isAbsolute()) {
             ref = ref.getAbsoluteFile();
         }
-        File[] avail = ref.getParentFile().listFiles(File::isFile);
+        String nameExt = ref.getName();
+        String name = nameExt.substring(0, nameExt.length() - ext.length());
+        File[] avail = BACKUP_FOLDER.listFiles(File::isFile);
         if (avail == null) {
-            //is this a bad description? it's pretty much what I'll say in response to this error ever happening
+            //is this a bad description? it's pretty much what I'll say
+            // in response to this error ever happening
             throw new IllegalStateException("wat");
         }
         long next = Arrays.stream(avail).map(File::getName)
-                .filter(s -> {
+                .map(s -> {
                     Matcher m = FF_DATA_SEARCH.matcher(s);
-                    return m.matches() && m.group(1).equalsIgnoreCase(ext);
+                    String res = m.matches() && m.group(2).equalsIgnoreCase(ext)
+                            ? m.group(1)
+                            : null;
+                    return null; //TODO: Fix
                 })
+                .filter(Objects::nonNull)
                 .count();
         if (next > ConfigKey.MAX_BACKUP_FILES.as(int.class)) {
             throw new IllegalStateException("Ran out of room for backups, aborting!");
         }
-        Files.move(ref.toPath(), new File(DATA_FILE_NAME + next + ext).toPath());
+        Files.move(ref.toPath(), new File(DATA_FOLDER, + next + ext).toPath());
     }
 
     @Override

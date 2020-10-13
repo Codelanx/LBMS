@@ -1,6 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.*;
+import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.state.types.Author;
@@ -85,7 +86,7 @@ public class SearchCommand extends TextCommand {
                 isbn = args[2],
                 publisher = args[3],
                 sortOrder = args[4];
-        String[] authors = args[1].split(TextCommand.TOKEN_DELIMITER);
+        String[] authors = TextInterpreter.splitInput(args[1]);
 
         Query<Book> query = this.server.getBookStore().query(Book.class);
         //Going through the query fields and adding them if they are there
