@@ -103,7 +103,7 @@ public class BorrowCommand extends TextCommand {
         }
 
         //Checking that the visitor's account balance is in the positive
-        if (v.getMoney().compareTo(BigDecimal.ZERO) < 1) {
+        if (v.getMoney().compareTo(BigDecimal.ZERO) > 0) {
             executor.sendMessage(buildResponse(this.getName(), "outstanding" +
                     "-fine", v.getMoney()));
             return ResponseFlag.SUCCESS;

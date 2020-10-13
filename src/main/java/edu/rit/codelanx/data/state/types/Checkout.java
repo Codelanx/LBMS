@@ -25,6 +25,10 @@ import static edu.rit.codelanx.data.cache.field.FieldIndicies.FM_KEY;
 @StorageContainer("checkouts")
 public class Checkout extends BasicState {
 
+    private static final BigDecimal INITIAL_FINE = BigDecimal.valueOf(10);
+    private static final BigDecimal WEEKLY_FINE = BigDecimal.valueOf(2);
+    private static final BigDecimal MAX_FINE = BigDecimal.valueOf(30);
+
     public static class Field {
         public static final DataField<Long> ID;
         public static final DataField<Visitor> VISITOR;
@@ -111,12 +115,19 @@ public class Checkout extends BasicState {
             throw new IllegalStateException("Book already returned");
         }
         Duration d = Duration.between(this.getBorrowedAt(), Instant.now());
-        //TODO: Determine if a fine should be applied
-        if (false) {
-            //TODO: And the amount (negative because we're taking from them)
-            return Transaction.perform(this.getVisitor(), BigDecimal.valueOf(-1D), Transaction.Reason.CHARGING_LATE_FEE);
+        //Due 7 days after checkout (if checked out on monday, not late until next tuesday)
+        //Initial Late fee - $10 ($10 owed that tuesday)
+        //+$2/week         -     ($12 by the next tuesday)
+        //max fine: $30    -     ($30 after 10 weeks late)
+        long days = Duration.between(this.getBorrowedAt(), Instant.now()).toDays();
+        long weeksLate = days / 7;
+        if (weeksLate > 0) {
+            BigDecimal amount = INITIAL_FINE;
+            amount = amount.add(WEEKLY_FINE.multiply(BigDecimal.valueOf(weeksLate - 1)));
+            amount = amount.max(MAX_FINE);
+            this.getLoader().getLibrary().updateMoney(amount);
+            return Transaction.perform(this.getVisitor(), amount.negate(), Transaction.Reason.CHARGING_LATE_FEE);
         }
-        Field.RETURNED.set(this, true);
         return null;
     }
 

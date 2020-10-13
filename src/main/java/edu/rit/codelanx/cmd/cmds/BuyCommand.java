@@ -118,7 +118,7 @@ public class BuyCommand extends TextCommand {
                         server.getBookStore().query(Book.class).isEqual(Book.Field.ID, id).results().findAny();
                 if (newBook.isPresent()) {
                     Book b = newBook.get();
-                    this.server.getLibraryData().insert(b);
+                    b = this.server.getLibraryData().insert(b);
                     b.addCopy(1 - quantity);
                     bookList.add(b);
                 } else {
