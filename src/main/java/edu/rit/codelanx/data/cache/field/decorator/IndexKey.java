@@ -11,10 +11,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * a {@link FieldIndex} used for object lookup.
+ * @param <T> of type {@link FieldIndex}
+ */
 public class IndexKey<T> extends FieldIndex<T> {
 
     private final Map<Object, Set<State>> states = new HashMap<>();
 
+    /**
+     * constructs the index key for an object
+     * @param parent {@link DataField} to be indexed
+     */
     public IndexKey(DataField<T> parent) {
         super(parent);
     }
@@ -54,12 +62,19 @@ public class IndexKey<T> extends FieldIndex<T> {
         });
         super.forget(state);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@code true} since it's the index key
+     */
     @Override
     public boolean isKey() {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@link IndexKey} type
+     */
     @Override
     public FieldIndicies getIndexType() {
         return FieldIndicies.FM_KEY;

@@ -10,6 +10,10 @@ public class IndexMapping<S extends State, E> extends FieldIndex<E> {
         super(parent);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return null
+     */
     @Override
     public FieldIndicies getIndexType() {
         return null;
