@@ -12,6 +12,8 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -58,10 +60,24 @@ public class DepartCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
 
-        //Checking that they have the correct amount of parameters
-        if (args.length != 1) {
-            executor.sendMessage(buildResponse(this.getName(),"missing" +
-                    "-parameters", "visitorID"));
+        boolean incorrectArgs = false;
+        Map<Integer, String> argMap = new HashMap<>();
+        for (int i = 0; i < args.length; i++){
+            if (args[i].isEmpty()) {
+                argMap.put(i, this.params[i].getLabel());
+                if (i == 0){
+                    incorrectArgs = true;
+                }
+            }
+        }
+
+        if (incorrectArgs){
+            String response = "";
+            for (Map.Entry<Integer,String> entry : argMap.entrySet()){
+                response += this.params[entry.getKey()];
+            }
+            executor.sendMessage(this.buildResponse(this.getName(),
+                    "missing-parameters",response));
             return ResponseFlag.SUCCESS;
         }
 
