@@ -107,6 +107,12 @@ public class LibraryData implements DataSource {
         return back;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param state {@inheritDoc}
+     * @param <R> {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> R insert(R state) {
         R back = this.adapter.insert(state);
@@ -114,11 +120,21 @@ public class LibraryData implements DataSource {
         return back;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param type {@inheritDoc}
+     * @param <R> {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> Stream<? extends R> ofLoaded(Class<R> type) {
         return this.relative.getStateStorage(type).streamLoaded();
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Library getLibrary() {
         return this.adapter.getLibrary();
