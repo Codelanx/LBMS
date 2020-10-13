@@ -26,6 +26,7 @@ import static java.lang.Long.parseLong;
  * visitor ID is the unique 10-digit ID of the visitor.
  * id is the comma-separated list of IDs for the books to be borrowed by the
  * visitor.
+ * @author maa1675  Mark Anderson
  */
 public class BorrowCommand extends TextCommand {
 

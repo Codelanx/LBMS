@@ -14,6 +14,7 @@ import com.codelanx.commons.util.InputOutput;
  * <p>
  * Request Format: 	arrive,visitor ID;
  * visitor ID is the unique 10-digit ID of the visitor.
+ * @author maa1675  Mark Anderson
  */
 public class ArriveCommand extends TextCommand {
 

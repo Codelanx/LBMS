@@ -29,6 +29,7 @@ import static java.lang.Long.parseLong;
  * id is the ID of the book as returned by the most recent book store search.
  * ids is the comma-separated list of additional books to buy. The same
  * quantity of each book will be purchased.
+ * @author maa1675  Mark Anderson
  */
 public class BuyCommand extends TextCommand {
 

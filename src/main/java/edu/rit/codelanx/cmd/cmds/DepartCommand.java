@@ -51,6 +51,7 @@ public class DepartCommand extends TextCommand {
      * @param args visitorID: the visitor whose visit will end
      * @return a responseflag that says whether or not the command was
      * executed correctly
+     * @author maa1675  Mark Anderson
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  * <p>
  * Request Format: borrowed,visitor ID
  * visitor ID is the unique 10-digit ID of the visitor.
+ * @author maa1675  Mark Anderson
  */
 public class BorrowedCommand extends TextCommand {
 
