@@ -18,8 +18,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -31,6 +33,7 @@ public class FFStorageAdapter implements StorageAdapter {
     private static final Pattern FF_DATA_SEARCH = Pattern.compile("(.*)\\d*\\.(json|yml)");
     private final Class<? extends FileDataType> type;
     private final DataSource storage;
+    private final Set<Class<? extends State>> loadedFromFile = new HashSet<>();
     private volatile Library library;
 
     protected FFStorageAdapter(DataSource storage) {
@@ -90,10 +93,15 @@ public class FFStorageAdapter implements StorageAdapter {
     @Override
     public void loadAll() throws IOException {
         if (this.library != null) {
-            throw new IllegalStateException("File contents already loaded!");
+            throw new IllegalStateException("File contents already loaded");
         }
-        DATA_FOLDER.mkdir();
-        BACKUP_FOLDER.mkdir();
+        if (!DATA_FOLDER.exists()) {
+            //nothing to load
+            this.library = Library.create()
+                    .setValue(Library.Field.MONEY, BigDecimal.ZERO)
+                    .build(this.storage);
+            return;
+        }
         String ext = (this.type == Json.class ? ".json" : ".yml");
         //TODO: Rewrite to use individual data files
         for (State.Type type : StateType.values()) {
@@ -102,47 +110,53 @@ public class FFStorageAdapter implements StorageAdapter {
                 throw new IllegalStateException(type.getConcreteType() + " is missing @StorageContainer annotation");
             }
             File ref = new File(container.value() + ext);
-
+            if (!ref.exists()) {
+                if (type == StateType.LIBRARY) {
+                    //create initial library
+                    this.library = Library.create()
+                            .setValue(Library.Field.MONEY, BigDecimal.ZERO)
+                            .build(this.storage);
+                }
+                continue; //nothing to load
+            }
+            FileDataType data = FileDataType.newInstance(this.type, ref);
+            List<?> read = data.getMutable("data").as(List.class);
+            if (read == null || read.stream().anyMatch(o -> !(o instanceof State))) {
+                //TODO: actual stderr here?
+                System.err.println("Bad value while parsing input file: " + container.value());
+                this.errorRecovery(ref, ext);
+                return;
+            }
+            read.stream()
+                    .map(o -> (State) o)
+                    .forEach(this.getAdaptee().getRelativeStorage()::addState);
+            this.loadedFromFile.add(type.getConcreteType());
         }
-        File ref = new File(DATA_FOLDER + ext); //only supporting json/yml flatfiles
-        if (!ref.exists()) {
-            this.library = Library.create()
-                    .setValue(Library.Field.MONEY, BigDecimal.ZERO)
-                    .build(this.storage);
-            return;
-        }
-        FileDataType data = FileDataType.newInstance(this.type, ref);
-        List<?> read = data.getMutable("data").as(List.class);
-        if (ref.exists() && read == null) {
-            this.errorRecovery(ref, ext);
-            return;
-        }
-        Object bad = read.stream()
-                .filter(o -> !(o instanceof State))
-                .findAny().orElse(null);
-        if (bad != null) {
-            System.err.println("Bad value while parsing input file: " + bad);
-            this.errorRecovery(ref, ext);
-            return;
-        }
-        read.stream()
-                .map(o -> (State) o)
-                .forEach(this.getAdaptee().getRelativeStorage()::addState);
-        Library lib = this.storage.query(Library.class).results().findAny().orElse(null);
-        if (lib == null) {
-            //no library defined yet, make one!
-            lib = Library.create()
-                    .setValue(Library.Field.MONEY, BigDecimal.ZERO)
-                    .build(this.storage);
-        }
-        this.library = lib;
     }
 
     @Override
     public void saveAll() throws IOException {
-        //TODO: Write all data to files
+        if (this.library == null) {
+            throw new IllegalStateException("Adapter was never initialized");
+        }
+        DATA_FOLDER.mkdir();
+        String ext = (this.type == Json.class ? ".json" : ".yml");
+        for (State.Type type : StateType.values()) {
+            StorageContainer container = type.getConcreteType().getAnnotation(StorageContainer.class);
+            if (container == null) {
+                throw new IllegalStateException(type.getConcreteType() + " is missing @StorageContainer annotation");
+            }
+            File ref = new File(DATA_FOLDER, container.value() + ext);
+            if (ref.exists() && !this.loadedFromFile.contains(type.getConcreteType())) {
+                //File exists but was not what we loaded
+                this.errorRecovery(ref, ext);
+            }
+            //fresh file refence
+            FileDataType data = FileDataType.newInstance(this.type, "{}");
+            data.set("data", this.storage.ofLoaded(type.getConcreteType()));
+            data.save(ref);
+        }
     }
-
 
     private void errorRecovery(File ref, String ext) throws IOException {
         System.err.println("Bad data file provided, backing up and starting fresh");
@@ -151,6 +165,7 @@ public class FFStorageAdapter implements StorageAdapter {
         }
         String nameExt = ref.getName();
         String name = nameExt.substring(0, nameExt.length() - ext.length());
+        BACKUP_FOLDER.mkdir();
         File[] avail = BACKUP_FOLDER.listFiles(File::isFile);
         if (avail == null) {
             //is this a bad description? it's pretty much what I'll say
@@ -163,14 +178,14 @@ public class FFStorageAdapter implements StorageAdapter {
                     String res = m.matches() && m.group(2).equalsIgnoreCase(ext)
                             ? m.group(1)
                             : null;
-                    return null; //TODO: Fix
+                    return name.equals(res) ? res : null;
                 })
                 .filter(Objects::nonNull)
                 .count();
         if (next > ConfigKey.MAX_BACKUP_FILES.as(int.class)) {
             throw new IllegalStateException("Ran out of room for backups, aborting!");
         }
-        Files.move(ref.toPath(), new File(DATA_FOLDER, + next + ext).toPath());
+        Files.move(ref.toPath(), new File(BACKUP_FOLDER, name + next + ext).toPath());
     }
 
     @Override
