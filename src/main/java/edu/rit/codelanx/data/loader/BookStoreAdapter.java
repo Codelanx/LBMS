@@ -14,11 +14,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 public class BookStoreAdapter extends FFStorageAdapter {
 
     private static Set<Class<? extends State>> KNOWN_TYPES;
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     static {
         KNOWN_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(Author.class, AuthorListing.class, Book.class)));
@@ -35,7 +37,10 @@ public class BookStoreAdapter extends FFStorageAdapter {
 
     @Override
     public <R extends State> R insert(StateBuilder<R> builder) {
-        throw new UnsupportedOperationException("Book store does not support adding new states");
+        if (this.initialized.get()) {
+            throw new UnsupportedOperationException("Book store does not support adding new states");
+        }
+        return super.insert(builder);
     }
 
     @Override

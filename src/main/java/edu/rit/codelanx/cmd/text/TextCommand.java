@@ -7,6 +7,8 @@ import edu.rit.codelanx.cmd.Command;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
@@ -48,11 +50,14 @@ public abstract class TextCommand implements Command {
     static {
         //initialize our formatters
         TIME_OF_DAY_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss")
-                        .withLocale( Locale.US )
-                        .withZone( ZoneId.systemDefault());
-        DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd")
-                .withLocale( Locale.US )
-                .withZone( ZoneId.systemDefault());
+                        .withLocale(Locale.US)
+                        .withZone(ZoneId.systemDefault());
+        DATE_FORMAT = new DateTimeFormatterBuilder()
+                .appendPattern("yyyy/MM/dd")
+                .parseDefaulting(ChronoField.NANO_OF_DAY, 0) //for parsing dates to instants
+                .toFormatter()
+                .withLocale(Locale.US)
+                .withZone(ZoneId.systemDefault());
     }
 
     /**
