@@ -13,8 +13,11 @@ import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.lang.Long.parseLong;
 
@@ -26,9 +29,13 @@ import static java.lang.Long.parseLong;
  * visitor ID is the unique 10-digit ID of the visitor.
  * id is the comma-separated list of IDs for the books to be borrowed by the
  * visitor.
+ *
  * @author maa1675  Mark Anderson
  */
 public class BorrowCommand extends TextCommand {
+
+    //maximum number of books that can be checked out
+    private static final int BOOK_LIMIT = 5;
 
     /**
      * Constructor for the BorrowCommand class
@@ -73,7 +80,7 @@ public class BorrowCommand extends TextCommand {
         }
 
         long visitorID;
-        Set<Long> bookIDs = new HashSet<Long>();
+        Set<Long> bookIDs = new HashSet<>();
         //Checking that the id passed was a number
         try {
             visitorID = parseLong(args[0]);
@@ -85,50 +92,48 @@ public class BorrowCommand extends TextCommand {
         }
 
         //Finding the visitor with the matching ID in the database
-        Visitor v =
-                this.server.getLibraryData().query(Visitor.class).isEqual(Visitor.Field.ID, visitorID).results().findAny().orElse(null);
+        Visitor v = this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, visitorID)
+                .results().findAny().orElse(null);
         if (v == null) {
-            executor.sendMessage(buildResponse(this.getName(), "invalid" +
-                    "-visitor-id"));
+            executor.sendMessage(buildResponse(this.getName(), "invalid-visitor-id"));
             return ResponseFlag.SUCCESS;
         }
 
         //Query for checkout
-        long checkedOutBooks = server.getLibraryData()
-                .query(Checkout.class).isEqual(Checkout.Field.VISITOR, v).results().count();
+        long checkedOutBooks = server.getLibraryData().query(Checkout.class)
+                .isEqual(Checkout.Field.VISITOR, v)
+                .results().count();
 
         //Checking they don't or won't have too many books
-        if (checkedOutBooks > 5 || checkedOutBooks + bookIDs.size() > 5) {
+        if (checkedOutBooks >= BOOK_LIMIT || checkedOutBooks + bookIDs.size() > BOOK_LIMIT) {
             executor.sendMessage(buildResponse(this.getName(), "book-limit-exceeded"));
         }
 
         //Checking that the visitor's account balance is in the positive
-        if (v.getMoney().compareTo(BigDecimal.ZERO) > 0) {
-            executor.sendMessage(buildResponse(this.getName(), "outstanding" +
-                    "-fine", v.getMoney()));
+        if (v.getMoney().compareTo(BigDecimal.ZERO) < 0) {
+            executor.sendMessage(buildResponse(this.getName(), "outstanding-fine", v.getMoney()));
             return ResponseFlag.SUCCESS;
         }
 
         //Search the database for the books in bookIDs, if any of them
         // aren't correct, don't allow them to check any of them out
-        Set<Book> books = new HashSet<>();
-        Optional<? extends Book> bookSearch;
-        for (final long bookID : bookIDs) {
-            bookSearch = this.server.getLibraryData().query(Book.class)
-                                .isEqual(Book.Field.ID, bookID)
-                                .results().findAny();
-            if (bookSearch.isPresent()) {
-                books.add(bookSearch.get());
-            } else {
-                executor.sendMessage(buildResponse(this.getName(), "invalid" +
-                        "-book-id", bookID));
-                return ResponseFlag.SUCCESS;
-            }
+        List<Book> found = this.server.getLibraryData().query(Book.class)
+                .isAny(Book.Field.ID, bookIDs)
+                .results()
+                .collect(Collectors.toList());
+        if (found.size() != bookIDs.size()) {
+            //we had a mismatch
+            found.stream().map(Book::getID).forEach(bookIDs::remove);
+            //bookIDs now contains only invalid ids
+            List<String> out = new LinkedList<>();
+            bookIDs.forEach(id -> out.add(id + ""));
+            out.add(0, this.getName());
+            out.add(1, "invalid-book-id");
+            executor.sendMessage(buildResponse(out));
+            return ResponseFlag.SUCCESS;
         }
-
-        for (Book b : books) {
-            b.checkout(v);
-        }
+        found.forEach(b -> b.checkout(v));
 
         return ResponseFlag.SUCCESS;
     }
