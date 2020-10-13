@@ -9,6 +9,8 @@ import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.cache.StateStorage;
 import edu.rit.codelanx.data.cache.field.DataField;
+import edu.rit.codelanx.data.state.types.StateType;
+import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,12 +63,25 @@ public class FFStorageAdapter implements StorageAdapter {
         return this.library;
     }
 
+    private static DataField<?>[] VISITOR_HACK = {Visitor.Field.FIRST, Visitor.Field.LAST, Visitor.Field.ADDRESS, Visitor.Field.PHONE};
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
     @Override
     public <R extends State> R insert(StateBuilder<R> builder) {
+        //TODO: This is a hack, needs proper support from Composite keys (R2)
+        if (builder.getType() == StateType.VISITOR) {
+            Query<Visitor> query = this.storage.query(Visitor.class);
+            for (DataField<?> field : VISITOR_HACK) {
+                Object o = builder.getValue(field);
+                query = query.isEqual((DataField<Object>) field, o);
+            }
+            if (query.results().count() > 0) {
+                throw new IllegalArgumentException("Duplicate Visitor provided");
+            }
+        }
         return builder.buildObj(this.storage, builder.getType().getNextID());
     }
 
