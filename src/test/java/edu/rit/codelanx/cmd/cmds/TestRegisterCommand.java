@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class TestRegisterCommand {
 
@@ -40,7 +38,7 @@ public class TestRegisterCommand {
         Assertions.assertSame(ResponseFlag.SUCCESS,
                 cmd.onExecute(this.exec, "bob", last, "242 electric avenue", "555-555-HAND"));
         Mockito.verify(this.exec).sendMessage("register," + id + ";");
-        Visitor visitor = this.serv.getDataStorage().query(Visitor.class)
+        Visitor visitor = this.serv.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
         Assertions.assertNotNull(visitor);

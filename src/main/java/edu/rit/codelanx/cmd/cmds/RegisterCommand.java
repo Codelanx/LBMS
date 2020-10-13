@@ -67,7 +67,7 @@ public class RegisterCommand extends TextCommand {
         //We can assume all input is good - bounds are correct and no conversions to be done
 
         // Compares the inputted arguments to those already existing
-        Visitor current = this.server.getDataStorage().query(Visitor.class)
+        Visitor current = this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.FIRST, args[0])
                 .isEqual(Visitor.Field.LAST, args[1])
                 .isEqual(Visitor.Field.ADDRESS, args[2])
@@ -89,7 +89,7 @@ public class RegisterCommand extends TextCommand {
                 .setValue(Visitor.Field.PHONE, args[3])
                 .setValue(Visitor.Field.REGISTRATION_DATE, registeredAt)
                 .setValue(Visitor.Field.MONEY, BigDecimal.ZERO)
-                .build(this.server.getDataStorage());
+                .build(this.server.getLibraryData());
 
         executor.renderState(newVisitor);
         executor.sendMessage(this.buildResponse(this.getName(), newVisitor.getID(), DATE_FORMAT.format(registeredAt)));

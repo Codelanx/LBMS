@@ -23,7 +23,7 @@ public class LBMS {
     private LBMS() {
         this.server = new TextServer();
         try {
-            this.server.getDataStorage().initialize();
+            this.server.getLibraryData().initialize();
             this.server.getBookStore().initialize();
         } catch (IOException e) {
             //because this is a fatal startup issue

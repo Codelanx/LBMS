@@ -76,20 +76,20 @@ public class InfoCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
         // gets the number of books
-        long numOfBooks = this.server.getDataStorage().query(Book.class)
+        long numOfBooks = this.server.getLibraryData().query(Book.class)
                 .results()
                 .count();
-        Book bookInfo = this.server.getDataStorage().query(Book.class)
+        Book bookInfo = this.server.getLibraryData().query(Book.class)
                 .results()
                 .findAny()
                 .orElse(null);
 
 
         // gets the number of copies for each book
-        long numOfCopies = this.server.getDataStorage().query(Book.class)
+        long numOfCopies = this.server.getLibraryData().query(Book.class)
                 .results()
                 .count();
-        List<Author> authors = this.server.getDataStorage().query(Author.class)
+        List<Author> authors = this.server.getLibraryData().query(Author.class)
                 .results()
                 .collect(Collectors.toList());
 

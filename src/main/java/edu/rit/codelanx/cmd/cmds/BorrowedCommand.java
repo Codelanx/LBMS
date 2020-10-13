@@ -2,7 +2,6 @@ package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.CommandUtils;
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Checkout;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -79,7 +78,7 @@ public class BorrowedCommand extends TextCommand {
 
         String responseString = this.getName() + ",";
 
-        List<Checkout> books = server.getDataStorage().query(Checkout.class)
+        List<Checkout> books = server.getLibraryData().query(Checkout.class)
                 .isEqual(Checkout.Field.VISITOR, v)
                 .results()
                 .collect(Collectors.toList());

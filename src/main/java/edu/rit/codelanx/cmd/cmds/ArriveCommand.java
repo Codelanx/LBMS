@@ -50,7 +50,7 @@ public class ArriveCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
-        if (!this.server.getDataStorage().getLibrary().isOpen()){
+        if (!this.server.getLibraryData().getLibrary().isOpen()){
             executor.sendMessage(this.getName() + "," + "library-closed;");
             return ResponseFlag.FAILURE;
         }
@@ -64,7 +64,7 @@ public class ArriveCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
         //pre: we have a valid id, we need a Visitor
-        Visitor visitor = this.server.getDataStorage().query(Visitor.class)
+        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
         if (visitor == null) {
@@ -75,7 +75,7 @@ public class ArriveCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        boolean visit = visitor.startVisit(this.server.getDataStorage().getLibrary());
+        boolean visit = visitor.startVisit(this.server.getLibraryData().getLibrary());
         executor.sendMessage(this.getName() + "," + visitor.getID() + "," +
                 TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()) + ";");
         return ResponseFlag.SUCCESS;

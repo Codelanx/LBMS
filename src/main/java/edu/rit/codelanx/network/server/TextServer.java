@@ -47,7 +47,7 @@ public class TextServer implements Server<TextMessage> {
      * @return {@inheritDoc}
      */
     @Override
-    public DataSource getDataStorage() {
+    public DataSource getLibraryData() {
         return this.library;
     }
 

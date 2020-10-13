@@ -81,7 +81,7 @@ public class ReturnCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         Optional<Visitor> optVisitor = InputOutput.parseLong(args[0])
                 .flatMap(id -> {
-                    return this.server.getDataStorage().query(Visitor.class)
+                    return this.server.getLibraryData().query(Visitor.class)
                             .isEqual(Visitor.Field.ID, id)
                             .results().findAny();
                 });
@@ -103,7 +103,7 @@ public class ReturnCommand extends TextCommand {
         Set<Book> books = null;
         if (failed.isEmpty()) {
             //now, make sure the ids that we parsed are valid books
-            books = this.server.getDataStorage().query(Book.class)
+            books = this.server.getLibraryData().query(Book.class)
                     .isAny(Book.Field.ID, ids)
                     .results()
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -117,7 +117,7 @@ public class ReturnCommand extends TextCommand {
         List<Checkout> checkouts = null;
         if (failed.isEmpty()) {
             //Make sure the books are actually checked out
-            checkouts = this.server.getDataStorage().query(Checkout.class)
+            checkouts = this.server.getLibraryData().query(Checkout.class)
                     .isEqual(Checkout.Field.VISITOR, visitor)
                     .isAny(Checkout.Field.BOOK, books)
                     .isEqual(Checkout.Field.RETURNED, false)

@@ -2,9 +2,7 @@ package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.types.Author;
 import edu.rit.codelanx.data.state.types.Book;
-import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -12,10 +10,8 @@ import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 import static java.lang.Long.parseLong;
@@ -104,7 +100,7 @@ public class BuyCommand extends TextCommand {
 
 
         for (Long id : bookIDs){
-            Optional<Book> bookSearch = server.getDataStorage().query(Book.class)
+            Optional<Book> bookSearch = server.getLibraryData().query(Book.class)
                                 .isEqual(Book.Field.ID, id)
                                 .results().findAny();
             if (bookSearch.isPresent()){

@@ -36,12 +36,12 @@ public interface Server<T extends Message<?>> extends Messenger<T> {
      *         current data
      * @see DataSource
      */
-    public DataSource getDataStorage();
+    public DataSource getLibraryData();
 
     /**
      * The {@link DataSource} which refences the "Book Store", aka an emulated
      * online shop which you can query in a similar fashion to
-     * {@link #getDataStorage()}, and which provides the available books to
+     * {@link #getLibraryData()}, and which provides the available books to
      * be added to a {@link Library}, as they are represented in the
      * {@code books.txt} resource
      *

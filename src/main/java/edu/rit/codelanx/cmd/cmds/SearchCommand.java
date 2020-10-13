@@ -9,12 +9,8 @@ import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
-import java.text.DateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -98,7 +94,7 @@ public class SearchCommand extends TextCommand {
         }
         if (authors.length > 0 && !authors[0].equals("*")) {
             for (String authorString : authors) {
-                Author a = this.server.getDataStorage().query(Author.class)
+                Author a = this.server.getLibraryData().query(Author.class)
                         .isEqual(Author.Field.NAME, authorString)
                         .results()
                         .findAny()

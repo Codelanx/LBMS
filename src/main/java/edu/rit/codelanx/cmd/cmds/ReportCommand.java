@@ -72,19 +72,19 @@ public class ReportCommand extends TextCommand {
         Instant curDate = Instant.now();
 
         //Finds all the books
-        long books = this.server.getDataStorage().query(Book.class)
+        long books = this.server.getLibraryData().query(Book.class)
                 .results()
                 .count();
 
 
         // Gathers the number of visitors registered
-        long numVisitors = this.server.getDataStorage().query(Visitor.class)
+        long numVisitors = this.server.getLibraryData().query(Visitor.class)
                 .results()
                 .count();
 
 
         //Uses summary statistics to get the average time of visits
-        LongSummaryStatistics stats = this.server.getDataStorage().query(Visit.class) //Query<Visit>
+        LongSummaryStatistics stats = this.server.getLibraryData().query(Visit.class) //Query<Visit>
                 .results() //Stream<Visit>
                 .map(visit -> Duration.between(visit.getStart(), visit.getEnd())) //Stream<Duration>
                 .mapToLong(Duration::getSeconds)//Stream<Long>
@@ -100,12 +100,12 @@ public class ReportCommand extends TextCommand {
 
 
         // Counts the number of books purchased
-        long numPurchased = this.server.getDataStorage().query(Library.class)
+        long numPurchased = this.server.getLibraryData().query(Library.class)
                 .results()
                 .count();
 
 
-        Map<String, Set<Transaction>> map = this.server.getDataStorage().query(Transaction.class)
+        Map<String, Set<Transaction>> map = this.server.getLibraryData().query(Transaction.class)
                 .results()
                 .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
         int amountLateFees = map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();

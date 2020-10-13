@@ -92,7 +92,7 @@ public class Book extends BasicState {
      * @param count of how many books to add
      */
     public void addCopy(int count){
-        Field.TOTAL_COPIES.mutate(this, old -> {return (old + count);});
+        Field.TOTAL_COPIES.mutate(this, old -> old + count);
     }
 
     /** @see BasicState#BasicState(DataSource, Map) */

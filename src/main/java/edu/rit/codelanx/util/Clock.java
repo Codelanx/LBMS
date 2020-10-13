@@ -126,9 +126,9 @@ public class Clock {
         int hour = this.getCurrentTime().get(ChronoField.HOUR_OF_DAY);
         boolean shouldBeOpen = hour >= OPEN_TIME_24HR && hour < CLOSE_TIME_24HR;
         if (shouldBeOpen && this.open.compareAndSet(false, true)) {
-            this.server.getDataStorage().ofLoaded(Library.class).forEach(Library::open);
+            this.server.getLibraryData().ofLoaded(Library.class).forEach(Library::open);
         } else if (!shouldBeOpen && this.open.compareAndSet(true, false)) {
-            this.server.getDataStorage().ofLoaded(Library.class).forEach(Library::close);
+            this.server.getLibraryData().ofLoaded(Library.class).forEach(Library::close);
         }
     }
 }

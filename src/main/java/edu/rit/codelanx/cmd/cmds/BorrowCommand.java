@@ -85,14 +85,14 @@ public class BorrowCommand extends TextCommand {
 
         //Finding the visitor with the matching ID in the database
         Visitor v =
-                this.server.getDataStorage().query(Visitor.class).isEqual(Visitor.Field.ID, visitorID).results().findAny().orElse(null);
+                this.server.getLibraryData().query(Visitor.class).isEqual(Visitor.Field.ID, visitorID).results().findAny().orElse(null);
         if (v == null) {
             executor.sendMessage(this.getName() + ",invalid-visitor-id;");
             return ResponseFlag.SUCCESS;
         }
 
         //Query for checkout
-        long checkedOutBooks = server.getDataStorage()
+        long checkedOutBooks = server.getLibraryData()
                 .query(Checkout.class).isEqual(Checkout.Field.VISITOR, v).results().count();
 
         //Checking they don't or won't have too many books
@@ -111,7 +111,7 @@ public class BorrowCommand extends TextCommand {
         Set<Book> books = new HashSet<>();
         Optional<? extends Book> bookSearch;
         for (final long bookID : bookIDs) {
-            bookSearch = this.server.getDataStorage().query(Book.class)
+            bookSearch = this.server.getLibraryData().query(Book.class)
                                 .isEqual(Book.Field.ID, bookID)
                                 .results().findAny();
             if (bookSearch.isPresent()) {
