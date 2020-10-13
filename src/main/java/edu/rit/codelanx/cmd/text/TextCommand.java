@@ -142,6 +142,6 @@ public abstract class TextCommand implements Command {
         long hours = d.toHours();
         long minutes = d.toMinutes() - (hours * 60);
         long seconds = d.getSeconds() - (d.toMinutes() * 60);
-        return String.format("%d:%d:%d", hours, minutes, seconds);
+        return String.format("%.2d:%.2d:%.2d", hours, minutes, seconds);
     }
 }
