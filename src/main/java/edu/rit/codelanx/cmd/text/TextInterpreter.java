@@ -11,6 +11,7 @@ import edu.rit.codelanx.cmd.ResponseFlag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -151,6 +152,16 @@ public class TextInterpreter implements Interpreter {
             if (!suffix.isEmpty()) {
                 return command.buildResponse(command.getName(), "missing-params", suffix);
             }
+        }
+        List<String> badWilds = IntStream.range(0, args.length)
+                .filter(i -> command.params[i].isRequired())
+                .filter(i -> args[i].isEmpty() || args[i].equals(INPUT_WILDCARD))
+                .mapToObj(i -> command.params[i].getLabel())
+                .collect(Collectors.toCollection(LinkedList::new));
+        if (badWilds.size() > 0) {
+            badWilds.add(0, command.getName());
+            badWilds.add(1, "missing-params");
+            return command.buildResponse(badWilds);
         }
         return null; //null if we're good!
     }
