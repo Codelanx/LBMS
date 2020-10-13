@@ -8,8 +8,12 @@ import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.util.Validate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 //TODO: Double check if commands need to disable when the library is closed
 public class TextInterpreter implements Interpreter {
@@ -42,22 +46,24 @@ public class TextInterpreter implements Interpreter {
     }
 
     private String getDenialReason(TextCommand command, String... args) {
-        //TODO: All pre-checks here
-        //TODO: Check args against command#params for things like length, correctness, etc
+        //Check args against command#params for things like length, correctness, etc
         if (command.params == null) {
-            return null; //TODO: command didn't implement params yet
+            throw new UnsupportedOperationException("Command did not implement #buildParams correctly");
         }
         if (command.params.length > 0 && args.length <= 0) { //if we need args, and there are none
             return command.buildResponse(command.getName(), "missing-params", command.getUsage()); //example of an error string
         }
-        for (int i = 0; i < command.params.length; i++) {
-
+        if (command.params.length > args.length) {
+            String suffix = IntStream.range(args.length, command.params.length)
+                    .mapToObj(i -> command.params[i].toString())
+                    .collect(Collectors.joining(TextCommand.TOKEN_DELIMITER));
+            return command.buildResponse(command.getName(), "missing-params", suffix);
         }
         return null; //null if we're good!
     }
 
     private void execute(CommandExecutor executor, String command) {
-        String[] args = command.split(",");
+        String[] args = this.splitInput(command);
         String[] passedArgs = new String[args.length - 1];
         System.arraycopy(args, 1, passedArgs, 0, passedArgs.length);
         Command cmd = TextCommandMap.getCommand(this.server, args[0]);
@@ -71,6 +77,38 @@ public class TextInterpreter implements Interpreter {
         }
         ResponseFlag r = cmd.onExecute(executor, passedArgs);
         executor.sendMessage(r.getDescription()); //TODO: Remove in production
+    }
+
+    //splits the input appropriately
+    private String[] splitInput(String input) {
+        char[] c = input.toCharArray();
+        List<String> back = new ArrayList<>();
+        StringBuilder buff = new StringBuilder();
+        chars:
+        for (int i = 0; i < c.length; i++) {
+            switch (c[i]) {
+                case ',':
+                    back.add(buff.toString());
+                    buff.setLength(0);
+                    break;
+                case '{':
+                    int end = input.indexOf('}', i);
+                    String val = input.substring(i+1, end);
+                    if (!val.isEmpty()) {
+                        back.add(val);
+                        i = end+1; //skip }
+                        continue chars;
+                    }
+                    //fall through
+                default:
+                    buff.append(c[i]);
+                    break;
+            }
+        }
+        if (buff.length() > 0) {
+            back.add(buff.toString());
+        }
+        return back.toArray(new String[0]);
     }
 
 }
