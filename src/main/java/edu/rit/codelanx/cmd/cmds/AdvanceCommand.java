@@ -2,13 +2,19 @@ package edu.rit.codelanx.cmd.cmds;
 
 import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -66,6 +72,24 @@ public class AdvanceCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
+        boolean incorrectArgs = false;
+        Map<Integer, String> argMap = new HashMap<>();
+        for (int i = 0; i < args.length; i++){
+            if (args[i].isEmpty()) {
+                argMap.put(i, this.params[i].getLabel());
+                incorrectArgs = true;
+            }
+        }
+
+        if (incorrectArgs){
+            String response = "";
+            for (Map.Entry<Integer,String> entry : argMap.entrySet()){
+                response += this.params[entry.getKey()];
+            }
+            executor.sendMessage(this.buildResponse(this.getName(),
+                    "missing-parameters",response));
+            return ResponseFlag.SUCCESS;
+        }
 
         //Checking that they have the correct amount of parameters
         if (args.length < 1 || args.length > 2) {
