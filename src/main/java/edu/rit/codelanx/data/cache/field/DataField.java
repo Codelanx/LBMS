@@ -46,7 +46,7 @@ public interface DataField<T> {
     public Object serialize(State state);
 
     /**
-     * initializes Data field with A specific state and its value.
+     * initializes Data field with A specific state and value.
      *
      * @param state involved {@link State}
      * @param value {@link Object} of the above State
@@ -81,9 +81,9 @@ public interface DataField<T> {
     /**
      * sets the field of this state to a certain value
      *
-     * @param state {@link State} to set the data from
-     * @param value to be {@link T}
-     * @return
+     * @param state {@link State} to be changed
+     * @param value {@link T} to be set to
+     * @return the new version
      */
     public T set(State state, T value);
 
@@ -136,7 +136,7 @@ public interface DataField<T> {
     /**
      * checks if the data field can be found via cache
      *
-     * @return {@code false}  since it can't
+     * @return {@code false}  since it cannot
      */
     default public boolean isKey() {
         return false;
