@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Checkout;
 import edu.rit.codelanx.network.io.TextMessage;
@@ -62,23 +63,24 @@ public class BorrowedCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
 
-        //Making sure that the visitor ID is correctly formatted
-        long visitorID = CommandUtils.checkVisitorID(args[0]);
-        if (visitorID == -1){
+        //Getting the visitor from the id
+        Long id = InputOutput.parseLong(args[0]).orElse(null);
+        if (id == null) {
             return ResponseFlag.FAILURE;
         }
-
-        //Finding the visitor with the matching ID in the database
-        Visitor v = CommandUtils.findVisitor(this.server, visitorID);
-        if (v == null){
-            executor.sendMessage(this.getName() + ",invalid-visitor-id;");
+        //pre: we have a valid id, we need a Visitor
+        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, id)
+                .results().findAny().orElse(null);
+        if (visitor == null) {
+            executor.sendMessage(this.getName() + ",invalid-id;");
             return ResponseFlag.SUCCESS;
         }
 
         String responseString = this.getName() + ",";
 
         List<Checkout> books = server.getLibraryData().query(Checkout.class)
-                .isEqual(Checkout.Field.VISITOR, v)
+                .isEqual(Checkout.Field.VISITOR, visitor)
                 .results()
                 .collect(Collectors.toList());
 
@@ -93,6 +95,5 @@ public class BorrowedCommand extends TextCommand {
         executor.sendMessage(responseString);
 
         return ResponseFlag.SUCCESS;
-
     }
 }

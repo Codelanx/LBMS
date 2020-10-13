@@ -12,7 +12,6 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 import java.time.Duration;
 import java.time.Instant;
 
-import static edu.rit.codelanx.cmd.CommandUtils.*;
 
 /**
  * Ends a visit in progress.
