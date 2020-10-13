@@ -1,23 +1,31 @@
 package edu.rit.codelanx.util;
 
+import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.StateBuilder;
+import edu.rit.codelanx.data.state.State;
+import edu.rit.codelanx.data.state.types.Author;
+import edu.rit.codelanx.data.state.types.AuthorListing;
 import edu.rit.codelanx.data.state.types.Book;
+import edu.rit.codelanx.data.state.types.StateType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+//TODO: Documentation
 public enum BookParser {;
 
     private static final String BOOKS_FILE = "books.txt";
     private static final int BOOK_COUNT = 515;
-
-    //TODO: data preconditional - when inserting, insert things without any form of external mappings
-    //TODO:     E.g. insert: [Author, Visitor, Library, Book] -> [AuthorListing, Visit, Checkout, Transaction]
-    //TODO: This will ensure that relationships are intact, as the latter will search for the former while being made
 
     //9780674028678,"The Race Between Education and Technology",{Claudia Dale Goldin, Lawrence F. Katz},"Harvard University Press",2008,488
     //9781591987628,"Build-a-Skill Instant Books: Synonyms and Antonyms, Gr. Kâ€“1, eBook",{Trisha Callella},"Creative Teaching Press",2007-01-01,32
@@ -27,11 +35,7 @@ public enum BookParser {;
              BufferedReader br = new BufferedReader(isr)) {
             String s;
             while ((s = br.readLine()) != null) {
-                TempContainer temp = new TempContainer();
-                //TODO: Fix below, compiler error
-                //temp.builder = Book.create(storage).checkedOut(0).totalCopies(1); //TODO: More than 1 copy???
-                BookParser.parseBook(temp, s);
-                //TODO: Insert book to storage
+                BookParser.parseAndInsert(storage, s);
             }
         } catch (IOException e) {
             Errors.report(e);
@@ -39,34 +43,49 @@ public enum BookParser {;
         return back;
     }
 
-    public static class TempContainer {
-        public StateBuilder<Book> builder;
-        public String[] authors;
+    public static Map<State.Type, List<? extends State>> parseAndInsert(DataSource insertInto, String line) {
+        Map<State.Type, List<? extends State>> back = new HashMap<>();
+        StateBuilder<Book> book = Book.create();
+        int start = 0, end = line.indexOf(',');
+        book.setValue(Book.Field.ISBN, line.substring(start, end));
+        start = end+2; //skip ,"
+        end = line.indexOf('"', start);
+        book.setValue(Book.Field.TITLE, line.substring(start, end));
+        start = end+3; //skip ",{
+        end = line.indexOf('}', start);
+        List<Author> authors = Arrays.stream(line.substring(start, end).split(","))
+                                    .map(String::trim)
+                                    .map(s -> BookParser.findOrInsertAuthor(insertInto, s))
+                                    .collect(Collectors.toList());
+        back.put(StateType.AUTHOR, authors);
+        start = end+3; //skip },"
+        end = line.indexOf('"', start);
+        book.setValue(Book.Field.PUBLISHER, line.substring(start, end));
+        start = end+2; //skip ",
+        end = line.indexOf(',', start);
+        book.setValue(Book.Field.PUBLISH_DATE, Instant.from(TextCommand.DATE_FORMAT.parse(line.substring(start, end))));
+        book.setValue(Book.Field.PAGE_COUNT, Integer.parseInt(line.substring(end+1)));
+        book.setValue(Book.Field.CHECKED_OUT, -1);
+        book.setValue(Book.Field.TOTAL_COPIES, -1);
+        Book addedBook = book.build(insertInto);
+        back.put(addedBook.getType(), Collections.singletonList(addedBook));
+        List<AuthorListing> listings = authors.stream()
+                .map(author -> {
+                    return AuthorListing.create()
+                            .setValue(AuthorListing.Field.AUTHOR, author)
+                            .setValue(AuthorListing.Field.BOOK, addedBook)
+                            .build(insertInto);
+                })
+                .collect(Collectors.toList());
+        back.put(StateType.AUTHOR_LISTING, listings);
+        return back;
     }
 
-    //TODO: Fix
-    public static StateBuilder<Book> parseBook(TempContainer temp, String s) {
-    /*    int start = 0, end = s.indexOf(',');
-        temp.builder.setValue(Book.Field.ISBN, s.substring(start, end));
-        start = end+2; //skip ,"
-        end = s.indexOf('"', start);
-        temp.builder.setValue(Book.Field.TITLE, s.substring(start, end));
-        start = end+3; //skip ",{
-        end = s.indexOf('}', start);
-        //TODO: Figure out what to do with authors
-        //TODO: We know now, we have to insert author objects and the listings!
-        temp.authors = Arrays.stream(s.substring(start, end).split(","))
-                .map(String::trim).toArray(String[]::new);
-        start = end+3; //skip },"
-        end = s.indexOf('"', start);
-        temp.builder.publisher(s.substring(start, end));
-        start = end+2; //skip ",
-        end = s.indexOf(',', start);
-        //temp.builder.publishDate(s.substring(start, end)); //TODO: Fix
-        temp.builder.pageCount(Integer.parseInt(s.substring(end+1)));
-        return temp.builder;
-
-     */
-        return null;
+    private static Author findOrInsertAuthor(DataSource source, String name) {
+        Author back = source.query(Author.class).isEqual(Author.Field.NAME, name).results().findAny().orElse(null);
+        if (back == null) {
+            back = Author.create().setValue(Author.Field.NAME, name).build(source);
+        }
+        return back;
     }
 }

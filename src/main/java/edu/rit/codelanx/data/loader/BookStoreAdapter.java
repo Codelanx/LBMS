@@ -7,9 +7,9 @@ import edu.rit.codelanx.data.state.types.AuthorListing;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.cache.field.DataField;
+import edu.rit.codelanx.util.BookParser;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,10 +40,7 @@ public class BookStoreAdapter extends FFStorageAdapter {
 
     @Override
     public void loadAll() throws IOException {
-        try (InputStream is = BookStoreAdapter.class.getResourceAsStream("books.txt")) {
-
-        }
-        //TODO: read books.txt
+        BookParser.parseBooks(this.getAdaptee());
     }
 
     @Override
