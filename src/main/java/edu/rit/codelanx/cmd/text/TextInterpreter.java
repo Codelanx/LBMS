@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.text;
 
+import com.codelanx.commons.util.ref.Box;
 import edu.rit.codelanx.LBMS;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -9,6 +10,7 @@ import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.cmd.ResponseFlag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -66,18 +68,26 @@ public class TextInterpreter implements Interpreter {
     }
 
     //Tries to find a reason to deny running the command
-    private String getDenialReason(TextCommand command, String... args) {
+    private String getDenialReason(TextCommand command, Box<String[]> args) {
         //Check args against command#params for things like length, correctness, etc
         if (command.params == null) {
             throw new UnsupportedOperationException("Command did not implement #buildParams correctly");
         }
-        if (command.params.length > 0 && args.length <= 0) { //if we need args, and there are none
+        if (command.params.length > 0 && args.value.length <= 0) { //if we need args, and there are none
             return command.buildResponse(command.getName(), "missing-params", command.getUsage()); //example of an error string
         }
-        if (command.params.length > args.length) {
-            String suffix = IntStream.range(args.length, command.params.length)
-                    .mapToObj(i -> command.params[i].toString())
+        if (command.params.length > args.value.length) {
+            String suffix = Arrays.stream(command.params, args.value.length, command.params.length)
+                    .filter(TextParam::isRequired)
+                    .map(TextParam::toString)
                     .collect(Collectors.joining(TextCommand.TOKEN_DELIMITER));
+            if (suffix.isEmpty()) {
+                //no required arguments were missed, we'll just hackily update the missing args
+                String[] newArgs = new String[command.params.length];
+                System.arraycopy(args.value, 0, newArgs, 0, args.value.length);
+                Arrays.fill(newArgs, args.value.length, newArgs.length, "");
+                args.value = newArgs; //REFACTOR: A little hacky, but gets the job done
+            }
             return command.buildResponse(command.getName(), "missing-params", suffix);
         }
         return null; //null if we're good!
@@ -91,7 +101,9 @@ public class TextInterpreter implements Interpreter {
         Command cmd = TextCommandMap.getCommand(this.server, args[0]);
         if (cmd instanceof TextCommand) {
             TextCommand tcmd = (TextCommand) cmd;
-            String denial = this.getDenialReason(tcmd, passedArgs);
+            Box<String[]> box = new Box<>();
+            box.value = passedArgs;
+            String denial = this.getDenialReason(tcmd, box);
             if (denial != null) {
                 executor.sendMessage(denial);
                 return;

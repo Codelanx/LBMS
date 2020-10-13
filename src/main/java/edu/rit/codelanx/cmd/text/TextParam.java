@@ -19,6 +19,22 @@ public class TextParam {
         this.list = list;
     }
 
+    public boolean isRequired() {
+        return this.required >= 1;
+    }
+
+    public int getNumberOfSubArgs() {
+        return this.required;
+    }
+
+    public boolean isList() {
+        return this.list;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
     @Override
     public String toString() {
         return this.list
