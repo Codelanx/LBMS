@@ -39,6 +39,19 @@ public interface DataSource {
     public <R extends State> R insert(StateBuilder<R> builder);
 
     /**
+     * Inserts a state created from a different {@link DataSource} into the
+     * {@link StorageAdapter} and {@link RelativeStorage} that back this
+     * {@link DataSource}. The newly generated state will have a new ID,
+     * relative to the {@link DataSource} it was inserted into
+     *
+     * @param state A {@link State} from an external {@link DataSource}
+     * @param <R> The type of the {@code state}
+     * @return The newly created {@link State} that resides on this
+     *         {@link DataSource}
+     */
+    public <R extends State> R insert(R state);
+
+    /**
      * Given current design considerations, we are managing this around a single
      * "Library" instance per system. Thus, the Library represents more or less
      * system-wide values, such as the money for the library's account

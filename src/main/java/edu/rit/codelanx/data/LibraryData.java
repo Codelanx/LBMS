@@ -103,7 +103,14 @@ public class LibraryData implements DataSource {
     @Override
     public <R extends State> R insert(StateBuilder<R> builder) {
         R back = this.adapter.insert(builder);
-        //TODO: Ensure RelativeStorage is accurately updated
+        this.relative.addState(back);
+        return back;
+    }
+
+    @Override
+    public <R extends State> R insert(R state) {
+        R back = this.adapter.insert(state);
+        this.relative.addState(back);
         return back;
     }
 
