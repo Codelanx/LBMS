@@ -5,8 +5,9 @@ import java.util.function.Supplier;
 
 /**
  * provides initialization of a data field
- *  @author sja9291  Spencer Alderman
- * @param <T> type
+ *
+ * @param <T> type of the data
+ * @author sja9291  Spencer Alderman
  */
 public class FieldInitializer<T> {
 
@@ -16,8 +17,9 @@ public class FieldInitializer<T> {
 
     /**
      * initializes field
-     * @param name string of the field
-     * @param type {@link T} of the field
+     *
+     * @param name         string of the field
+     * @param type         {@link T} of the field
      * @param defaultValue of the field
      */
     public FieldInitializer(String name,
@@ -30,6 +32,7 @@ public class FieldInitializer<T> {
 
     /**
      * gets the field' name
+     *
      * @return string name
      */
     public String getName() {
@@ -38,6 +41,7 @@ public class FieldInitializer<T> {
 
     /**
      * gets the field's type
+     *
      * @return type {@link Class<T>}
      */
     public Class<T> getType() {
@@ -45,9 +49,10 @@ public class FieldInitializer<T> {
     }
 
     /**
-     *  gets the default value of the object
+     * gets the default value of the object
+     *
      * @return default {@link T} value
-     *  @throws UnsupportedOperationException If object has no default value
+     * @throws UnsupportedOperationException If object has no default value
      */
     public T getDefaultValue() {
         if (this.defaultValue == null) {

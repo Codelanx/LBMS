@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 /**
  * Interfaces contains functionalities handling specified {@link T} field
+ *
  * @param <T> field type
  * @author sja9291  Spencer Alderman
  */
@@ -20,6 +21,7 @@ public interface DataField<T> {
 
     /**
      * gets the name of the data field
+     *
      * @return string name
      */
     default public String getName() {
@@ -28,6 +30,7 @@ public interface DataField<T> {
 
     /**
      * gets data field's type
+     *
      * @return a specific type
      */
     default public Class<T> getType() {
@@ -36,6 +39,7 @@ public interface DataField<T> {
 
     /**
      * serializes the specified state
+     *
      * @param state the specified {@link State}
      * @return serialized object
      */
@@ -43,6 +47,7 @@ public interface DataField<T> {
 
     /**
      * initializes Data field with A specific state and its value.
+     *
      * @param state involved {@link State}
      * @param value {@link Object} of the above State
      */
@@ -50,13 +55,15 @@ public interface DataField<T> {
 
     /**
      * clear out the state.
+     *
      * @param state {@link State} to be cleared out.
      */
     public void forget(State state);
 
     /**
      * makes changes to the data field
-     * @param state {@link State} that to be changed
+     *
+     * @param state   {@link State} that to be changed
      * @param updater {@link UnaryOperator} that forms the operation
      * @return changed {@link T}
      */
@@ -65,6 +72,7 @@ public interface DataField<T> {
 
     /**
      * retrieves the data in a specified state
+     *
      * @param state {@link State} to retrieve data from
      * @return data {@link T}
      */
@@ -72,6 +80,7 @@ public interface DataField<T> {
 
     /**
      * sets the field of a state to a certain value
+     *
      * @param state {@link State} to set the data from
      * @param value to be {@link T}
      * @return
@@ -80,12 +89,14 @@ public interface DataField<T> {
 
     /**
      * gets he initialized version of the data field
+     *
      * @return {@link FieldInitializer} of type {@link T}
      */
     public FieldInitializer<T> getInitializer();
 
     /**
      * finds the state based on specified value
+     *
      * @param key {@link T} used to search up the state
      * @return {@link Stream} of type {@link State}
      */
@@ -96,23 +107,46 @@ public interface DataField<T> {
         return InputMapper.toTypeOrState(from, type, InputMapper.getObject(type, sql, this.getName()));
     }
 
+
     @Deprecated
     default public Stream<T> getAll(State state) {
         return Stream.of(this.get(state));
     }
 
+
+    /**
+     * checks for data field index
+     *
+     * @param modifier {@link FieldIndicies}
+     * @return {@code true} if has index, {@code false} otherwise
+     */
     default public boolean hasIndex(FieldIndicies modifier) {
         return false;
     }
 
+    /**
+     * checks for mutability of the data field
+     *
+     * @return {@code false} since this's immutable
+     */
     default public boolean isImmutable() {
         return false;
     }
 
+    /**
+     * checks if the data field can be found via cache
+     *
+     * @return {@code false}  since it can't
+     */
     default public boolean isKey() {
         return false;
     }
 
+    /**
+     * checks the for the Data field uniqueness
+     *
+     * @return {@code false} since data field is not unique
+     */
     default public boolean isUnique() {
         return false;
     }
@@ -243,7 +277,6 @@ public interface DataField<T> {
             this.from.modifiers(modifiers);
             return this;
         }
-
         @Override
         public boolean isValid() {
             return this.from.isValid();
