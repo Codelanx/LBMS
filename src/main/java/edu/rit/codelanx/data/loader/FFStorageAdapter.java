@@ -44,16 +44,27 @@ public class FFStorageAdapter implements StorageAdapter {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataSource getAdaptee() {
         return this.storage;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Library getLibrary() {
         return this.library;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> R insert(StateBuilder<R> builder) {
         return builder.buildObj(this.storage, builder.getType().getNextID());
@@ -104,6 +115,7 @@ public class FFStorageAdapter implements StorageAdapter {
         //TODO: Write all data to files
     }
 
+
     private void errorRecovery(File ref, String ext) throws IOException {
         System.err.println("Bad data file provided, backing up and starting fresh");
         if (!ref.isAbsolute()) {
@@ -153,12 +165,19 @@ public class FFStorageAdapter implements StorageAdapter {
         //well, nothing to be done then
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove(State state) {
         //TODO: Actually remove the state
         //nothing to do here, data lives in the caches
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@code true} since this loads data into memory all the time
+     */
     @Override
     public boolean isCached() {
         return true;

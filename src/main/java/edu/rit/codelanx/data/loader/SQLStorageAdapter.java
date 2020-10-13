@@ -21,12 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * A type of {@link StorageAdapter} for sql database.
+ *
+ * @author sja9291  Spencer Alderman
+ */
 public class SQLStorageAdapter implements StorageAdapter {
 
     private final Cache<? extends SQLDataType> db;
     private final Library lib;
     private final DataSource storage;
 
+    /**
+     * Creates sql adapter for
+     * @param storage {@link DataSource}
+     */
     public SQLStorageAdapter(DataSource storage) {
         this.storage = storage;
         this.db = ConfigKey.newDBCache();
@@ -49,6 +58,10 @@ public class SQLStorageAdapter implements StorageAdapter {
         this.lib = lib;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Library getLibrary() {
         return this.lib;
@@ -73,21 +86,34 @@ public class SQLStorageAdapter implements StorageAdapter {
         return null; //should not reach
     }
 
+    /**
+     * {@inheritDoc} no preloading with sql, simply utilizes the backend
+     */
     @Override
     public void loadAll() {
         //no preloading with sql, simply utilizes the backend
     }
-
+    /**
+     * {@inheritDoc} In this case, no saving needed.
+     */
     @Override
     public void saveAll() throws IOException {
         //no saving needed, updates are pushed as made
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataSource getAdaptee() {
         return this.storage;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> R loadState(long id, Class<R> type) {
         State.Type stateType = StateType.fromClass(type);
@@ -99,6 +125,10 @@ public class SQLStorageAdapter implements StorageAdapter {
         }, StatementType.FIND_BY_ID.forType(type), id).getResponse();
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
         //TODO: Attempt the local cache before resorting to SQL?
@@ -117,6 +147,10 @@ public class SQLStorageAdapter implements StorageAdapter {
         return Stream.empty();
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State, E> Stream<R> loadState(Class<R> type, DataField<E> field, E value) {
         return this.storage.query(type)
@@ -124,16 +158,26 @@ public class SQLStorageAdapter implements StorageAdapter {
                 .results();
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E> void notifyUpdate(State state, DataField<E> field, E value) {
         //TODO: update db
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void remove(State state) {
         //TODO: update db
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@code false} since sqlStorage adapter not loads data into memory all the time
+     */
     @Override
     public boolean isCached() {
         return false;
@@ -161,7 +205,8 @@ public class SQLStorageAdapter implements StorageAdapter {
                 case CREATE_CONTAINER:
                     //TODO: save .sql files from heidisql and load from resources
             }
-            throw new IllegalArgumentException("Cannot map " + type.getSimpleName() + " to a " + this.name() + " statement (not implemented yet?)");
+            throw new IllegalArgumentException("Cannot map " + type.getSimpleName() + " to a " + this.name()
+                    + " statement (not implemented yet?)");
         }
     }
 

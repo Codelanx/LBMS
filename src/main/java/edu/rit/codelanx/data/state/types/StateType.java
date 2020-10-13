@@ -37,6 +37,10 @@ public enum StateType implements State.Type {
         this.fileBuild = fileBuild;
     }
 
+    /**
+     * increments the ID
+     * @param value-value to be incremented
+     */
     public void setAutoIncrementID(long value) {
         this.autoID.set(value);
     }
@@ -105,7 +109,6 @@ public enum StateType implements State.Type {
     public <T extends State> State.StateFileConstructor<T> getFileConstructor() {
         return (State.StateFileConstructor<T>) this.fileBuild;
     }
-
     public static State.Type fromClassNullable(Class<? extends State> stateType) {
         for (StateType t : VALUES) {
             if (t.type == stateType) {
