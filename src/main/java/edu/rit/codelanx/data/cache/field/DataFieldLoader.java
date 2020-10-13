@@ -28,6 +28,10 @@ public class DataFieldLoader<T> implements DataField<T> {
         this.initializer = initializer;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return string representation of {@link FieldInitializer}
+     */
     @Override
     public String getName() {
         return this.initializer.getName();
@@ -53,6 +57,10 @@ public class DataFieldLoader<T> implements DataField<T> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @param state {@link State} to be cleared out.
+     */
     @Override
     public void forget(State state) {
         this.values.remove(state);
@@ -85,6 +93,10 @@ public class DataFieldLoader<T> implements DataField<T> {
         state.getLoader().getAdapter().notifyUpdate(state, this, newValue);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return involved {@link FieldInitializer}
+     */
     @Override
     public FieldInitializer<T> getInitializer() {
         return this.initializer;

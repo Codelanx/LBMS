@@ -79,7 +79,7 @@ public interface DataField<T> {
     public T get(State state);
 
     /**
-     * sets the field of a state to a certain value
+     * sets the field of this state to a certain value
      *
      * @param state {@link State} to set the data from
      * @param value to be {@link T}
@@ -127,7 +127,7 @@ public interface DataField<T> {
     /**
      * checks for mutability of the data field
      *
-     * @return {@code false} since this's immutable
+     * @return {@code false} since this's mutable
      */
     default public boolean isImmutable() {
         return false;
@@ -179,10 +179,20 @@ public interface DataField<T> {
                 .build();
     }
 
+    /**
+     * creates id type long
+     * @param type of {@link State} involved
+     * @return {@link DataField} long type
+     */
     public static DataField<Long> makeIDField(State.Type type) {
         return DataField.makeIDField(type::getNextID);
     }
 
+    /**
+     * called in {@link DataField#makeIDField(State.Type)} to creates {@link DataField} type long
+     * @param nextID-subsequent id of specified {@link State.Type}
+     * @return {@link DataField} type long
+     */
     public static DataField<Long> makeIDField(Supplier<? extends Long> nextID) {
         return DataField.builder(Long.class)
                 .name("id")
@@ -190,6 +200,7 @@ public interface DataField<T> {
                 .giveDefaultValue(nextID)
                 .build();
     }
+
 
     public static DataField<Long> makeIDField(Class<? extends State> state) {
         State.Type type = StateType.fromClass(state);
