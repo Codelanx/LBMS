@@ -1,5 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
+import edu.rit.codelanx.LBMS;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
@@ -123,6 +124,9 @@ public class Library extends BasicState {
     }
 
     public boolean isOpen() {
+        if (LBMS.PREPRODUCTION_DEBUG) {
+            return true;
+        }
         return this.open.get();
     }
 

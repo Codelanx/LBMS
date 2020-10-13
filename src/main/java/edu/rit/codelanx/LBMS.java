@@ -16,6 +16,8 @@ import java.io.IOException;
  */
 public class LBMS {
 
+    /** TODO: Remove in production */
+    public static final boolean PREPRODUCTION_DEBUG = true;
     //The server we're running
     private final Server<TextMessage> server;
 

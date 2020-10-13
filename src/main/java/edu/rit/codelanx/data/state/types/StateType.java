@@ -1,5 +1,6 @@
 package edu.rit.codelanx.data.state.types;
 
+import edu.rit.codelanx.LBMS;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.loader.StateBuilder;
@@ -21,7 +22,7 @@ public enum StateType implements State.Type {
     ;
 
     private static final StateType[] VALUES = StateType.values();
-    private final AtomicLong autoID = new AtomicLong(1); //we start with 10-digit ids
+    private final AtomicLong autoID = new AtomicLong(LBMS.PREPRODUCTION_DEBUG ? 1 : 1000000001); //we start with 10-digit ids
     private final Class<? extends State> type;
     private final State.StateBuildConstructor<? extends State> builderBlueprint;
     private final State.StateSQLConstructor<? extends State> sqlBuild;
