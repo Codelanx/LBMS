@@ -81,16 +81,51 @@ public class TextInterpreter implements Interpreter {
                     .filter(TextParam::isRequired)
                     .map(TextParam::toString)
                     .collect(Collectors.joining(TextCommand.TOKEN_DELIMITER));
-            if (suffix.isEmpty()) {
-                //no required arguments were missed, we'll just hackily update the missing args
-                String[] newArgs = new String[command.params.length];
-                System.arraycopy(args.value, 0, newArgs, 0, args.value.length);
-                Arrays.fill(newArgs, args.value.length, newArgs.length, "");
-                args.value = newArgs; //REFACTOR: A little hacky, but gets the job done
+            if (!suffix.isEmpty()) {
+                return command.buildResponse(command.getName(), "missing-params", suffix);
             }
-            return command.buildResponse(command.getName(), "missing-params", suffix);
         }
         return null; //null if we're good!
+    }
+
+    private String[] preprocessArguments(TextCommand command, String... args) {
+        IntStream.range(0, args.length)
+                .filter(i -> args[i] == null)
+                .forEach(i -> args[i] = "");
+        String[] sized;
+        if (command.params.length == args.length) {
+            sized = args;
+        } else {
+            //Map mismatched array sizes
+            String[] newArgs = new String[command.params.length];
+            int copyLength; //how much we can copy from args
+            if (args.length > command.params.length) {
+                //Ignore excess arguments
+                copyLength = newArgs.length;
+            } else {
+                //Check to see if the remaining arguments are optional
+                long req = Arrays.stream(command.params, args.length, command.params.length)
+                        .filter(p -> !p.isRequired())
+                        .count();
+                if (req > 0) { //if not...
+                    throw new IllegalArgumentException("Missed required arguments");
+                }
+                copyLength = args.length;
+            }
+            //copy the input available
+            System.arraycopy(args, 0, newArgs, 0, copyLength);
+            if (args.length < newArgs.length) {
+                //buffer optional arguments with wildcards
+                Arrays.fill(newArgs, args.length, newArgs.length, "");
+            }
+            sized = newArgs;
+        }
+        //Map star inputs to empty strings to indicate "wildcards"
+        IntStream.range(0, sized.length)
+                .filter(i -> !command.params[i].isRequired())
+                .filter(i -> sized[i].equals("*"))
+                .forEach(i -> sized[i] = "");
+        return sized;
     }
 
     //finds the appropriate command and parses the input, then executes the command
@@ -108,6 +143,7 @@ public class TextInterpreter implements Interpreter {
                 executor.sendMessage(denial);
                 return;
             }
+            passedArgs = this.preprocessArguments(tcmd, passedArgs);
         }
         ResponseFlag r = cmd.onExecute(executor, passedArgs);
         if (LBMS.PREPRODUCTION_DEBUG) {
