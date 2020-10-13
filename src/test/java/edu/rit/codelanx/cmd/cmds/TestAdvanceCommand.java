@@ -15,15 +15,14 @@ public class TestAdvanceCommand {
     @Test
     public void testNoInput() {
         // TODO: Call advance;
-        // Should send advance,missing-params,numberofdays,numberofhours; and ResponseFlag
-        // .Success;
+        // Should send advance,missing-params,numberofdays,numberofhours; and ResponseFlag.Success;
         // Works
     }
 
     @Test
     public void tooMuchInput() {
         // TODO: Call advance and try to pass in 3 inputs
-        // Should send advance,missing-params,numberofdays,numberofhours; and ResponseFlag.Success;
+        // Should send advance,success; and ResponseFlag.Success;
         // Works
     }
 
@@ -38,8 +37,7 @@ public class TestAdvanceCommand {
     @Test
     public void wrongHours() {
         // TODO: Call advance with too many hours
-        // Should send advance,invalid-number-of-hours,numberOfDays;
-        // and ResponseFlag.Success
+        // Should send advance,invalid-number-of-hours,numberOfDays; and ResponseFlag.Success
         // Works
     }
 

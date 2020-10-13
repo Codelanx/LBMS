@@ -69,7 +69,7 @@ public class InfoCommand extends TextCommand {
     protected TextParam.Builder buildParams() {
         return TextParam.create()
                 .argument("title")
-                .list("authors", 1)
+                .list("authors", 0)
                 .argumentOptional("isbn")
                 .argumentOptional("publisher")
                 .argumentOptional("sort order");

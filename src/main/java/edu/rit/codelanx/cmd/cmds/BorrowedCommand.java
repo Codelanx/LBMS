@@ -60,8 +60,6 @@ public class BorrowedCommand extends TextCommand {
             executor.sendMessage(buildResponse(this.getName(), "missing" +
                     "-parameters", "visitorID"));
             return ResponseFlag.SUCCESS;
-        } else if (args.length > 1){
-            return ResponseFlag.FAILURE;
         }
 
         //Getting the visitor from the id
@@ -78,7 +76,7 @@ public class BorrowedCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        String responseString = this.getName() + ",";
+        String responseString = this.getName();
 
         List<Checkout> books = server.getLibraryData().query(Checkout.class)
                 .isEqual(Checkout.Field.VISITOR, visitor)
@@ -86,7 +84,8 @@ public class BorrowedCommand extends TextCommand {
                 .collect(Collectors.toList());
 
         if (books.size() == 0){
-            executor.sendMessage(buildListResponse(responseString,"0"));
+            executor.sendMessage(buildResponse(responseString,"0"));
+            return ResponseFlag.SUCCESS;
         } else {
             responseString += books.size() + "\n";
             for (Checkout b : books) {
