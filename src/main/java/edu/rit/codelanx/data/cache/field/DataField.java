@@ -11,30 +11,84 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+/**
+ * Interfaces contains functionalities handling specified {@link T} field
+ * @param <T> field type
+ * @author sja9291  Spencer Alderman
+ */
 public interface DataField<T> {
 
+    /**
+     * gets the name of the data field
+     * @return string name
+     */
     default public String getName() {
         return this.getInitializer().getName();
     }
 
+    /**
+     * gets data field's type
+     * @return a specific type
+     */
     default public Class<T> getType() {
         return this.getInitializer().getType();
     }
 
+    /**
+     * serializes the specified state
+     * @param state the specified {@link State}
+     * @return serialized object
+     */
     public Object serialize(State state);
 
+    /**
+     * initializes Data field with A specific state and its value.
+     * @param state involved {@link State}
+     * @param value {@link Object} of the above State
+     */
     public void initialize(State state, Object value);
 
+    /**
+     * clear out the state.
+     * @param state {@link State} to be cleared out.
+     */
     public void forget(State state);
 
+    /**
+     * makes changes to the data field
+     * @param state {@link State} that to be changed
+     * @param updater {@link UnaryOperator} that forms the operation
+     * @return changed {@link T}
+     */
     public T mutate(State state, UnaryOperator<T> updater);
 
+
+    /**
+     * retrieves the data in a specified state
+     * @param state {@link State} to retrieve data from
+     * @return data {@link T}
+     */
     public T get(State state);
 
+    /**
+     * sets the field of a state to a certain value
+     * @param state {@link State} to set the data from
+     * @param value to be {@link T}
+     * @return
+     */
     public T set(State state, T value);
 
+    /**
+     * gets he initialized version of the data field
+     * @return {@link FieldInitializer} of type {@link T}
+     */
     public FieldInitializer<T> getInitializer();
 
+    /**
+     * finds the state based on specified value
+     * @param key {@link T} used to search up the state
+     * @return {@link Stream} of type {@link State}
+     */
     public Stream<? extends State> findStatesByValue(T key);
 
     default public T getFromSQL(ResultSet sql, DataSource from) throws SQLException {
