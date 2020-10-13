@@ -91,7 +91,7 @@ public class Book extends BasicState {
      *  creates a new copy of the book and adds it to the database
      * @param count of how many books to add
      */
-    public void addCopy(int count){
+    public void addCopy(int count) {
         Field.TOTAL_COPIES.mutate(this, old -> old + count);
     }
 

@@ -112,6 +112,7 @@ public interface State extends FileSerializable {
          * increments to get the next ID
          * @return next ID of type long
          */
+        //TODO: fix for unique ids per server? eh not really important
         public long getNextID();
 
     }

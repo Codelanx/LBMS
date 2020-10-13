@@ -1,12 +1,12 @@
 package edu.rit.codelanx.cmd.text;
 
+import edu.rit.codelanx.LBMS;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.Command;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.Interpreter;
 import edu.rit.codelanx.cmd.ResponseFlag;
-import edu.rit.codelanx.util.Validate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +15,37 @@ import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Parses and executes text content sent from a connected client
+ *
+ * @author sja9291  Spencer Alderman
+ * @author ahd6901  Amy Ha Do
+ * @see Interpreter
+ */
 //TODO: Double check if commands need to disable when the library is closed
 public class TextInterpreter implements Interpreter {
 
+    //the server the commands run on
     private final Server<TextMessage> server;
+    //buffers per connected executor
     private final Map<CommandExecutor, StringBuilder> buffers = new WeakHashMap<>();
 
+    /**
+     * Initializes the command map, making the commands available for general
+     * use by any connected clients
+     *
+     * @param server The {@link Server} these commands are run on
+     */
     public TextInterpreter(Server<TextMessage> server) {
         this.server = server;
         TextCommandMap.initialize(server); //Enables commands on this server
     }
 
+    /**
+     * {@inheritDoc}
+     * @param executor {@inheritDoc}
+     * @param data {@inheritDoc}
+     */
     @Override
     public void receive(CommandExecutor executor, String data) {
         //TODO: Cleanup? Splitting up the method?
@@ -45,6 +65,7 @@ public class TextInterpreter implements Interpreter {
         }
     }
 
+    //Tries to find a reason to deny running the command
     private String getDenialReason(TextCommand command, String... args) {
         //Check args against command#params for things like length, correctness, etc
         if (command.params == null) {
@@ -62,6 +83,7 @@ public class TextInterpreter implements Interpreter {
         return null; //null if we're good!
     }
 
+    //finds the appropriate command and parses the input, then executes the command
     private void execute(CommandExecutor executor, String command) {
         String[] args = this.splitInput(command);
         String[] passedArgs = new String[args.length - 1];
@@ -76,7 +98,9 @@ public class TextInterpreter implements Interpreter {
             }
         }
         ResponseFlag r = cmd.onExecute(executor, passedArgs);
-        executor.sendMessage(r.getDescription()); //TODO: Remove in production
+        if (LBMS.PREPRODUCTION_DEBUG) {
+            executor.sendMessage(r.getDescription()); //TODO: Remove in production
+        }
     }
 
     //splits the input appropriately
