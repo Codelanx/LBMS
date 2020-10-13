@@ -1,11 +1,14 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
+
+import java.util.Optional;
 
 
 /**
@@ -19,6 +22,9 @@ import edu.rit.codelanx.cmd.text.TextCommand;
  * forward, must be between 0 and 7 days.
  * number-of-hours is the number of hours to move the library's calendar
  * forward, must be between 0 and 23 hours.
+ *
+ * @author maa1675  Mark Anderson
+ * @author sja9291  Spencer Alderman    refactoring
  */
 public class AdvanceCommand extends TextCommand {
 
@@ -66,38 +72,18 @@ public class AdvanceCommand extends TextCommand {
                     "numberofdays,numberofhours;");
             return ResponseFlag.SUCCESS;
         }
-
         //Checking the hours and days passed in to make sure they are within
-        // their parameters
-        int daysInt;
-        int hoursInt;
-        try {
-            daysInt = Integer.parseInt(args[0]);
-            if (daysInt > 7 || daysInt < 0){
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException e){
-            executor.sendMessage(this.getName() + ",invalid-number-of" +
-                    "-days," + args[0]);
+        Optional<Integer> days = InputOutput.parseInt(args[0]);
+        Optional<Integer> hours = InputOutput.parseInt(args[1]);
+        if (!days.isPresent() || days.get() < 0 || days.get() > 7) {
+            executor.sendMessage(this.buildResponse(this.getName(), "invalid-number-of-days", args[0]));
             return ResponseFlag.SUCCESS;
         }
-
-        //Seeing if they gave us days and hours or just hours
-        if (args.length == 2) {
-            try {
-                hoursInt = Integer.parseInt(args[1]);
-                if (hoursInt > 23 || hoursInt < 0) {
-                    throw new NumberFormatException();
-                }
-            } catch (NumberFormatException e) {
-                executor.sendMessage(this.getName() + ",invalid-number-of" +
-                        "-hours," + args[1]);
-                return ResponseFlag.SUCCESS;
-            }
-        } else {
-            hoursInt = 0;
+        if (!args[1].isEmpty() && (!hours.isPresent() || hours.get() < 0 || hours.get() > 23)) {
+            executor.sendMessage(this.buildResponse(this.getName(), "invalid-number-of-hours", args[1]));
+            return ResponseFlag.SUCCESS;
         }
-        this.server.getClock().advanceTime(daysInt, hoursInt);
+        this.server.getClock().advanceTime(days.get(), hours.orElse(0));
         executor.sendMessage(this.getName() + "success;");
         return ResponseFlag.SUCCESS;
     }
