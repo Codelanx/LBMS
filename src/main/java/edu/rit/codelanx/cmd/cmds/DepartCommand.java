@@ -2,6 +2,7 @@ package edu.rit.codelanx.cmd.cmds;
 
 import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -77,11 +78,11 @@ public class DepartCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        Instant start = visitor.getVisitStart();
-        Instant end = Instant.now();
-        Duration d = Duration.between(start, end);
+        Visit visit = visitor.endVisit(Instant.now());
 
-        String endOutput = TIME_OF_DAY_FORMAT.format(end);
+        Duration d = Duration.between(visit.getStart(), visit.getEnd());
+
+        String endOutput = TIME_OF_DAY_FORMAT.format(visit.getEnd());
         String durOutput = this.formatDuration(d);
 
         executor.sendMessage(this.buildResponse(this.getName(), visitor.getID(),
