@@ -11,6 +11,7 @@ import com.codelanx.commons.util.InputOutput;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Begins a new visit by a registered visitor.
@@ -32,7 +33,8 @@ public class ArriveCommand extends TextCommand {
 
     @Override
     protected TextParam.Builder buildParams() {
-        return TextParam.create().argument("visitor-id");
+        return TextParam.create()
+                .argument("visitor-id");
     }
 
     /**
@@ -55,8 +57,7 @@ public class ArriveCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
         if (!this.server.getLibraryData().getLibrary().isOpen()){
-            executor.sendMessage(buildResponse(this.getName(), "library-is" +
-                    "-closed"));
+            executor.sendMessage(buildResponse(this.getName(), "library-is-closed"));
             return ResponseFlag.FAILURE;
         }
 
@@ -65,7 +66,7 @@ public class ArriveCommand extends TextCommand {
         for (int i = 0; i < args.length; i++){
             if (args[i].isEmpty()) {
                 argMap.put(i, this.params[i].getLabel());
-                if (i == 0){
+                if (i == 0) {
                     incorrectArgs = true;
                 }
             }
@@ -77,7 +78,7 @@ public class ArriveCommand extends TextCommand {
                 response += this.params[entry.getKey()];
             }
             executor.sendMessage(this.buildResponse(this.getName(),
-                    "missing-parameters",response));
+                    "missing-parameters", response));
             return ResponseFlag.SUCCESS;
         }
 
