@@ -1,20 +1,12 @@
 package edu.rit.codelanx.cmd.cmds;
 
-import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.types.Library;
-import edu.rit.codelanx.data.state.types.Transaction;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
-import edu.rit.codelanx.data.state.types.Visitor;
 
-import java.math.BigDecimal;
-
-import static edu.rit.codelanx.cmd.CommandUtils.findVisitor;
-import static edu.rit.codelanx.cmd.CommandUtils.numArgs;
 
 /**
  * Pays all or part of an outstanding fine.
@@ -65,7 +57,7 @@ public class PayCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
 
-        //args
+        /*//args
         BigDecimal amount = new BigDecimal(Double.parseDouble(args[1]));
         long visitorID = Long.parseLong(args[0]);
 
@@ -89,8 +81,8 @@ public class PayCommand extends TextCommand {
             Transaction.perform(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
             executor.sendMessage("Success" + visitor.getMoney());
             return ResponseFlag.SUCCESS;
-        }
-
+        }*/
+        return ResponseFlag.NOT_FINISHED;
     }
 
 }
