@@ -103,9 +103,10 @@ public class ReportCommand extends TextCommand {
 
 
         // Counts the number of books purchased
-        long numPurchased = this.server.getLibraryData().query(Library.class)
+        long numPurchased = this.server.getLibraryData().query(Book.class)
                 .results()
-                .count();
+                .map(Book::getTotalCopies)
+                .reduce(0, Integer::sum);
 
 
         Map<String, Set<Transaction>> map =
