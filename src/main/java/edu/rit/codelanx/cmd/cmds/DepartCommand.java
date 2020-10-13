@@ -1,9 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import com.codelanx.commons.util.InputOutput;
-import edu.rit.codelanx.cmd.UtilsFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
