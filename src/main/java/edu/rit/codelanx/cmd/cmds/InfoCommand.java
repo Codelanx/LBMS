@@ -77,8 +77,9 @@ public class InfoCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
         if (args.length < 2) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "title,authors,isbn,publisher,sortOrder;");
+            executor.sendMessage(buildResponse(this.getName(), "missing" +
+                            "-parameters",
+                    "title,authors,isbn,publisher,sortOrder"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -131,7 +132,8 @@ public class InfoCommand extends TextCommand {
                         query.results().filter(Book::isValid).collect(Collectors.toList());
                 break;
             default:
-                executor.sendMessage(this.getName() + ",invalid-sort-order");
+                executor.sendMessage(buildResponse(this.getName(),"invalid" +
+                        "-sort-order"));
                 return ResponseFlag.SUCCESS;
         }
 

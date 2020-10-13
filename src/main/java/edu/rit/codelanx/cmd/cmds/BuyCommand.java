@@ -74,8 +74,8 @@ public class BuyCommand extends TextCommand {
 
         //Checking that the amount of args passed is correct
         if (args.length < 2) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "visitorID;");
+            executor.sendMessage(buildResponse(this.getName(),"missing" +
+                    "-parameters", "visitorID"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -88,7 +88,8 @@ public class BuyCommand extends TextCommand {
         }
 
         if (quantity == 0) {
-            executor.sendMessage(this.getName() + ",success," + quantity + ";");
+            executor.sendMessage(buildResponse(this.getName(),"success",
+                    quantity));
         }
 
         Set<Long> bookIDs = new HashSet<Long>();

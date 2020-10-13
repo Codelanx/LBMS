@@ -59,8 +59,8 @@ public class DepartCommand extends TextCommand {
 
         //Checking that they have the correct amount of parameters
         if (args.length != 1) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "visitorID;");
+            executor.sendMessage(buildResponse(this.getName(),"missing" +
+                    "-parameters", "visitorID"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -73,7 +73,7 @@ public class DepartCommand extends TextCommand {
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
         if (visitor == null || !visitor.isVisiting()) {
-            executor.sendMessage(this.getName() + ",invalid-id;");
+            executor.sendMessage(buildResponse(this.getName(),"invalid-id"));
             return ResponseFlag.SUCCESS;
         }
 

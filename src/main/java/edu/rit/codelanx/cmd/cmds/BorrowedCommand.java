@@ -57,8 +57,8 @@ public class BorrowedCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         //Checking that the amount of arguments is correct
         if (args.length < 1) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "visitorID");
+            executor.sendMessage(buildResponse(this.getName(), "missing" +
+                    "-parameters", "visitorID"));
             return ResponseFlag.SUCCESS;
         } else if (args.length > 1){
             return ResponseFlag.FAILURE;
@@ -74,7 +74,7 @@ public class BorrowedCommand extends TextCommand {
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
         if (visitor == null) {
-            executor.sendMessage(this.getName() + ",invalid-id;");
+            executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -86,14 +86,14 @@ public class BorrowedCommand extends TextCommand {
                 .collect(Collectors.toList());
 
         if (books.size() == 0){
-            executor.sendMessage(responseString + "0;");
+            executor.sendMessage(buildListResponse(responseString,"0"));
         } else {
             responseString += books.size() + "\n";
             for (Checkout b : books) {
                 responseString += (b.getBook().toFormattedText() + "\n");
             }
         }
-        executor.sendMessage(responseString);
+        executor.sendMessage(buildResponse(responseString));
 
         return ResponseFlag.SUCCESS;
     }

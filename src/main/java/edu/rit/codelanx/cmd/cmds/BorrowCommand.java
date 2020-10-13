@@ -67,8 +67,8 @@ public class BorrowCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         if (args.length < 2) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "visitorID;");
+            executor.sendMessage(buildResponse(this.getName(), "missing" +
+                    "-parameters", "visitorID"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -88,7 +88,8 @@ public class BorrowCommand extends TextCommand {
         Visitor v =
                 this.server.getLibraryData().query(Visitor.class).isEqual(Visitor.Field.ID, visitorID).results().findAny().orElse(null);
         if (v == null) {
-            executor.sendMessage(this.getName() + ",invalid-visitor-id;");
+            executor.sendMessage(buildResponse(this.getName(), "invalid" +
+                    "-visitor-id"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -98,12 +99,13 @@ public class BorrowCommand extends TextCommand {
 
         //Checking they don't or won't have too many books
         if (checkedOutBooks > 5 || checkedOutBooks + bookIDs.size() > 5) {
-            executor.sendMessage(this.getName() + ",book-limit-exceeded;");
+            executor.sendMessage(buildResponse(this.getName(), "book-limit-exceeded"));
         }
 
         //Checking that the visitor's account balance is in the positive
         if (v.getMoney().compareTo(BigDecimal.ZERO) < 1) {
-            executor.sendMessage(this.getName() + ",outstanding-fine," + v.getMoney());
+            executor.sendMessage(buildResponse(this.getName(), "outstanding" +
+                    "-fine", v.getMoney()));
             return ResponseFlag.SUCCESS;
         }
 
@@ -118,7 +120,8 @@ public class BorrowCommand extends TextCommand {
             if (bookSearch.isPresent()) {
                 books.add(bookSearch.get());
             } else {
-                executor.sendMessage(this.getName() + ",invalid-book-id," + bookID);
+                executor.sendMessage(buildResponse(this.getName(), "invalid" +
+                        "-book-id", bookID));
                 return ResponseFlag.SUCCESS;
             }
         }

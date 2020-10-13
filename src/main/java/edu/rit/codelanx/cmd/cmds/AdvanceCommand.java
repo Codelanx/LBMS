@@ -68,8 +68,8 @@ public class AdvanceCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         //Checking that they have the correct amount of parameters
         if (args.length < 1 || args.length > 2) {
-            executor.sendMessage(this.getName() + ",missing-parameters," +
-                    "numberofdays,numberofhours;");
+            executor.sendMessage(this.buildResponse(this.getName(), "missing" +
+                    "-parameters", "numberofdays" , "numberofhours"));
             return ResponseFlag.SUCCESS;
         }
         //Checking the hours and days passed in to make sure they are within

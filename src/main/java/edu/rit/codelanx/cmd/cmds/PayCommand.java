@@ -82,18 +82,19 @@ public class PayCommand extends TextCommand {
 
         //checks to see is the visitor is valid
         else if (visitor == null) {
-            executor.sendMessage(getName() + ",invalid-visitor-id");
+            executor.sendMessage(buildResponse(getName(), "invalid-visitor-id"));
             return ResponseFlag.SUCCESS;
         }
 
         //checks that the amount enter is not negative and the amount entered is not greater than balance
         else if ( amount.compareTo(BigDecimal.ZERO) < 1 || visitor.getMoney().compareTo(amount) < 1) {
-            executor.sendMessage(getName() + ",invalid-amount" + "," + amount + "," + visitor.getMoney());
+            executor.sendMessage(buildResponse(getName(), "invalid-amount",
+                    amount,visitor.getMoney()));
             return ResponseFlag.SUCCESS;
         } else {
             //performs the transaction
             Transaction.perform(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
-            executor.sendMessage("Success" + visitor.getMoney());
+            executor.sendMessage(buildResponse("Success", visitor.getMoney()));
             return ResponseFlag.SUCCESS;
         }
 

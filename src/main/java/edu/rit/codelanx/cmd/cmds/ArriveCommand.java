@@ -52,12 +52,13 @@ public class ArriveCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
         if (!this.server.getLibraryData().getLibrary().isOpen()){
-            executor.sendMessage(this.getName() + "," + "library-closed;");
+            executor.sendMessage(buildResponse(this.getName(), "library-is" +
+                    "-closed"));
             return ResponseFlag.FAILURE;
         }
         if (args.length != 1) {
-            executor.sendMessage(this.getName() + "," + "missing-parameters," +
-                    "visitorID");
+            executor.sendMessage(buildResponse(this.getName(), "missing" +
+                    "-parameters", "visitorID"));
             return ResponseFlag.SUCCESS;
         }
         Long id = InputOutput.parseLong(args[0]).orElse(null);
@@ -69,16 +70,16 @@ public class ArriveCommand extends TextCommand {
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
         if (visitor == null) {
-            executor.sendMessage(this.getName() + ",invalid-id;");
+            executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
             return ResponseFlag.SUCCESS;
         } else if (visitor.isVisiting()) {
-            executor.sendMessage(this.getName() + ",duplicate;");
+            executor.sendMessage(buildResponse(this.getName(), "duplicate"));
             return ResponseFlag.SUCCESS;
         }
 
         boolean visit = visitor.startVisit(this.server.getLibraryData().getLibrary());
-        executor.sendMessage(this.getName() + "," + visitor.getID() + "," +
-                TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()) + ";");
+        executor.sendMessage(buildResponse(this.getName(), visitor.getID(),
+                TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime())));
         return ResponseFlag.SUCCESS;
     }
 }
