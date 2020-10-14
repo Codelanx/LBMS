@@ -3,9 +3,7 @@ package edu.rit.codelanx.cmd;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
-import edu.rit.codelanx.util.Validate;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class MessengerExecutor implements CommandExecutor {
@@ -25,10 +23,7 @@ public class MessengerExecutor implements CommandExecutor {
 
     @Override
     public void renderState(State... states) {
-        Arrays.stream(states)
-                .peek(s -> Validate.nonNull(s, "Cannot render a null state"))
-                .map(State::toFormattedText)
-                .forEach(this::sendMessage); //final code version
+        //TODO: Wait for gui in R2
     }
 
     @Override
