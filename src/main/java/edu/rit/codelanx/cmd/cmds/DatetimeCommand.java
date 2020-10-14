@@ -51,12 +51,6 @@ public class DatetimeCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
-
-        //Checking that no other arguments were passed in
-        if (args.length > 0) {
-            return ResponseFlag.SUCCESS;
-        }
-
         //Getting the current time from the server's clock
         executor.sendMessage(buildResponse(this.getName(), DATE_FORMAT.format(server.getClock().getCurrentTime()), TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime())));
 

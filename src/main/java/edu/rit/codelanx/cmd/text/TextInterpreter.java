@@ -28,13 +28,9 @@ import java.util.stream.IntStream;
 //TODO: Double check if commands need to disable when the library is closed
 public class TextInterpreter implements Interpreter {
 
-    /**
-     * the wildcards as specified in the LBMS command doc
-     */
+    /** The wildcards as specified in the LBMS command doc */
     public static final String INPUT_WILDCARD = "*";
-    /**
-     * What we identify as a wildcard in the arguments
-     */
+    /** What we identify as a wildcard in the arguments */
     public static final String OUTPUT_WILDCARD = "";
     //the server the commands run on
     private final Server<TextMessage> server;
@@ -121,8 +117,7 @@ public class TextInterpreter implements Interpreter {
         return back.toArray(new String[0]);
     }
 
-    //finds the appropriate command and parses the input, then executes the
-    // command
+    //finds the appropriate command and parses the input, then executes the command
     private void execute(CommandExecutor executor, String command) {
         String[] args = TextInterpreter.splitInput(command);
         String[] passedArgs = new String[args.length - 1];
@@ -139,15 +134,13 @@ public class TextInterpreter implements Interpreter {
         }
         ResponseFlag r = cmd.onExecute(executor, passedArgs);
         if (LBMS.PREPRODUCTION_DEBUG) {
-            executor.sendMessage(r.getDescription()); //TODO: Remove in
-            // production
+            executor.sendMessage(r.getDescription()); //TODO: Remove in production
         }
     }
 
     //Tries to find a reason to deny running the command
     private String getDenialReason(TextCommand command, String... args) {
-        //Check args against command#params for things like length,
-        // correctness, etc
+        //Check args against command#params for things like length correctness, etc
         if (command.params == null) {
             throw new UnsupportedOperationException("Command did not implement #buildParams correctly");
         }
@@ -163,8 +156,7 @@ public class TextInterpreter implements Interpreter {
                     .map(TextParam::toString)
                     .collect(Collectors.joining(TextCommand.TOKEN_DELIMITER));
             if (!suffix.isEmpty()) {
-                return command.buildResponse(command.getName(),
-                        "missing-params", suffix);
+                return command.buildResponse(command.getName(), "missing-params", suffix);
             }
         }
         List<String> badWilds = IntStream.range(0, args.length - 1)
@@ -181,10 +173,6 @@ public class TextInterpreter implements Interpreter {
     }
 
     private String[] preprocessArguments(TextCommand command, String... args) {
-        //TODO: Quick Patch for fixing commands with no args being passed args
-        ///if (command.params.length == 0){
-            //return new String[]{};
-        //}
         IntStream.range(0, args.length)
                 .filter(i -> args[i] == null)
                 .forEach(i -> args[i] = OUTPUT_WILDCARD);
@@ -193,19 +181,20 @@ public class TextInterpreter implements Interpreter {
             sized = args;
         } else {
             //Map mismatched array sizes
-            int copyLength = command.params.length; //how much we can copy from args
+            int copyLength = args.length; //how much we can copy from args
             if (args.length > command.params.length) {
-                //TODO: added the -1 because we were getting oob errors
-                if (command.params[command.params.length - 1].isList()) {
+                if (!command.params[command.params.length - 1].isList()) {
                     //Ignore excess arguments if not a list
-                    copyLength = args.length;
+                    copyLength = command.params.length;
                 }
             } else {
                 //Check to see if any of the remaining arguments are required
-                if (Arrays.stream(command.params, args.length, command.params.length)
+                if (Arrays.stream(command.params, args.length,
+                        command.params.length)
                         .anyMatch(TextParam::isRequired)) {
                     throw new IllegalArgumentException("Missed required arguments");
                 }
+                copyLength = command.params.length;
             }
             String[] newArgs = new String[copyLength];
             //copy the input available
