@@ -40,11 +40,11 @@ public enum TextCommandMap {
         this.initializer = initializer;
     }
 
-    public Command toCommand(Server<TextMessage> server) {
+    private Command toCommand(Server<TextMessage> server) {
         return this.serverCmd.computeIfAbsent(server, this.initializer);
     }
 
-    public static Optional<TextCommandMap> getMappingFor(String name) {
+    private static Optional<TextCommandMap> getMappingFor(String name) {
         Validate.nonNull(name, "Cannot map from null to a Command");
         String fname = name.toLowerCase();
         return Arrays.stream(VALUES)

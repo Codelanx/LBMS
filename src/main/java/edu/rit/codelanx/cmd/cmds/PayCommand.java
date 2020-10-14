@@ -73,6 +73,7 @@ public class PayCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
+
         //finds the visitor
         Visitor visitor = this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, visitorID)
