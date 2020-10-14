@@ -44,7 +44,7 @@ public class LibraryData implements DataSource {
     }
 
     /**
-     * Construts a source of LBMS-related data using a {@link StorageAdapter}
+     * Constructs a source of LBMS-related data using a {@link StorageAdapter}
      * that is provided to this concrete {@link DataSource}
      *
      * @param adapter The {@link StorageAdapter} to load from

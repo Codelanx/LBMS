@@ -76,8 +76,7 @@ public class SearchCommand extends TextCommand {
      * executed correctly
      */
     @Override
-    public ResponseFlag onExecute(CommandExecutor executor,
-                                  String... args) {
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         String[] authors = TextInterpreter.splitInput(args[1]);
         if (Arrays.stream(authors).anyMatch(String::isEmpty)) {
             authors = AUTHOR_WILDCARD;
@@ -97,6 +96,10 @@ public class SearchCommand extends TextCommand {
                         .map(AuthorListing::getBook)
                         .map(Book::getID)
                         .collect(Collectors.toSet());
+                if (filterIDs.isEmpty()) {
+                    executor.sendMessage(this.buildResponse(this.getName(), 0));
+                    return ResponseFlag.SUCCESS;
+                }
             }
         }
         Set<Long> idFilter = filterIDs;
@@ -115,14 +118,10 @@ public class SearchCommand extends TextCommand {
         if (!args[3].isEmpty()) {
             query = query.isEqual(Book.Field.PUBLISHER, args[3]);
         }
-        Stream<Book> res;
-        if (filterIDs != null) { //if filtering by authors...
-            res = filterIDs.isEmpty()
-                    ? Stream.empty() //no possible results now
-                    : query.results().filter(b -> !idFilter.contains(b.getID()));
-        } else {
-            res = query.results();
+        if (idFilter != null) {
+            query = query.isAny(Book.Field.ID, idFilter);
         }
+        Stream<Book> res = query.results();
         switch (args[4].toLowerCase()) { //sort-order
             case "":
             case "title":
@@ -143,10 +142,8 @@ public class SearchCommand extends TextCommand {
         }
         bookList.stream()
                 .map(book -> {
-                    List<String> authorsForBook =
-                            book.getAuthors().map(Author::getName).collect(Collectors.toList());
-                    String authorOutput =
-                            this.buildListResponse(authorsForBook.toString());
+                    List<String> authorsForBook = book.getAuthors().map(Author::getName).collect(Collectors.toList());
+                    String authorOutput = this.buildListResponse(authorsForBook.toString());
                     return this.buildResponse(book.getID(), book.getISBN(), book.getTitle(),
                             authorOutput, DATE_FORMAT.format(book.getPublishDate()));
                 })
