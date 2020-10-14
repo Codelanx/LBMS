@@ -149,8 +149,7 @@ public class TextInterpreter implements Interpreter {
         //Check args against command#params for things like length,
         // correctness, etc
         if (command.params == null) {
-            throw new UnsupportedOperationException("Command did not " +
-                    "implement #buildParams correctly");
+            throw new UnsupportedOperationException("Command did not implement #buildParams correctly");
         }
         if (command.params.length > 0 && args.length <= 0) { //if we need
             // args, and there are none
@@ -164,8 +163,8 @@ public class TextInterpreter implements Interpreter {
                     .map(TextParam::toString)
                     .collect(Collectors.joining(TextCommand.TOKEN_DELIMITER));
             if (!suffix.isEmpty()) {
-                return command.buildResponse(command.getName(), "missing" +
-                        "-params", suffix);
+                return command.buildResponse(command.getName(),
+                        "missing-params", suffix);
             }
         }
         List<String> badWilds = IntStream.range(0, args.length - 1)
@@ -194,25 +193,23 @@ public class TextInterpreter implements Interpreter {
             sized = args;
         } else {
             //Map mismatched array sizes
-            int copyLength = args.length; //how much we can copy from args
+            int copyLength = command.params.length; //how much we can copy from args
             if (args.length > command.params.length) {
                 //TODO: added the -1 because we were getting oob errors
-                if (!command.params[command.params.length - 1].isList()) {
+                if (command.params[command.params.length - 1].isList()) {
                     //Ignore excess arguments if not a list
-                    copyLength = command.params.length;
+                    copyLength = args.length;
                 }
             } else {
                 //Check to see if any of the remaining arguments are required
-                if (Arrays.stream(command.params, args.length,
-                        command.params.length)
+                if (Arrays.stream(command.params, args.length, command.params.length)
                         .anyMatch(TextParam::isRequired)) {
-                    throw new IllegalArgumentException("Missed required " +
-                            "arguments");
+                    throw new IllegalArgumentException("Missed required arguments");
                 }
             }
             String[] newArgs = new String[copyLength];
             //copy the input available
-            System.arraycopy(args, 0, newArgs, 0, copyLength);
+            System.arraycopy(args, 0, newArgs, 0, args.length);
             if (args.length < newArgs.length) {
                 //buffer optional arguments with wildcards
                 Arrays.fill(newArgs, args.length, newArgs.length,

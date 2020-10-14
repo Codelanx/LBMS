@@ -41,20 +41,7 @@ import java.util.stream.Stream;
  */
 public class InfoCommand extends TextCommand {
 
-    //a map of Book#Field objects to their index in args
-    private static final Map<DataField<?>, Integer> FIELD_INDICIES;
-
     private static final String[] AUTHOR_WILDCARD = new String[] {""};
-
-    static {
-        Map<DataField<?>, Integer> set = new HashMap<>();
-        set.put(Book.Field.TITLE, 0);
-        set.put(Book.Field.TITLE, 1);
-        set.put(Book.Field.ISBN, 2);
-        set.put(Book.Field.PUBLISHER, 3);
-        set.put(Book.Field.TITLE, 4);
-        FIELD_INDICIES = Collections.unmodifiableMap(set);
-    }
 
     /**
      * Constructor for the InfoCommand class
@@ -68,8 +55,8 @@ public class InfoCommand extends TextCommand {
     @Override
     protected TextParam.Builder buildParams() {
         return TextParam.create()
-                .argument("title")
-                .list("authors", 0)
+                .argumentOptional("title")
+                .listOptional("authors")
                 .argumentOptional("isbn")
                 .argumentOptional("publisher")
                 .argumentOptional("sort order");

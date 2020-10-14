@@ -55,18 +55,12 @@ public class Visitor extends BasicState {
 
         static {
             ID = DataField.makeIDField(Book.class);
-            FIRST = DataField.buildSimple(String.class, "first", FM_IMMUTABLE
-                    , FM_KEY, FM_COMPOSITE);
-            LAST = DataField.buildSimple(String.class, "last", FM_IMMUTABLE,
-                    FM_KEY, FM_COMPOSITE);
-            ADDRESS = DataField.buildSimple(String.class, "address",
-                    FM_IMMUTABLE, FM_COMPOSITE);
-            PHONE = DataField.buildSimple(String.class, "phone", FM_IMMUTABLE
-                    , FM_KEY, FM_COMPOSITE);
-            REGISTRATION_DATE = DataField.buildSimple(Instant.class,
-                    "registration_date", FM_IMMUTABLE);
-            MONEY = DataField.buildSimple(BigDecimal.class, "money",
-                    FM_IMMUTABLE);
+            FIRST = DataField.buildSimple(String.class, "first", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
+            LAST = DataField.buildSimple(String.class, "last", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
+            ADDRESS = DataField.buildSimple(String.class, "address", FM_IMMUTABLE, FM_COMPOSITE);
+            PHONE = DataField.buildSimple(String.class, "phone", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
+            REGISTRATION_DATE = DataField.buildSimple(Instant.class, "registration_date", FM_IMMUTABLE);
+            MONEY = DataField.buildSimple(BigDecimal.class, "money", FM_IMMUTABLE);
             VALUES = Field.values();
         }
     }

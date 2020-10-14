@@ -164,7 +164,7 @@ public class StateQuery<S extends State> implements Query<S> {
                 //would fail if passed an unrelated data field
                 //TODO: We should probably find a way to define a state->field association
                 //TODO:     However, I want to avoid over-generifying
-                return (Stream<S>) this.getDataField().findStatesByValue(this.getValue());
+                return (Stream<S>) this.getDataField().findStatesByValue(StateQuery.this.storage, this.getValue());
             }
             //TODO: Basically, return anything indexed
             return null;

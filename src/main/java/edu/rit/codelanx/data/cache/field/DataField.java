@@ -1,6 +1,7 @@
 package edu.rit.codelanx.data.cache.field;
 
 import edu.rit.codelanx.data.DataSource;
+import edu.rit.codelanx.data.cache.field.decorator.DataFieldSource;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.StateType;
@@ -83,7 +84,7 @@ public interface DataField<T> {
      *
      * @param state {@link State} to be changed
      * @param value {@link T} to be set to
-     * @return the new version
+     * @return The previous {@code T} value held by this field
      */
     public T set(State state, T value);
 
@@ -97,8 +98,19 @@ public interface DataField<T> {
     /**
      * finds the state based on specified value
      *
+     * @param source The {@link DataSource} to search through
      * @param key {@link T} used to search up the state
      * @return {@link Stream} of type {@link State}
+     */
+    public Stream<? extends State> findStatesByValue(DataSource source, T key);
+
+    /**
+     * Finds a state given a provided {@code key}, with the assumption that
+     * the {@link DataField} is appropriately isolated per {@link DataSource}
+     *
+     * @param key {@link T} used to search up the state
+     * @return {@link Stream} of type {@link State}
+     * @see #findStatesByValue(DataSource, Object)
      */
     public Stream<? extends State> findStatesByValue(T key);
 
@@ -112,7 +124,6 @@ public interface DataField<T> {
     default public Stream<T> getAll(State state) {
         return Stream.of(this.get(state));
     }
-
 
     /**
      * checks for data field index
@@ -252,11 +263,14 @@ public interface DataField<T> {
 
         public DataField<R> build() {
             FieldInitializer<R> init = new FieldInitializer<>(this.name, this.type, this.defaultValue);
-            DataField<R> back = new DataFieldLoader<>(init);
-            for (FieldIndicies fm : modifiers) {
-                back = fm.map(back);
-            }
-            return back;
+            Supplier<? extends DataField<R>> builder = () -> {
+                DataField<R> back = new DataFieldLoader<>(init);
+                for (FieldIndicies fm : modifiers) {
+                    back = fm.map(back);
+                }
+                return back;
+            };
+            return new DataFieldSource<>(init, builder);
         }
     }
 
@@ -296,11 +310,14 @@ public interface DataField<T> {
         @Override
         public DataField<T> build() {
             FieldInitializer<T> init = new FieldInitializer<>(this.from.name, this.from.type, this.from.defaultValue);
-            DataField<T> back = new DataFieldLoader<>(this.to, init);
-            for (FieldIndicies fm : this.from.modifiers) {
-                back = fm.map(back);
-            }
-            return back;
+            Supplier<? extends DataField<T>> builder = () -> {
+                DataField<T> back = new DataFieldLoader<>(this.to, init);
+                for (FieldIndicies fm : this.from.modifiers) {
+                    back = fm.map(back);
+                }
+                return back;
+            };
+            return new DataFieldSource<>(init, builder);
         }
     }
 }

@@ -1,5 +1,6 @@
 package edu.rit.codelanx.data.cache.field.decorator;
 
+import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.cache.field.DataField;
 import edu.rit.codelanx.data.cache.field.FieldInitializer;
@@ -56,6 +57,7 @@ public abstract class FieldIndex<T> implements DataField<T> {
     public boolean isKey() {
         return this.parent.isKey();
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -64,6 +66,7 @@ public abstract class FieldIndex<T> implements DataField<T> {
     public boolean isImmutable() {
         return this.parent.isImmutable();
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -72,6 +75,7 @@ public abstract class FieldIndex<T> implements DataField<T> {
     public boolean hasIndex(FieldIndicies modifier) {
         return this.getIndexType() == modifier || this.parent.hasIndex(modifier);
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -80,6 +84,7 @@ public abstract class FieldIndex<T> implements DataField<T> {
     public T mutate(State state, UnaryOperator<T> updater) {
         return this.parent.mutate(state, updater);
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -88,6 +93,7 @@ public abstract class FieldIndex<T> implements DataField<T> {
     public T get(State state) {
         return this.parent.get(state);
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -96,6 +102,7 @@ public abstract class FieldIndex<T> implements DataField<T> {
     public T set(State state, T value) {
         return this.parent.set(state, value);
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -104,9 +111,11 @@ public abstract class FieldIndex<T> implements DataField<T> {
     public FieldInitializer<T> getInitializer() {
         return this.parent.getInitializer();
     }
+
     /**
      * {@inheritDoc}
-     * @return {@inheritDoc}
+     * @param state {@inheritDoc}
+     * @param value {@inheritDoc}
      */
     @Override
     public void initialize(State state, Object value) {
@@ -114,27 +123,21 @@ public abstract class FieldIndex<T> implements DataField<T> {
     }
     /**
      * {@inheritDoc}
-     * @return {@inheritDoc}
+     * @param state {@inheritDoc}
      */
     @Override
     public void forget(State state) {
         this.parent.forget(state);
     }
+
     /**
      * {@inheritDoc}
+     * @param state {@inheritDoc}
      * @return {@inheritDoc}
      */
     @Override
     public Object serialize(State state) {
         return this.parent.serialize(state);
-    }
-    /**
-     * {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public Stream<? extends State> findStatesByValue(T key) {
-        return this.parent.findStatesByValue(key);
     }
 
     /**
@@ -144,5 +147,15 @@ public abstract class FieldIndex<T> implements DataField<T> {
     @Override
     public boolean isUnique() {
         return this.parent.isUnique();
+    }
+
+    @Override
+    public Stream<? extends State> findStatesByValue(T key) {
+        return this.parent.findStatesByValue(key);
+    }
+
+    @Override
+    public Stream<? extends State> findStatesByValue(DataSource source, T key) {
+        return this.parent.findStatesByValue(source, key);
     }
 }

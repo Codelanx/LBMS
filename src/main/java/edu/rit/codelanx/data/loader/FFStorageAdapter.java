@@ -190,8 +190,7 @@ public class FFStorageAdapter implements StorageAdapter {
 
     @Override
     public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
-        //TODO: Handle the query for information
-        //TODO: Indexing for relative fields?
+        //Handle the query for information
         Class<R> type = query.getType();
         StateStorage<R> data = this.storage.getRelativeStorage().getStateStorage(type);
         return query.locateLocal(data);

@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+//TODO: Potentially remove or re-hide this under FFStorageAdapter
 //stores hard references for states, where they won't go out of scope (unless we want them to)
 public class StateStorage<T extends State> {
 
@@ -44,7 +45,7 @@ public class StateStorage<T extends State> {
             throw new IllegalStateException("Cannot retrieve a unique value from a non-keyed field");
         }
         if (field.isKey()) {
-            T s = (T) field.findStatesByValue(value).findAny().orElse(null);
+            T s = (T) field.findStatesByValue(this.storage, value).findAny().orElse(null);
             if (s == null) {
                 //not loaded?
                 s = this.storage.getAdapter().loadState(this.concreteType, field, value).findAny().orElse(null);
