@@ -74,7 +74,8 @@ public class Book extends BasicState {
      */
     public Checkout checkout(Visitor taker) {
         Field.CHECKED_OUT.mutate(this, old -> {
-            if (old <= 0) {
+            if (old == this.getTotalCopies()) {
+                System.out.println("Old: " + old);
                 throw new UnsupportedOperationException("All books are already checked out");
             }
             return old - 1;
@@ -84,6 +85,7 @@ public class Book extends BasicState {
                 .setValue(Checkout.Field.BOOK, this)
                 .setValue(Checkout.Field.VISITOR, taker)
                 .setValue(Checkout.Field.AT, Instant.now())
+                .setValue(Checkout.Field.RETURNED, false)
                 .build(this.getLoader());
     }
 

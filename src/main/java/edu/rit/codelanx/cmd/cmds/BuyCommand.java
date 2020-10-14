@@ -1,6 +1,8 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.loader.ProxiedStateBuilder;
+import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.state.types.Author;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
@@ -118,8 +120,10 @@ public class BuyCommand extends TextCommand {
                         server.getBookStore().query(Book.class).isEqual(Book.Field.ID, id).results().findAny();
                 if (newBook.isPresent()) {
                     Book b = newBook.get();
-                    b = this.server.getLibraryData().insert(b);
-                    b.addCopy(1 - quantity);
+                    StateBuilder<Book> bookStateBuilder = new ProxiedStateBuilder<>(b);
+                    bookStateBuilder.setValue(Book.Field.TOTAL_COPIES, quantity);
+                    bookStateBuilder.setValue(Book.Field.CHECKED_OUT, 0);
+                    b = this.server.getLibraryData().insert(bookStateBuilder);
                     bookList.add(b);
                 } else {
                     return ResponseFlag.FAILURE;

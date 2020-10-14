@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.LBMS;
 import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.cache.field.DataField;
@@ -163,7 +164,7 @@ public class InfoCommand extends TextCommand {
                             this.buildListResponse(authorsForBook.toString());
                     return this.buildResponse(book.getAvailableCopies(), book.getISBN(), book.getTitle(),
                             authorOutput, book.getPublisher(), DATE_FORMAT.format(book.getPublishDate()),
-                            book.getPageCount());
+                            book.getPageCount() + TextCommand.TOKEN_DELIMITER + (LBMS.PREPRODUCTION_DEBUG ? "ID: " + book.getID() : ""));
                 })
                 .forEach(executor::sendMessage);
         return ResponseFlag.SUCCESS;

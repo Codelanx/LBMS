@@ -40,7 +40,7 @@ public class SearchCommand extends TextCommand {
     @Override
     protected TextParam.Builder buildParams() {
         return TextParam.create()
-                .argument("title")
+                .argumentOptional("title")
                 .listOptional("authors")
                 .argumentOptional("isbn")
                 .argumentOptional("publisher")

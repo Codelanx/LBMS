@@ -2,6 +2,7 @@ package edu.rit.codelanx.cmd.cmds;
 
 import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Checkout;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -10,6 +11,7 @@ import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.state.types.Visitor;
 
+import java.text.DateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,12 +89,13 @@ public class BorrowedCommand extends TextCommand {
             executor.sendMessage(buildResponse(responseString,"0"));
             return ResponseFlag.SUCCESS;
         } else {
-            responseString += books.size() + "\n";
-            for (Checkout b : books) {
-                responseString += (b.getBook().toFormattedText() + "\n");
+            responseString += "," + books.size() + "\n";
+            for (Checkout c : books) {
+                Book b = c.getBook();
+                responseString += (buildResponse(b.getID(), b.getISBN(), b.getTitle(), DATE_FORMAT.format(c.getBorrowedAt())) + "\n");
             }
         }
-        executor.sendMessage(buildResponse(responseString));
+        executor.sendMessage(responseString);
 
         return ResponseFlag.SUCCESS;
     }

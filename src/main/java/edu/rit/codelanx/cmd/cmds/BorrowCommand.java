@@ -12,6 +12,8 @@ import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -84,8 +86,9 @@ public class BorrowCommand extends TextCommand {
         //Checking that the id passed was a number
         try {
             visitorID = parseLong(args[0]);
-            for (int i = 1; i < args.length; i++) {
-                bookIDs.add(parseLong(args[i]));
+            String[] books = args[1].split(",");
+            for (String b : books){
+                bookIDs.add(parseLong(b));
             }
         } catch (NumberFormatException e) {
             return ResponseFlag.FAILURE;
@@ -134,6 +137,8 @@ public class BorrowCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
         found.forEach(b -> b.checkout(v));
+
+        executor.sendMessage(buildResponse(this.getName(), DATE_FORMAT.format(server.getClock().getCurrentTime().plus(Duration.ofDays(Checkout.BORROW_DAYS)))));
 
         return ResponseFlag.SUCCESS;
     }

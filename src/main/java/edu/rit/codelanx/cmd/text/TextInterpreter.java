@@ -182,9 +182,9 @@ public class TextInterpreter implements Interpreter {
 
     private String[] preprocessArguments(TextCommand command, String... args) {
         //TODO: Quick Patch for fixing commands with no args being passed args
-        if (command.params.length == 0){
-            return new String[]{};
-        }
+        ///if (command.params.length == 0){
+            //return new String[]{};
+        //}
         IntStream.range(0, args.length)
                 .filter(i -> args[i] == null)
                 .forEach(i -> args[i] = OUTPUT_WILDCARD);

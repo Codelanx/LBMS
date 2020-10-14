@@ -25,6 +25,7 @@ import static edu.rit.codelanx.data.cache.field.FieldIndicies.FM_KEY;
 @StorageContainer("checkouts")
 public class Checkout extends BasicState {
 
+    public static final long BORROW_DAYS = 7; //number of days you can borrow
     private static final BigDecimal INITIAL_FINE = BigDecimal.valueOf(10);
     private static final BigDecimal WEEKLY_FINE = BigDecimal.valueOf(2);
     private static final BigDecimal MAX_FINE = BigDecimal.valueOf(30);
