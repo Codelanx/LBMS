@@ -5,7 +5,7 @@ import com.codelanx.commons.data.types.Json;
 import com.codelanx.commons.data.types.XML;
 import edu.rit.codelanx.ConfigKey;
 import edu.rit.codelanx.data.DataSource;
-import edu.rit.codelanx.data.cache.StorageContainer;
+import edu.rit.codelanx.data.state.StorageContainer;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.data.cache.StateStorage;
@@ -131,6 +131,10 @@ public class FFStorageAdapter implements StorageAdapter {
                     .map(o -> (State) o)
                     .forEach(this.getAdaptee().getRelativeStorage()::addState);
             this.loadedFromFile.add(type.getConcreteType());
+            if (type == StateType.LIBRARY) {
+                this.library = this.getAdaptee().getRelativeStorage().getStateStorage(Library.class)
+                        .streamLoaded().findAny().orElse(null);
+            }
         }
     }
 

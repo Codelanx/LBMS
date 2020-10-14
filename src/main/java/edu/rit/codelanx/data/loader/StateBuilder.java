@@ -6,10 +6,8 @@ import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,7 +17,6 @@ public abstract class StateBuilder<T extends State> {
     private final DataField<?> idField;
     private final DataField<?>[] fields;
     private final Map<DataField<?>, Object> values = new HashMap<>(); //always maps DataField<E> -> E
-    private final Map<DataField<?>, List<State>> associations = new HashMap<>();
 
     public StateBuilder(State.Type type, DataField<?> idField, DataField<?>... fields) {
         this.type = type;
@@ -38,11 +35,6 @@ public abstract class StateBuilder<T extends State> {
 
     public <E> StateBuilder<T> setValue(DataField<E> field, E value) {
         this.values.put(field, value);
-        return this;
-    }
-
-    public <E extends State> StateBuilder<T> addAssociations(DataField<E> field, E... values) {
-        this.associations.computeIfAbsent(field, k -> new ArrayList<>()).addAll(Arrays.asList(values));
         return this;
     }
 

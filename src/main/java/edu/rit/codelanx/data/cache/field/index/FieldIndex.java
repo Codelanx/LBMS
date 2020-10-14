@@ -1,4 +1,4 @@
-package edu.rit.codelanx.data.cache.field.decorator;
+package edu.rit.codelanx.data.cache.field.index;
 
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;

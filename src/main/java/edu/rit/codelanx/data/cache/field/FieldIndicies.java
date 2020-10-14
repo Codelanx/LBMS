@@ -1,10 +1,10 @@
 package edu.rit.codelanx.data.cache.field;
 
-import edu.rit.codelanx.data.cache.field.decorator.IndexCompositeKey;
-import edu.rit.codelanx.data.cache.field.decorator.IndexImmutable;
-import edu.rit.codelanx.data.cache.field.decorator.IndexKey;
-import edu.rit.codelanx.data.cache.field.decorator.IndexUnique;
-import edu.rit.codelanx.data.cache.field.decorator.FieldIndex;
+import edu.rit.codelanx.data.cache.field.index.IndexCompositeKey;
+import edu.rit.codelanx.data.cache.field.index.IndexImmutable;
+import edu.rit.codelanx.data.cache.field.index.IndexKey;
+import edu.rit.codelanx.data.cache.field.index.IndexUnique;
+import edu.rit.codelanx.data.cache.field.index.FieldIndex;
 
 import java.util.function.Function;
 

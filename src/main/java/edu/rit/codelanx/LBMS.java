@@ -26,6 +26,7 @@ public class LBMS {
         this.server = new TextServer();
         try {
             this.server.getLibraryData().initialize();
+            this.server.getLibraryData().getLibrary().setClock(this.server.getClock());
             this.server.getBookStore().initialize();
         } catch (IOException e) {
             //because this is a fatal startup issue

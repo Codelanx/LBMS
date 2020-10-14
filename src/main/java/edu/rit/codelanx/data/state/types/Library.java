@@ -4,8 +4,9 @@ import edu.rit.codelanx.LBMS;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
-import edu.rit.codelanx.data.cache.StorageContainer;
+import edu.rit.codelanx.data.state.StorageContainer;
 import edu.rit.codelanx.data.cache.field.DataField;
+import edu.rit.codelanx.util.Clock;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -57,6 +58,8 @@ public class Library extends BasicState {
             VALUES = Field.values();
         }
     }
+
+    private volatile Clock clock;
 
     /**
      * {@inheritDoc}
@@ -110,6 +113,10 @@ public class Library extends BasicState {
         }
     }
 
+    public void setClock(Clock clock) {
+        this.clock = clock;
+    }
+
     /**
      * closes the library, stops all visits
      */
@@ -117,10 +124,14 @@ public class Library extends BasicState {
         if (!this.open.compareAndSet(true, false)) {
             return; //already closed
         }
-        Instant at = Instant.now();
+        Instant at = this.clock.getCurrentTime();
         this.getLoader().getRelativeStorage()
                 .getStateStorage(Visitor.class)
                 .forAllLoaded(vis -> vis.endVisit(at));
+    }
+
+    public Clock getClock() {
+        return this.clock;
     }
 
     public boolean isOpen() {

@@ -1,5 +1,6 @@
 package edu.rit.codelanx.data.cache.field;
 
+import com.codelanx.commons.util.Lambdas;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.state.State;
@@ -115,7 +116,7 @@ public class DataFieldLoader<T> implements DataField<T> {
         //Do a slow search if we can't do by key
         Predicate<T> check = key == null ? Objects::isNull : key::equals;
         return this.values.entrySet().stream()
-                .filter(ent -> check.test(ent.getValue()))
+                .filter(Lambdas.mapToPredicate(Map.Entry::getValue, check))
                 .map(Map.Entry::getKey);
     }
 }

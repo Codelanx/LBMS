@@ -3,7 +3,7 @@ package edu.rit.codelanx.data.state.types;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
-import edu.rit.codelanx.data.cache.StorageContainer;
+import edu.rit.codelanx.data.state.StorageContainer;
 import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.math.BigDecimal;
@@ -136,7 +136,7 @@ public class Visitor extends BasicState {
         if (!library.isOpen()){
             return false;
         }
-        this.visitStart.set(Instant.now());
+        this.visitStart.set(library.getClock().getCurrentTime());
         return true;
     }
 

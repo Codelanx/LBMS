@@ -1,4 +1,4 @@
-package edu.rit.codelanx.data.cache.field.decorator;
+package edu.rit.codelanx.data.cache.field.index;
 
 import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.state.State;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+//TODO: R2 implementation, fix for the hackaround in the queries
 public class IndexCompositeKey<T> extends FieldIndex<T> {
 
     private final List<IndexCompositeKey<?>> linkedKeys = new ArrayList<>();
@@ -107,7 +108,7 @@ public class IndexCompositeKey<T> extends FieldIndex<T> {
      * anything, however)
      *
      * @param others The other {@link DataField}s to link to
-     * @see edu.rit.codelanx.data.cache.field.decorator.IndexCompositeKey
+     * @see edu.rit.codelanx.data.cache.field.index.IndexCompositeKey
      * @see #isComposite()
      */
     //public void compose(DataField<?>... others);

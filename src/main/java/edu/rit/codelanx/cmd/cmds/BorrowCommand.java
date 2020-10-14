@@ -8,6 +8,7 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 
 import edu.rit.codelanx.cmd.text.TextCommand;
+import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Visitor;
 
@@ -86,7 +87,7 @@ public class BorrowCommand extends TextCommand {
         //Checking that the id passed was a number
         try {
             visitorID = parseLong(args[0]);
-            String[] books = args[1].split(",");
+            String[] books = TextInterpreter.splitInput(args[1]);
             for (String b : books){
                 bookIDs.add(parseLong(b));
             }
@@ -146,7 +147,8 @@ public class BorrowCommand extends TextCommand {
 
         found.forEach(b -> b.checkout(v, this.server.getClock()));
 
-        executor.sendMessage(buildResponse(this.getName(), DATE_FORMAT.format(server.getClock().getCurrentTime().plus(Duration.ofDays(Checkout.BORROW_DAYS)))));
+        Instant due = server.getClock().getCurrentTime().plus(Duration.ofDays(Checkout.BORROW_DAYS));
+        executor.sendMessage(buildResponse(this.getName(), DATE_FORMAT.format(due)));
 
         return ResponseFlag.SUCCESS;
     }
