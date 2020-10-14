@@ -1,5 +1,6 @@
 package edu.rit.codelanx.network.server;
 
+import edu.rit.codelanx.cmd.MessengerExecutor;
 import edu.rit.codelanx.data.loader.BookStoreAdapter;
 import edu.rit.codelanx.util.Clock;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -77,10 +78,7 @@ public class TextServer implements Server<TextMessage> {
      */
     @Override
     public void receive(Messenger<TextMessage> from, TextMessage message) {
-        if (!(from instanceof CommandExecutor)) {
-            throw new IllegalArgumentException("Cannot receive messages from a non-CommandExecutor");
-        }
         String data = message.getData();
-        this.getInterpreter().receive((CommandExecutor) from, data);
+        this.getInterpreter().receive(new MessengerExecutor(this, from), data);
     }
 }

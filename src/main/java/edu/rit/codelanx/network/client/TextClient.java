@@ -1,12 +1,10 @@
 package edu.rit.codelanx.network.client;
 
-import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.network.io.Message;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.util.Errors;
-import edu.rit.codelanx.util.Validate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
@@ -101,28 +98,6 @@ public class TextClient implements Client<TextMessage> {
     public void close() throws Exception {
         this.buffer.close();
         this.reader.close();
-    }
-
-    /**
-     * Prints the given message to the provided output {@link #buffer}
-     *
-     * @param message- to be printed out
-     */
-    @Override
-    public void sendMessage(String message) {
-        this.output.println(message);
-    }
-
-    /**
-     * print out the user' states via terminal
-     * @param states -array of states
-     */
-    @Override
-    public void renderState(State... states) {
-        Arrays.stream(states)
-                .peek(s -> Validate.nonNull(s, "Cannot render a null state"))
-                .map(State::toFormattedText)
-                .forEach(this.output::println); //final code version
     }
 
     /**

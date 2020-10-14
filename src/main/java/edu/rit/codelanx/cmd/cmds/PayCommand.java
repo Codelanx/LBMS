@@ -64,7 +64,7 @@ public class PayCommand extends TextCommand {
 
 
         //args
-        BigDecimal amount = new BigDecimal(Double.parseDouble(args[1]));
+        BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
         Long visitorID = InputOutput.parseLong(args[0]).orElse(null);
 
 

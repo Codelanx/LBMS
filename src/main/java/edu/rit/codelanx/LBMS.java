@@ -38,7 +38,6 @@ public class LBMS {
         try (Client<TextMessage> client = new TextClient(System.in, System.out)) {
             client.connect(this.server);
             client.display();
-            client.sendMessage("Hello world!");
         } catch (Exception e) {
             Errors.report(e);
         }

@@ -3,7 +3,6 @@ package edu.rit.codelanx.network.client;
 import edu.rit.codelanx.network.io.Message;
 import edu.rit.codelanx.network.io.Messenger;
 import edu.rit.codelanx.network.server.Server;
-import edu.rit.codelanx.cmd.CommandExecutor;
 
 import java.io.IOException;
 
@@ -14,7 +13,7 @@ import java.io.IOException;
  *
  * @author sja9291  Spencer Alderman
  */
-public interface Client<T extends Message<?>> extends CommandExecutor, Messenger<T>, AutoCloseable {
+public interface Client<T extends Message<?>> extends Messenger<T>, AutoCloseable {
 
     /**
      * Begins an interactive session with a specified {@code server},
