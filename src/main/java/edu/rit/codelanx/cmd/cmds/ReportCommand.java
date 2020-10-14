@@ -70,7 +70,7 @@ public class ReportCommand extends TextCommand {
 
 
         //Gets the date
-        Instant curDate = Instant.now();
+        Instant curDate = this.server.getClock().getCurrentTime();
 
         //Finds all the books
         long books = this.server.getLibraryData().query(Book.class)

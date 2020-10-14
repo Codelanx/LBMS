@@ -1,10 +1,13 @@
 package edu.rit.codelanx.data.state.types;
 
 import edu.rit.codelanx.data.DataSource;
+import edu.rit.codelanx.data.cache.field.FieldInitializer;
 import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.cache.StorageContainer;
 import edu.rit.codelanx.data.cache.field.DataField;
+import edu.rit.codelanx.data.state.State;
+import edu.rit.codelanx.util.Clock;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -12,6 +15,8 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import static edu.rit.codelanx.data.cache.field.FieldIndicies.FM_IMMUTABLE;
 import static edu.rit.codelanx.data.cache.field.FieldIndicies.FM_KEY;
@@ -46,7 +51,7 @@ public class Checkout extends BasicState {
             ID = DataField.makeIDField(Checkout.class);
             VISITOR = DataField.buildFromState(Visitor.class, "visitor", Visitor.Field.ID, FM_IMMUTABLE, FM_KEY);
             BOOK = DataField.buildFromState(Book.class, "book", Book.Field.ID, FM_IMMUTABLE, FM_KEY);
-            AT = DataField.buildSimple(Instant.class, "at", FM_IMMUTABLE);
+            AT = DataField.buildSimple(Instant.class, "at");
             RETURNED = DataField.buildSimple(Boolean.class, "returned");
             VALUES = Field.values();
         }
@@ -111,16 +116,17 @@ public class Checkout extends BasicState {
      * @return A {@link BigDecimal} describing a fine applied if late, or
      *         {@code null} if no fine was applied
      */
-    public BigDecimal returnBook() {
+    public BigDecimal returnBook(Clock clock) {
         if (this.wasReturned()) {
             throw new IllegalStateException("Book already returned");
         }
-        Duration d = Duration.between(this.getBorrowedAt(), Instant.now());
+        this.getBook().addCopy(1);
+        Duration d = Duration.between(this.getBorrowedAt(), clock.getCurrentTime());
         //Due 7 days after checkout (if checked out on monday, not late until next tuesday)
         //Initial Late fee - $10 ($10 owed that tuesday)
         //+$2/week         -     ($12 by the next tuesday)
         //max fine: $30    -     ($30 after 10 weeks late)
-        long days = Duration.between(this.getBorrowedAt(), Instant.now()).toDays();
+        long days = Duration.between(this.getBorrowedAt(), clock.getCurrentTime()).toDays();
         long weeksLate = days / 7;
         if (weeksLate > 0) {
             BigDecimal amount = INITIAL_FINE;
@@ -129,6 +135,7 @@ public class Checkout extends BasicState {
             this.getLoader().getLibrary().updateMoney(amount);
             return Transaction.perform(this.getVisitor(), amount.negate(), Transaction.Reason.CHARGING_LATE_FEE);
         }
+        Field.RETURNED.set(this, true);
         return null;
     }
 

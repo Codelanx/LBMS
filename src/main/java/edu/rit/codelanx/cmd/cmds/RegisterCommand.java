@@ -79,7 +79,7 @@ public class RegisterCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        Instant registeredAt = Instant.now();
+        Instant registeredAt = this.server.getClock().getCurrentTime();
 
         // Creates a new Visitor id from the arguments
         Visitor newVisitor = Visitor.create()

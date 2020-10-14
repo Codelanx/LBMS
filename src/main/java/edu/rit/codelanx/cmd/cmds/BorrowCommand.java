@@ -136,7 +136,15 @@ public class BorrowCommand extends TextCommand {
             executor.sendMessage(buildResponse(out));
             return ResponseFlag.SUCCESS;
         }
-        found.forEach(b -> b.checkout(v));
+
+        for (Book book : found){
+            if (book.getAvailableCopies() == 0){
+                executor.sendMessage(buildResponse(this.getName(), "no-copies-available", book.getTitle()));
+                return ResponseFlag.SUCCESS;
+            }
+        }
+
+        found.forEach(b -> b.checkout(v, this.server.getClock()));
 
         executor.sendMessage(buildResponse(this.getName(), DATE_FORMAT.format(server.getClock().getCurrentTime().plus(Duration.ofDays(Checkout.BORROW_DAYS)))));
 

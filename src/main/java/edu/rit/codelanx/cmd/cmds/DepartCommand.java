@@ -73,7 +73,7 @@ public class DepartCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        Visit visit = visitor.endVisit(Instant.now());
+        Visit visit = visitor.endVisit(this.server.getClock().getCurrentTime());
 
         Duration d = Duration.between(visit.getStart(), visit.getEnd());
 

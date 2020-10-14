@@ -5,6 +5,7 @@ import edu.rit.codelanx.data.state.BasicState;
 import edu.rit.codelanx.data.loader.StateBuilder;
 import edu.rit.codelanx.data.cache.StorageContainer;
 import edu.rit.codelanx.data.cache.field.DataField;
+import edu.rit.codelanx.util.Clock;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,13 +73,13 @@ public class Book extends BasicState {
      * @param taker of the book {@link Visitor}
      * @return {@link Checkout} state
      */
-    public Checkout checkout(Visitor taker) {
+    public Checkout checkout(Visitor taker, Clock clock) {
         Field.CHECKED_OUT.mutate(this, old -> {
             if (old == this.getTotalCopies()) {
                 System.out.println("Old: " + old);
                 throw new UnsupportedOperationException("All books are already checked out");
             }
-            return old - 1;
+            return old + 1;
         });
         // check out a book
         return Checkout.create()

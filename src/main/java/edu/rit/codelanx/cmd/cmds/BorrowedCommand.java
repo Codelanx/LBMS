@@ -82,6 +82,7 @@ public class BorrowedCommand extends TextCommand {
 
         List<Checkout> books = server.getLibraryData().query(Checkout.class)
                 .isEqual(Checkout.Field.VISITOR, visitor)
+                .isEqual(Checkout.Field.RETURNED, false)
                 .results()
                 .collect(Collectors.toList());
 

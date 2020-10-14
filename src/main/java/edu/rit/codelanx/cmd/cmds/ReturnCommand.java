@@ -86,7 +86,7 @@ public class ReturnCommand extends TextCommand {
                             .results().findAny();
                 });
         if (!optVisitor.isPresent()) {
-            executor.sendMessage(this.buildResponse(this.getName(), "invalid-visitor-od"));
+            executor.sendMessage(this.buildResponse(this.getName(), "invalid-visitor-id"));
             return ResponseFlag.SUCCESS;
         }
         Visitor visitor = optVisitor.get();
@@ -142,7 +142,7 @@ public class ReturnCommand extends TextCommand {
         List<String> fined = new LinkedList<>();
         BigDecimal sum = BigDecimal.ZERO;
         for (Checkout checkout : checkouts) {
-            BigDecimal fine = checkout.returnBook();
+            BigDecimal fine = checkout.returnBook(this.server.getClock());
             if (fine != null) {
                 fined.add(checkout.getBook().getID() + "");
                 sum = sum.add(fine);

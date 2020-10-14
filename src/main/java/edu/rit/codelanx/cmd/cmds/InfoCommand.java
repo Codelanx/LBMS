@@ -146,8 +146,7 @@ public class InfoCommand extends TextCommand {
                         .sorted(Comparator.comparing(Book::getAvailableCopies));
                 break;
             default:
-                executor.sendMessage(buildResponse(this.getName(),"invalid" +
-                        "-sort-order"));
+                executor.sendMessage(buildResponse(this.getName(),"invalid-sort-order"));
                 return ResponseFlag.SUCCESS;
         }
 
