@@ -200,26 +200,6 @@ public class Visitor extends BasicState {
     }
 
     /**
-     * return the string representation for visitor
-     *
-     * @return arrive string
-     */
-    @Override
-    public String toFormattedText() {
-        String visitor;
-        String formatted_visitor;
-        //arrive| visitorID, visit date+ time
-        visitor = "Visitor ID: %d| First name: %s| Last Name: %s| Address: " +
-                "%s| Phone: %s| Balance: %.2f";
-        formatted_visitor = String.format(visitor, this.getID(),
-                this.getFirstName(), this.getLastName(),
-                this.getAddress(), this.getPhone(),
-                this.getMoney().doubleValue());
-        return formatted_visitor;
-    }
-
-
-    /**
      * format time (type instant) into a string
      *
      * @param time- to be formatted

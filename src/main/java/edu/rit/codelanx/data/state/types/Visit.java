@@ -28,22 +28,6 @@ import static edu.rit.codelanx.data.cache.field.FieldIndicies.FM_KEY;
 @StorageContainer("visits")
 public class Visit extends BasicState {
 
-    /**
-     * String representation of a visit
-     *
-     * @return string
-     */
-    @Override
-    public String toFormattedText() {
-        Instant start = this.getStart();
-        Instant end = this.getEnd();
-        String visit;
-        visit = "Visit ID: %d| Visitor ID %d| Visit Duration: %s";
-        String formatted_visit = String.format(visit, this.getID(), this.getVisitor().getID(),
-                this.getDuration().toString());
-        return formatted_visit;
-    }
-
 
     /**
      * gets the visit duration
