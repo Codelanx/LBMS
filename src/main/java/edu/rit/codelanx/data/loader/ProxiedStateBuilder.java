@@ -23,7 +23,7 @@ public class ProxiedStateBuilder<T extends State> extends StateBuilder<T> {
     @Override
     public <E> E getValue(DataField<E> field) {
         E override = super.getValue(field);
-        return override == null
+        return override == null && field != other.getIDField()
                 ? field.get(this.other)
                 : override;
     }
