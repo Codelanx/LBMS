@@ -93,16 +93,6 @@ public class Library extends BasicState {
     public Type getType() {
         return StateType.LIBRARY;
     }
-    /**
-     * {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String toFormattedText() {
-        String lib="Library ID: %s| Is Open: %b";
-        String formatted_lib=String.format(lib, this.getIDField(), this.isOpen());
-        return formatted_lib;
-    }
 
     /**
      * opens the library so visitors can make visits

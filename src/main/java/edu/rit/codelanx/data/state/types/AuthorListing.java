@@ -108,14 +108,6 @@ public class AuthorListing extends BasicState {
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
-    @Override
-    public String toFormattedText() {
-        return this.getAuthor().toFormattedText();
-    }
-    /**
-     * {@inheritDoc}
-     * @return {@inheritDoc}
-     */
     public static StateBuilder<AuthorListing> create() {
         return StateBuilder.of(AuthorListing::new, StateType.AUTHOR_LISTING, Field.ID, Field.VALUES);
     }

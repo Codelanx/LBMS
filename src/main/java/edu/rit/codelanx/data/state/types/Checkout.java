@@ -163,18 +163,7 @@ public class Checkout extends BasicState {
     public Type getType() {
         return StateType.CHECKOUT;
     }
-    /**
-     * {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String toFormattedText() {
-        String checkout= "Book Checkout: %s| Visitor ID: %d| at: %s| has been returned: %b";
-        String formatted_ver= String.format(checkout, this.getBook().getTitle(), this.getVisitor().getID(),
-        this.getBorrowedAt().toString(), this.wasReturned());
 
-        return getFields().toString();
-    }
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}

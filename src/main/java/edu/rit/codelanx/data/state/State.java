@@ -37,12 +37,6 @@ public interface State extends FileSerializable, Comparable<State> {
     public Type getType();
 
     /**
-     * String representation of the current state
-     * @return string of state data
-     */
-    public String toFormattedText();
-
-    /**
      * gets the data storage
      * @return {@link DataSource}
      */

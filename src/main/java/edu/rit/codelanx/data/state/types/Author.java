@@ -77,6 +77,7 @@ public class Author extends BasicState {
     protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -85,6 +86,7 @@ public class Author extends BasicState {
     public DataField<Long> getIDField() {
         return Field.ID;
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -93,6 +95,7 @@ public class Author extends BasicState {
     public DataField<? super Object>[] getFields() {
         return Field.values();
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -101,17 +104,7 @@ public class Author extends BasicState {
     public Type getType() {
         return StateType.AUTHOR;
     }
-    /**
-     * {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String toFormattedText() {
 
-        String author="Author: %s| Author' books: %s";
-        String formatted_author= String.format(author, this.getName(), this.getBooks().toString());
-        return formatted_author;
-    }
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}

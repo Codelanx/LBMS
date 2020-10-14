@@ -214,16 +214,6 @@ public class Book extends BasicState {
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
-    @Override
-    public String toFormattedText() {
-
-        return this.getFields().toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @return {@inheritDoc}
-     */
     public static StateBuilder<Book> create() {
         return StateBuilder.of(Book::new, StateType.BOOK, Field.ID, Field.VALUES);
     }

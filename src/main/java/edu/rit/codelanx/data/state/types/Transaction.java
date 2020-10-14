@@ -116,18 +116,6 @@ public class Transaction extends BasicState {
     }
 
     /**
-     * {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String toFormattedText() {
-        String transaction="Transaction ID: %d| Visitor: %s %s| Reason: %s| Amount: %s";
-        String formatted_transaction = String.format(transaction, this.getID(), this.getVisitor().getFirstName(),
-                this.getVisitor().getLastName(), this.getReason(), this.getAmount().toPlainString() );
-        return formatted_transaction;
-    }
-
-    /**
      * Façade method for performing a transaction, correctly logging and
      * updating the money
      *
