@@ -28,7 +28,7 @@ public interface Messenger<M extends Message<?>> {
      * @param message The {@link Message} to be sent
      * @see #receive(Messenger, Message)
      */
-    default public void message(Messenger<M> other, M message) {
+    default public void sendTo(Messenger<M> other, M message) {
         other.receive(this, message);
     }
 }

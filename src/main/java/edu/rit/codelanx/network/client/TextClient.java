@@ -78,7 +78,7 @@ public class TextClient implements Client<TextMessage> {
                 continue;
             }
             try {
-                this.message(server, new TextMessage(line)); //otherwise, send it off
+                this.sendTo(server, new TextMessage(line)); //otherwise, send it off
             } catch (Throwable t) {
                 this.output.println("Server encountered error while processing latest request");
                 if (this.output == System.out) {
