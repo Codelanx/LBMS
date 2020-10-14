@@ -54,7 +54,7 @@ public class Library extends BasicState {
 
         static {
             ID = DataField.makeIDField(Library.class);
-            MONEY = DataField.buildSimple(BigDecimal.class, "money", FM_IMMUTABLE, FM_UNIQUE, FM_KEY);
+            MONEY = DataField.buildSimple(BigDecimal.class, "money", FM_UNIQUE, FM_KEY);
             VALUES = Field.values();
         }
     }

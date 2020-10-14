@@ -60,7 +60,7 @@ public class Visitor extends BasicState {
             ADDRESS = DataField.buildSimple(String.class, "address", FM_IMMUTABLE, FM_COMPOSITE);
             PHONE = DataField.buildSimple(String.class, "phone", FM_IMMUTABLE, FM_KEY, FM_COMPOSITE);
             REGISTRATION_DATE = DataField.buildSimple(Instant.class, "registration_date", FM_IMMUTABLE);
-            MONEY = DataField.buildSimple(BigDecimal.class, "money", FM_IMMUTABLE);
+            MONEY = DataField.buildSimple(BigDecimal.class, "money");
             VALUES = Field.values();
         }
     }

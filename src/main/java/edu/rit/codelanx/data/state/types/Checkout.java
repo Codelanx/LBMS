@@ -131,7 +131,7 @@ public class Checkout extends BasicState {
         if (weeksLate > 0) {
             BigDecimal amount = INITIAL_FINE;
             amount = amount.add(WEEKLY_FINE.multiply(BigDecimal.valueOf(weeksLate - 1)));
-            amount = amount.max(MAX_FINE);
+            amount = amount.min(MAX_FINE);
             this.getLoader().getLibrary().updateMoney(amount);
             return Transaction.perform(this.getVisitor(), amount.negate(), Transaction.Reason.CHARGING_LATE_FEE);
         }

@@ -1,18 +1,23 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.LBMS;
 import edu.rit.codelanx.cmd.*;
 import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.state.types.Author;
+import edu.rit.codelanx.data.state.types.AuthorListing;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Searches for books that may be purchased by the library and added to its
@@ -27,6 +32,8 @@ import java.util.stream.Collectors;
  * alphanumerical from 0..1-A-Z, publish date will be newest first.
  */
 public class SearchCommand extends TextCommand {
+
+    private static final String[] AUTHOR_WILDCARD = new String[] {""};
 
     /**
      * Constructor for the SearchCommand class
@@ -71,74 +78,79 @@ public class SearchCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
-        //args == {title, authors, isbn, publisher, sort-order}
-        //if optional and omitted, value is null
-        //if value is a list, value.split(TextCommand.TOKEN_DELIMITER) will
-        // provide the subarguments of that argument
-
-        //Checking that the amount of arguments is correct
-        if (args.length < 2) {
-            return ResponseFlag.FAILURE;
-        }
-
-        //Going through the args and assigning them to their variables
-        String title = args[0],
-                isbn = args[2],
-                publisher = args[3],
-                sortOrder = args[4];
         String[] authors = TextInterpreter.splitInput(args[1]);
-
-        Query<Book> query = this.server.getBookStore().query(Book.class);
-        //Going through the query fields and adding them if they are there
-        if (!title.isEmpty() && !title.equals("*")) {
-            query = query.isEqual(Book.Field.TITLE, title);
+        if (Arrays.stream(authors).anyMatch(String::isEmpty)) {
+            authors = AUTHOR_WILDCARD;
         }
-        if (authors.length > 0 && !authors[0].equals("*")) {
-            for (String authorString : authors) {
-                Author a = this.server.getLibraryData().query(Author.class)
-                        .isEqual(Author.Field.NAME, authorString)
+        Set<Long> filterIDs = null;
+        if (authors != AUTHOR_WILDCARD) {
+            List<Author> found = this.server.getBookStore().query(Author.class)
+                    .isAny(Author.Field.NAME, authors)
+                    .results()
+                    .collect(Collectors.toList());
+            if (!found.isEmpty()) {
+                //no results can possibly be found otherwise
+                filterIDs = this.server.getBookStore()
+                        .query(AuthorListing.class)
+                        .isAny(AuthorListing.Field.AUTHOR, found)
                         .results()
-                        .findAny()
-                        .orElse(null);
-                if (a != null) {
-                    query = query.isEqual(Book.Field.ID, a.getID());
-                } else {
-                    return ResponseFlag.FAILURE;
-                }
+                        .map(AuthorListing::getBook)
+                        .map(Book::getID)
+                        .collect(Collectors.toSet());
             }
         }
-        if (!isbn.isEmpty() && !isbn.equals("*")) {
-            query = query.isEqual(Book.Field.ISBN, isbn);
+        Set<Long> idFilter = filterIDs;
+        //at this point, if filterIDs is null, no authors were searched
+        //if filterIDs is empty, no listings were found for the authors
+        //otherwise, our books are restricted to the contents of filterIDs
+        Query<Book> query = this.server.getBookStore().query(Book.class);
+        //REFACTOR: DRY these blocks of code
+        //Going through the query fields and adding them if they are there
+        if (!args[0].isEmpty()) {
+            query = query.isEqual(Book.Field.TITLE, args[0]);
         }
-        if (!publisher.isEmpty() && !publisher.equals("*")) {
-            query = query.isEqual(Book.Field.PUBLISHER, publisher);
+        if (!args[2].isEmpty()) {
+            query = query.isEqual(Book.Field.ISBN, args[2]);
         }
-
-        List<Book> bookList = query.results().collect(Collectors.toList());
-
-        if (sortOrder.equals("") || sortOrder.equals("*") || sortOrder.equals("title")) {
-            bookList.sort(Comparator.comparing(Book::getTitle));
+        if (!args[3].isEmpty()) {
+            query = query.isEqual(Book.Field.PUBLISHER, args[3]);
+        }
+        Stream<Book> res;
+        if (filterIDs != null) { //if filtering by authors...
+            res = filterIDs.isEmpty()
+                    ? Stream.empty() //no possible results now
+                    : query.results().filter(b -> !idFilter.contains(b.getID()));
         } else {
-            bookList.sort(Comparator.comparing(Book::getPublishDate).reversed());
+            res = query.results();
+        }
+        switch (args[4].toLowerCase()) { //sort-order
+            case "":
+            case "title":
+                res = res.sorted(Comparator.comparing(Book::getTitle));
+                break;
+            case "publish-date":
+                res = res.sorted(Comparator.comparing(Book::getPublishDate).reversed());
+                break;
+            default:
+                executor.sendMessage(buildResponse(this.getName(),"invalid-sort-order"));
+                return ResponseFlag.SUCCESS;
         }
 
-        //this.getName() + "," + 0 + ";"
+        List<Book> bookList = res.collect(Collectors.toList());
         executor.sendMessage(this.buildResponse(this.getName(), bookList.size()));
         if (bookList.isEmpty()) {
             return ResponseFlag.SUCCESS;
         }
-        executor.sendMessage("Results (" + bookList.size() + "):");
         bookList.stream()
                 .map(book -> {
                     List<String> authorsForBook =
                             book.getAuthors().map(Author::getName).collect(Collectors.toList());
-                    String authorOutput = this.buildListResponse(authorsForBook.toString());
-                    return this.buildResponse(book.getID(), book.getISBN(),
-                            book.getTitle(), authorOutput,
-                            DATE_FORMAT.format(book.getPublishDate()));
+                    String authorOutput =
+                            this.buildListResponse(authorsForBook.toString());
+                    return this.buildResponse(book.getID(), book.getISBN(), book.getTitle(),
+                            authorOutput, DATE_FORMAT.format(book.getPublishDate()));
                 })
                 .forEach(executor::sendMessage);
-
         return ResponseFlag.SUCCESS;
     }
 }
