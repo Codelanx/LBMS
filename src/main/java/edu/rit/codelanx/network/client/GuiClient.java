@@ -21,16 +21,6 @@ public class GuiClient implements Client<TextMessage> {
     }
 
     @Override
-    public void sendMessage(String message) {
-
-    }
-
-    @Override
-    public void renderState(State... state) {
-
-    }
-
-    @Override
     public void receive(Messenger<TextMessage> from, TextMessage message) {
 
     }
