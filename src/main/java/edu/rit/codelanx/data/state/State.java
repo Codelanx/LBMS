@@ -17,7 +17,7 @@ import java.util.function.BiFunction;
  *
  * @author sja9291  Spencer Alderman
  */
-public interface State extends FileSerializable {
+public interface State extends FileSerializable, Comparable<State> {
     /**
      * gets the field id
      * @return id of {@link DataField}
@@ -65,6 +65,14 @@ public interface State extends FileSerializable {
      */
     default public long getID() {
         return this.getIDField().get(this);
+    }
+
+    @Override
+    default int compareTo(State o) {
+        if (!this.getType().getConcreteType().isInstance(o)) {
+            throw new IllegalArgumentException("Cannot compare different State types");
+        }
+        return Long.compare(this.getID(), o.getID());
     }
 
     /**
