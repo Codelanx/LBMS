@@ -2,12 +2,9 @@ package edu.rit.codelanx.data.cache.field;
 
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.cache.field.decorator.DataFieldSource;
-import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.state.types.StateType;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
@@ -52,7 +49,7 @@ public interface DataField<T> {
      * @param state involved {@link State}
      * @param value {@link Object} of the above State
      */
-    public void initialize(State state, Object value);
+    public void initialize(State state, T value);
 
     /**
      * clear out the state.
@@ -114,17 +111,6 @@ public interface DataField<T> {
      */
     public Stream<? extends State> findStatesByValue(T key);
 
-    default public T getFromSQL(ResultSet sql, DataSource from) throws SQLException {
-        Class<T> type = this.getType();
-        return InputMapper.toTypeOrState(from, type, InputMapper.getObject(type, sql, this.getName()));
-    }
-
-
-    @Deprecated
-    default public Stream<T> getAll(State state) {
-        return Stream.of(this.get(state));
-    }
-
     /**
      * checks for data field index
      *
@@ -160,15 +146,6 @@ public interface DataField<T> {
      */
     default public boolean isUnique() {
         return false;
-    }
-
-    @Deprecated
-    default public <R> DataField<R> asField(Class<R> type) {
-        Class<T> current = this.getInitializer().getType();
-        if (current != type) {
-            throw new ClassCastException("Cannot cast " + current.getName() + " to " + type.getName());
-        }
-        return (DataField<R>) this;
     }
 
     public static <R> Builder<R> builder(Class<R> type) {

@@ -35,13 +35,13 @@ public abstract class BasicState implements State {
      * @param id long type
      * @param builder {@link StateBuilder}
      */
-    public BasicState(DataSource loader, long id, StateBuilder<?> builder) {
+    public <T extends State> BasicState(DataSource loader, long id, StateBuilder<T> builder) {
         this.loader = loader;
         this.id = id;
-        DataField<?> idField = this.getIDField();
+        DataField<? super Long> idField = this.getIDField();
         idField.initialize(this, id);
         //id field should be the first indexed field
-        DataField<?>[] fields = this.getFieldsUnsafe();
+        DataField<? super Object>[] fields = this.getFieldsUnsafe();
         //but just in case we'll iterate them all
         for (int i = 0; i < fields.length; i++) {
             if (fields[i] == idField) continue; //skip id field

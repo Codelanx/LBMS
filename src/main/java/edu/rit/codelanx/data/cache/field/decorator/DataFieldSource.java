@@ -38,7 +38,7 @@ public class DataFieldSource<T> implements DataField<T> {
     }
 
     @Override
-    public void initialize(State state, Object value) {
+    public void initialize(State state, T value) {
         this.getField(state).initialize(state, value);
     }
 

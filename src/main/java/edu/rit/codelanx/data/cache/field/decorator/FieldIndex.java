@@ -118,7 +118,7 @@ public abstract class FieldIndex<T> implements DataField<T> {
      * @param value {@inheritDoc}
      */
     @Override
-    public void initialize(State state, Object value) {
+    public void initialize(State state, T value) {
         this.parent.initialize(state, value);
     }
     /**

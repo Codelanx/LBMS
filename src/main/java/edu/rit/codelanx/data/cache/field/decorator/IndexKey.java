@@ -28,7 +28,7 @@ public class IndexKey<T> extends FieldIndex<T> {
     }
 
     @Override
-    public void initialize(State state, Object value) {
+    public void initialize(State state, T value) {
         super.initialize(state, value);
         this.getStates((T) value).add(state);
     }

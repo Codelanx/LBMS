@@ -57,7 +57,7 @@ public class IndexUnique<T> extends FieldIndex<T> {
      * @param value {@inheritDoc}
      */
     @Override
-    public void initialize(State state, Object value) {
+    public void initialize(State state, T value) {
         super.initialize(state, value);
         this.uniqueMap.put((T) value, state);
     }
