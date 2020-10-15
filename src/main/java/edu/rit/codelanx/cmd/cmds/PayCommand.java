@@ -41,7 +41,8 @@ public class PayCommand extends TextCommand {
     }
 
     /**
-     * @link edu.rit.codelanx.cmd.Command#getName()
+     * {@inheritDoc}
+     * @return {@inheritDoc}
      */
     @Override
     public String getName() {

@@ -12,7 +12,8 @@ import edu.rit.codelanx.data.state.types.Library; //imported solely for javadocs
  * Represents an instance which many {@link Messenger} objects can connect to
  * in order to interact with the services provided by our system
  *
- * @param <T> The {@link Message<T>} used to communicate with this server
+ * @param <T> The {@link Message Message&lt;T&gt;} used to communicate with this
+ *            server
  *
  * @author sja9291  Spencer Alderman
  */
@@ -20,7 +21,7 @@ public interface Server<T extends Message<?>> extends Messenger<T> {
 
     /**
      * The {@link Interpreter}, which decides how to act upon receiving a
-     * {@link Message<T>}
+     * {@link Message Message&lt;T&gt;}
      *
      * @return The held {@link Interpreter} for this server
      * @see Interpreter

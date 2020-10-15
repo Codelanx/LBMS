@@ -90,7 +90,11 @@ public abstract class TextCommand implements Command {
         return String.join(TOKEN_DELIMITER, Arrays.stream(tokens).map(Objects::toString).toArray(String[]::new)) + ";";
     }
 
-    /** @see #buildResponse(Object...) */
+    /**
+     * @param tokens An iterable set of string tokens to join together
+     * @see #buildResponse(Object...)
+     * @return The input arguments joined together by a common delimiter
+     */
     protected String buildResponse(Iterable<?> tokens) {
         return String.join(TOKEN_DELIMITER, StreamSupport.stream(tokens.spliterator(), false).map(Objects::toString).toArray(String[]::new)) + ";";
     }
@@ -108,7 +112,11 @@ public abstract class TextCommand implements Command {
         return "{" + String.join(TOKEN_DELIMITER, Arrays.stream(tokens).map(Objects::toString).toArray(String[]::new)) + "}";
     }
 
-    /** @see #buildListResponse(Object...) */
+    /**
+     * @param tokens An iterable set of string tokens to join together
+     * @see #buildListResponse(Object...)
+     * @return The input arguments joined together by a common delimiter
+     */
     protected String buildListResponse(Iterable<?> tokens) {
         return "{" + String.join(TOKEN_DELIMITER, StreamSupport.stream(tokens.spliterator(), false).map(Objects::toString).toArray(String[]::new)) + "}";
     }

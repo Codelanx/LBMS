@@ -1,27 +1,27 @@
 package edu.rit.codelanx.network.io;
 
 /**
- * Designates a class which can send or receive {@link Message Message<T>}
- * objects with other {@link Messenger Messenger<T>}'s of the same type
+ * Designates a class which can send or receive {@link Message Message&lt;M&gt;}
+ * objects with other {@link Messenger Messenger&lt;M&gt;}'s of the same type
  *
- * @param <M> The {@link Message Message<T>} type this class expects
+ * @param <M> The {@link Message Message&lt;M&gt;} type this class expects
  * @author sja9291  Spencer Alderman
  * @see Message
  */
 public interface Messenger<M extends Message<?>> {
 
     /**
-     * Receiving a message from an external {@link Messenger Messenger<T>}
+     * Receiving a message from an external {@link Messenger Messenger&lt;M&gt;}
      *
-     * @param from The {@link Messenger Messenger<T>} who sent the
+     * @param from The {@link Messenger Messenger&lt;M&gt;} who sent the
      *             {@code message}
-     * @param message The received {@link Message Message<T>}
+     * @param message The received {@link Message Message&lt;M&gt;}
      */
     public void receive(Messenger<M> from, M message);
 
     /**
-     * Sends a given {@link Message Message<T>} to the provided
-     * {@link Messenger Messenger<T>}. This is in effect equivalent to:
+     * Sends a given {@link Message Message&lt;M&gt;} to the provided
+     * {@link Messenger Messenger&lt;M&gt;}. This is in effect equivalent to:
      *      {@code other.receive(this, message)}
      *
      * @param other The {@link Messenger} to receive the message

@@ -2,6 +2,8 @@ package edu.rit.codelanx.data.cache.field;
 
 import com.codelanx.commons.util.Lambdas;
 import edu.rit.codelanx.data.DataSource;
+import edu.rit.codelanx.data.cache.field.index.IndexImmutable;
+import edu.rit.codelanx.data.cache.field.index.IndexKey;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.state.State;
 

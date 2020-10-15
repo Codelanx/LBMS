@@ -1,7 +1,7 @@
 package edu.rit.codelanx.network.io;
 
 /**
- * A concrete type for {@link Message Message<String>}, as trying to pass
+ * A concrete type for {@link Message Message&lt;String&gt;}, as trying to pass
  * around generified types for a {@link Messenger} results in untenable generics
  * and unreadable code. Instead, a generic could simply reference this class
  * when being instantiated, and save a lot of type-casting headaches

@@ -42,7 +42,7 @@ public class FieldInitializer<T> {
     /**
      * gets the field's type
      *
-     * @return type {@link Class<T>}
+     * @return type {@link Class Class&lt;T&gt;}
      */
     public Class<T> getType() {
         return this.type;

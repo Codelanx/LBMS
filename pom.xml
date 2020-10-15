@@ -57,7 +57,7 @@
                 <version>2.10.3</version>
                 <configuration>
                     <links>
-                        <link>http://docs.codelanx.com/Bukkit/1.8/</link>
+                        <link>http://docs.codelanx.com/CodelanxCommons/0.3.2/</link>
                         <link>https://docs.oracle.com/javase/8/docs/api/</link>
                     </links>
                 </configuration>

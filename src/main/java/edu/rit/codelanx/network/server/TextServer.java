@@ -72,7 +72,7 @@ public class TextServer implements Server<TextMessage> {
 
     /**
      * {@inheritDoc}
-     * @param from The {@link Messenger Messenger<TextMessage>} who sent the
+     * @param from The {@link Messenger Messenger&lt;TextMessage&gt;} who sent the
      *             {@code message}
      * @param message The received {@link TextMessage TextMessage}
      */

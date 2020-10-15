@@ -73,7 +73,7 @@ public enum ConfigKey implements ConfigFile {
     }
 
     /**
-     * Builds a new {@link Cache Cache<MySQL>} from settings specified in the
+     * Builds a new {@link Cache Cache&lt;MySQL&gt;} from settings specified in the
      * configuration file for this enum
      *
      * @return A pre-configured and ready-to-use {@link MySQL} cache
