@@ -73,6 +73,15 @@ public class LibraryData implements DataSource {
         return this.adapter;
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
+    @Override
+    public void cleanup() throws IOException {
+        this.adapter.saveAll();
+        //TODO: Cleanup RelativeStorage as well since it's hard references
+    }
 
     /**
      * {@inheritDoc}

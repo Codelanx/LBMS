@@ -28,6 +28,14 @@ public class LBMS {
             this.server.getLibraryData().initialize();
             this.server.getLibraryData().getLibrary().setClock(this.server.getClock());
             this.server.getBookStore().initialize();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    this.server.getLibraryData().cleanup();
+                } catch (IOException e) {
+                    System.err.println("Fatal error while saving library data: ");
+                    e.printStackTrace();
+                }
+            }, "LBMS-shutdown"));
         } catch (IOException e) {
             //because this is a fatal startup issue
             Errors.reportAndExit("Fatal error while starting LBMS storage", e);
