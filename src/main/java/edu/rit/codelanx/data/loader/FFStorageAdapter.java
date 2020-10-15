@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -35,6 +36,7 @@ public class FFStorageAdapter implements StorageAdapter {
     private final DataSource storage;
     private final Set<Class<? extends State>> loadedFromFile = new HashSet<>();
     private volatile Library library;
+    private final AtomicBoolean modified = new AtomicBoolean(false);
 
     protected FFStorageAdapter(DataSource storage) {
         this.storage = storage;
@@ -140,6 +142,9 @@ public class FFStorageAdapter implements StorageAdapter {
 
     @Override
     public void saveAll() throws IOException {
+        if (!this.modified.get()) {
+            return; //If never modified, do not save
+        }
         if (this.library == null) {
             throw new IllegalStateException("Adapter was never initialized");
         }
@@ -215,7 +220,7 @@ public class FFStorageAdapter implements StorageAdapter {
 
     @Override
     public <E> void notifyUpdate(State state, DataField<E> field, E value) {
-        //well, nothing to be done then
+        this.modified.set(true);
     }
 
     /**
@@ -224,7 +229,7 @@ public class FFStorageAdapter implements StorageAdapter {
     @Override
     public void remove(State state) {
         //TODO: Actually remove the state
-        //nothing to do here, data lives in the caches
+        this.modified.set(true);
     }
 
     /**
