@@ -27,7 +27,6 @@ public abstract class BasicState implements State {
     private final AtomicBoolean valid = new AtomicBoolean(false);
     private final long id;
     private final DataSource loader;
-    private final Map<DataField<?>, Object> values = new HashMap<>();
 
     /**
      * construct the state from State buil
@@ -129,7 +128,6 @@ public abstract class BasicState implements State {
     @Override
     public void unload() {
         this.valid.set(false);
-        this.values.clear();
         this.getIDField().forget(this);
         for (DataField<?> f : this.getFieldsUnsafe()) {
             f.forget(this);
