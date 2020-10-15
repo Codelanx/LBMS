@@ -68,6 +68,13 @@ public interface DataSource {
     public void initialize() throws IOException;
 
     /**
+     * Cleans up any data used by the data source, saving if necessary
+     *
+     * @throws IOException If the data cannot be saved
+     */
+    public void cleanup() throws IOException;
+
+    /**
      * Initiates a {@link Query Query<R>} of this source of data, returning all
      * {@link State} objects which match the specified parameters of the query
      *
