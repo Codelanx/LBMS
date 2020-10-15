@@ -4,6 +4,8 @@ import edu.rit.codelanx.data.state.types.Library;
 import edu.rit.codelanx.network.server.Server;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.Executors;
@@ -123,7 +125,7 @@ public class Clock {
     // decouple Clock from Library
     //our "event loop"
     private void tick() {
-        int hour = this.getCurrentTime().get(ChronoField.HOUR_OF_DAY);
+        int hour = LocalDateTime.ofInstant(this.getCurrentTime(), ZoneId.systemDefault()).getHour();
         boolean shouldBeOpen = hour >= OPEN_TIME_24HR && hour < CLOSE_TIME_24HR;
         if (shouldBeOpen && this.open.compareAndSet(false, true)) {
             this.server.getLibraryData().ofLoaded(Library.class).forEach(Library::open);

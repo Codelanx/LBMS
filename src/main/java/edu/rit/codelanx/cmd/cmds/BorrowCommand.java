@@ -77,6 +77,11 @@ public class BorrowCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
+        if (!this.server.getLibraryData().getLibrary().isOpen()){
+            executor.sendMessage(buildResponse(this.getName(), "library-is-closed"));
+            return ResponseFlag.FAILURE;
+        }
+
         if (args.length < 2) {
             executor.sendMessage(buildResponse(this.getName(), "missing" +
                     "-parameters", "visitorID"));
