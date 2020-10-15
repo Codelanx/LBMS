@@ -31,6 +31,7 @@ public class LBMS {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     this.server.getLibraryData().cleanup();
+                    this.server.getBookStore().cleanup();
                 } catch (IOException e) {
                     System.err.println("Fatal error while saving library data: ");
                     e.printStackTrace();

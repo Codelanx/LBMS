@@ -98,8 +98,8 @@ public class Library extends BasicState {
      * opens the library so visitors can make visits
      */
     public void open() {
-        if (!this.isOpen()) {
-            this.open.getAndSet(true);
+        if (!this.open.compareAndSet(false, true)) {
+            return; //already open
         }
     }
 
@@ -125,9 +125,6 @@ public class Library extends BasicState {
     }
 
     public boolean isOpen() {
-        //if (LBMS.PREPRODUCTION_DEBUG) {
-        //    return true;
-        //}
         return this.open.get();
     }
 

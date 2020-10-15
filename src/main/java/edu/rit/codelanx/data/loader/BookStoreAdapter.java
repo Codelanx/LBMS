@@ -27,7 +27,7 @@ public class BookStoreAdapter extends FFStorageAdapter {
     }
 
     public BookStoreAdapter(DataSource storage) {
-        super(storage, "json"); //TODO: this is invalid, needs a proper valuue / fix for the parent
+        super(storage, "json"); //TODO: this is invalid, needs a proper value / fix for the parent
     }
 
     @Override
