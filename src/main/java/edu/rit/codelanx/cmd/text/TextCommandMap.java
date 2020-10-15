@@ -30,6 +30,7 @@ public enum TextCommandMap {
     REPORT(ReportCommand::new),
     SEARCH(SearchCommand::new),
     RETURN(ReturnCommand::new),
+    TEST(TestCommand::new),
     ;
 
     private static final TextCommandMap[] VALUES = TextCommandMap.values();

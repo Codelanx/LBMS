@@ -1,6 +1,5 @@
 package edu.rit.codelanx.data.state;
 
-import com.codelanx.commons.data.FileSerializable;
 import com.codelanx.commons.data.SQLFunction;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.loader.InputMapper;
@@ -9,7 +8,6 @@ import edu.rit.codelanx.data.cache.field.DataField;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -75,7 +73,7 @@ public abstract class BasicState implements State {
         for (DataField<? super Object> f : this.getFieldsUnsafe()) {
             if (f == (DataField<?>) this.getIDField()) continue;
             Object o = mapper.apply(f);
-            f.initialize(this, InputMapper.toTypeOrState(loader, f.getType(), o));
+            f.initialize(this, InputMapper.toTypeOrState(loader, f.getType(), o).get());
         }
         this.valid.set(true);
         return id;

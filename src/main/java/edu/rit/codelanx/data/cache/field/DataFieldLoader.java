@@ -2,11 +2,10 @@ package edu.rit.codelanx.data.cache.field;
 
 import com.codelanx.commons.util.Lambdas;
 import edu.rit.codelanx.data.DataSource;
-import edu.rit.codelanx.data.cache.field.index.IndexImmutable;
-import edu.rit.codelanx.data.cache.field.index.IndexKey;
 import edu.rit.codelanx.data.loader.InputMapper;
 import edu.rit.codelanx.data.state.State;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
@@ -44,9 +43,12 @@ public class DataFieldLoader<T> implements DataField<T> {
     @Override
     public Object serialize(State state) {
         //If we're proxied, then we're mapping a State inherently
-        return this.proxied != null
+        Object back = this.proxied != null
                 ? this.proxied.serialize((State) this.get(state))
                 : this.get(state);
+        return back instanceof Instant
+                ? ((Instant) back).getEpochSecond()
+                : back;
     }
 
     @Override

@@ -143,7 +143,10 @@ public class SearchCommand extends TextCommand {
         }
         bookList.stream()
                 .map(book -> {
-                    List<String> authorsForBook = book.getAuthors().map(Author::getName).collect(Collectors.toList());
+                    List<String> authorsForBook = book.getAuthors()
+                            .map(AuthorListing::getAuthor)
+                            .map(Author::getName)
+                            .collect(Collectors.toList());
                     String authorOutput = this.buildListResponse(authorsForBook.toString());
                     return this.buildResponse(book.getID(), book.getISBN(), book.getTitle(),
                             authorOutput, DATE_FORMAT.format(book.getPublishDate()));

@@ -6,13 +6,13 @@ import edu.rit.codelanx.network.server.Server;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 /**
  * A utility class for timing events outside of the user's control based on the
@@ -128,9 +128,21 @@ public class Clock {
         int hour = LocalDateTime.ofInstant(this.getCurrentTime(), ZoneId.systemDefault()).getHour();
         boolean shouldBeOpen = hour >= OPEN_TIME_24HR && hour < CLOSE_TIME_24HR;
         if (shouldBeOpen && this.open.compareAndSet(false, true)) {
-            this.server.getLibraryData().ofLoaded(Library.class).forEach(Library::open);
+            this.getLibraries().forEach(Library::open);
         } else if (!shouldBeOpen && this.open.compareAndSet(true, false)) {
-            this.server.getLibraryData().ofLoaded(Library.class).forEach(Library::close);
+            this.getLibraries().forEach(Library::close);
         }
+    }
+
+    private Stream<Library> getLibraries() {
+        return this.server.getLibraryData().query(Library.class).local().results();
+    }
+
+    /**
+     * Shuts down the tick loop, preventing any more Clock ticking. For use
+     * before shutting down
+     */
+    public static void shutdown() {
+        TICKER.shutdownNow();
     }
 }

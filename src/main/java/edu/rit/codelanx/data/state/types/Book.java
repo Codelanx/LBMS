@@ -147,10 +147,10 @@ public class Book extends BasicState {
      * gets the book's authors
      * @return stream of {@link Author}
      */
-    public Stream<Author> getAuthors() {
+    public Stream<AuthorListing> getAuthors() {
         return this.getLoader().query(AuthorListing.class)
                 .isEqual(AuthorListing.Field.BOOK, this)
-                .results().map(AuthorListing::getAuthor);
+                .results();
     }
 
     /**

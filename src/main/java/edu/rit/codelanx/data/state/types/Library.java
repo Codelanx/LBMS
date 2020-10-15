@@ -115,9 +115,8 @@ public class Library extends BasicState {
             return; //already closed
         }
         Instant at = this.clock.getCurrentTime();
-        this.getLoader().getRelativeStorage()
-                .getStateStorage(Visitor.class)
-                .forAllLoaded(vis -> vis.endVisit(at));
+        this.getLoader().query(Visitor.class).local().results()
+                .forEach(vis -> vis.endVisit(at));
     }
 
     public Clock getClock() {
@@ -135,5 +134,9 @@ public class Library extends BasicState {
 
     public static StateBuilder<Library> create() {
         return StateBuilder.of(Library::new, StateType.LIBRARY, Field.ID, Field.VALUES);
+    }
+
+    public static Library newEmptyLibrary(DataSource source) {
+        return Library.create().setValue(Field.MONEY, BigDecimal.ZERO).build(source);
     }
 }

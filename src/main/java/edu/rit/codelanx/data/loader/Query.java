@@ -10,6 +10,9 @@ public interface Query<T> {
 
     //runtime
     public <E> Query<T> filterBy(DataField<E> field, Predicate<E> test);
+    public Query<T> local();
+    public Query<T> remote();
+    public Query<T> isID(long id);
 
     //comparisons
     public <E> Query<T> isEqual(DataField<E> field, E value);

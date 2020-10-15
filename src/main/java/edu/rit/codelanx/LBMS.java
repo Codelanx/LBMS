@@ -1,10 +1,13 @@
 package edu.rit.codelanx;
 
+import com.codelanx.commons.logging.Debugger;
+import com.codelanx.commons.logging.Logging;
 import edu.rit.codelanx.network.client.Client;
 import edu.rit.codelanx.network.client.TextClient;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.TextServer;
 import edu.rit.codelanx.network.server.Server;
+import edu.rit.codelanx.util.Clock;
 import edu.rit.codelanx.util.Errors;
 
 import java.io.IOException;
@@ -30,6 +33,7 @@ public class LBMS {
             this.server.getBookStore().initialize();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
+                    Clock.shutdown();
                     this.server.getLibraryData().cleanup();
                     this.server.getBookStore().cleanup();
                 } catch (IOException e) {
@@ -59,6 +63,7 @@ public class LBMS {
      * @param args command-line arguments (unused)
      */
     public static void main(String... args) {
+        Debugger.toggleOutput(false);
         LBMS system = new LBMS();
         system.access(); //will consume main thread
     }

@@ -1,5 +1,6 @@
 package edu.rit.codelanx.data;
 
+import edu.rit.codelanx.data.loader.ProxiedStateBuilder;
 import edu.rit.codelanx.data.loader.StorageAdapter;
 import edu.rit.codelanx.data.loader.Query;
 import edu.rit.codelanx.data.state.State;
@@ -19,15 +20,6 @@ import java.util.stream.Stream;
 public interface DataSource {
 
     /**
-     * Returns all of the stored data relevant to the given {@link Class type}.
-     *
-     * @param type The type of {@link State} to retrieve
-     * @param <R> The generic type witness to {@code type}
-     * @return A {@link Stream Stream<R>} of all possible, loaded values.
-     */
-    public <R extends State> Stream<? extends R> ofLoaded(Class<R> type);
-
-    /**
      * Inserts a new state into the system, built from dynamic input or otherwise.
      * This method will allow the underlying storage to determine a new ID for the
      * state
@@ -37,19 +29,6 @@ public interface DataSource {
      * @return The newly inserted {@link State}
      */
     public <R extends State> R insert(StateBuilder<R> builder);
-
-    /**
-     * Inserts a state created from a different {@link DataSource} into the
-     * {@link StorageAdapter} and {@link RelativeStorage} that back this
-     * {@link DataSource}. The newly generated state will have a new ID,
-     * relative to the {@link DataSource} it was inserted into
-     *
-     * @param state A {@link State} from an external {@link DataSource}
-     * @param <R> The type of the {@code state}
-     * @return The newly created {@link State} that resides on this
-     *         {@link DataSource}
-     */
-    public <R extends State> R insert(R state);
 
     /**
      * Given current design considerations, we are managing this around a single
@@ -95,11 +74,30 @@ public interface DataSource {
     public StorageAdapter getAdapter();
 
     /**
-     * The container for relational indexing and mappings, for the sake of
-     * faster lookup times
+     * Inserts a state created from a different {@link DataSource} into the
+     * {@link StorageAdapter} and {@link RelativeStorage} that back this
+     * {@link DataSource}. The newly generated state will have a new ID,
+     * relative to the {@link DataSource} it was inserted into
      *
-     * @return The {@link RelativeStorage} for this data source
+     * @param state A {@link State} from an external {@link DataSource}
+     * @param <R> The type of the {@code state}
+     * @return The newly created {@link State} that resides on this
+     *         {@link DataSource}
+     * @see #insert(StateBuilder)
      */
-    public RelativeStorage getRelativeStorage();
+    default public <R extends State> R insert(R state) {
+        return this.insert(new ProxiedStateBuilder<>(state));
+    }
+
+    /**
+     * Returns all of the stored data relevant to the given {@link Class type}.
+     *
+     * @param type The type of {@link State} to retrieve
+     * @param <R> The generic type witness to {@code type}
+     * @return A {@link Stream Stream<R>} of all possible, loaded values.
+     */
+    default public <R extends State> Stream<? extends R> ofLoaded(Class<R> type) {
+        return this.query(type).local().results();
+    }
 
 }

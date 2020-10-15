@@ -14,7 +14,6 @@ import edu.rit.codelanx.data.cache.RelativeStorage;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * A concrete {@link DataSource} for loading {@link State} objects specific
@@ -26,8 +25,6 @@ public class LibraryData implements DataSource {
 
     //the background loader
     private final StorageAdapter adapter;
-    //our indexed storage
-    private final RelativeStorage relative;
 
     /**
      * Selects an appropriate {@link StorageAdapter} for general LBMS data,
@@ -51,7 +48,6 @@ public class LibraryData implements DataSource {
      */
     public LibraryData(Function<DataSource, StorageAdapter> adapter) {
         this.adapter = adapter.apply(this);
-        this.relative = new RelativeStorage(this);
     }
 
     /**
@@ -83,14 +79,14 @@ public class LibraryData implements DataSource {
         //TODO: Cleanup RelativeStorage as well since it's hard references
     }
 
-    /**
+    /*
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
-    @Override
-    public RelativeStorage getRelativeStorage() {
-        return this.relative;
-    }
+    //@Override
+    //public RelativeStorage getRelativeStorage() {
+    //    return this.relative;
+    //}
 
     /**
      * {@inheritDoc}
@@ -112,32 +108,7 @@ public class LibraryData implements DataSource {
     @Override
     public <R extends State> R insert(StateBuilder<R> builder) {
         R back = this.adapter.insert(builder);
-        this.relative.addState(back);
         return back;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param state {@inheritDoc}
-     * @param <R> {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public <R extends State> R insert(R state) {
-        R back = this.adapter.insert(state);
-        this.relative.addState(back);
-        return back;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param type {@inheritDoc}
-     * @param <R> {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public <R extends State> Stream<? extends R> ofLoaded(Class<R> type) {
-        return this.relative.getStateStorage(type).streamLoaded();
     }
 
     /**

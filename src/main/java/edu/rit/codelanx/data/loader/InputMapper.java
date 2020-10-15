@@ -4,6 +4,7 @@ import com.codelanx.commons.data.SQLBiFunction;
 import edu.rit.codelanx.data.DataSource;
 import edu.rit.codelanx.data.state.State;
 import edu.rit.codelanx.data.cache.field.DataField;
+import edu.rit.codelanx.data.state.types.StateType;
 import edu.rit.codelanx.util.Errors;
 
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public enum InputMapper {;
 
@@ -51,21 +53,26 @@ public enum InputMapper {;
     }
 
     public static Instant toInstant(Object value) {
+        if (value instanceof Number) {
+            return Instant.ofEpochSecond(((Number) value).longValue());
+        }
         if (!(value instanceof Timestamp)) {
             throw new IllegalArgumentException("Cannot convert a non-timestamp to an Instant");
         }
         return ((Timestamp) value).toInstant();
     }
 
-    public static <T extends State> T toState(DataSource storage, Class<T> type, long id) {
-        return storage.getRelativeStorage().getStateStorage(type).getByID(id);
+    public static <T extends State> Optional<T> toState(DataSource storage, Class<T> type, long id) {
+        State.Type st = StateType.fromClass(type);
+        return storage.query(type).isID(id).results().findAny();
     }
 
     public static <T extends State, E> T toState(DataSource storage, Class<T> type, DataField<E> field, E value) {
         if (!field.isUnique()) {
             throw new IllegalStateException("Cannot map a to a unique State based on the provided field, field is not unique");
         }
-        return storage.query(type).isEqual(field, value).results().findFirst().orElse(null);
+        return storage.query(type).isEqual(field, value).results().findFirst()
+                .orElseThrow(() -> new IllegalStateException("No matching field found for: " + type + " , " + field.getName()));
     }
 
     public static boolean isStateClass(Class<?> clazz) {
@@ -76,18 +83,28 @@ public enum InputMapper {;
         if (type.isAssignableFrom(Instant.class)) {
             return (T) InputMapper.toInstant(value); //in this case, T == Instant
         }
+        if (Instant.class.isAssignableFrom(type)) {
+            return (T) InputMapper.toInstant(value);
+        }
+        if (type.isAssignableFrom(Integer.class) && value instanceof Number) {
+            return (T) (Object) ((Number) value).intValue();
+        }
+        if (type.isAssignableFrom(BigDecimal.class) && value instanceof Number) {
+            return (T) (Object) BigDecimal.valueOf(((Number) value).longValue());
+        }
         return (T) value; //will CCE if mismatched at this point
     }
 
-    public static <T> T toTypeOrState(DataSource storage, Class<T> type, Object value) {
+    public static <T> Optional<T> toTypeOrState(DataSource storage, Class<T> type, Object value) {
         if (InputMapper.isStateClass(type)) {
             if (!(value instanceof Number)) {
                 throw new IllegalArgumentException("Cannot interpret ID for " + type.getSimpleName() + ": " + value);
             }
             //T extends State, thus the below is safe but needs casting
             //additionally, we'll move it outside since it references stuff
-            return (T) InputMapper.toState(storage, (Class<? extends State>) type, ((Number) value).longValue());
+            return InputMapper.toState(storage, (Class<? extends State>) type, ((Number) value).longValue())
+                    .map(o -> (T) o);
         }
-        return (T) InputMapper.toType(type, value);
+        return Optional.of((T) InputMapper.toType(type, value));
     }
 }

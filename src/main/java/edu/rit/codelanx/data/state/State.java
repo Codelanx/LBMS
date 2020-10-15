@@ -70,6 +70,13 @@ public interface State extends FileSerializable, Comparable<State> {
     }
 
     /**
+     * Serializes this state into a readable output for files
+     *
+     * @return A map of field names to their current values for this state
+     */
+    public Map<String, Object> serialize();
+
+    /**
      * Interface for types
      */
     public interface Type {

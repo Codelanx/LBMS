@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -26,10 +28,18 @@ public class StateQuery<S extends State> implements Query<S> {
     private final Class<S> type;
     private final List<Comparison<?>> comparisons = new ArrayList<>();
     private final List<Predicate<S>> postFixes = new ArrayList<>();
+    private final AtomicBoolean local = new AtomicBoolean(false);
+    final AtomicLong idSpecificLookup = new AtomicLong(-1);
 
     public StateQuery(DataSource storage, Class<S> type) {
         this.storage = storage;
         this.type = type;
+    }
+
+    @Override
+    public Query<S> isID(long id) {
+        this.idSpecificLookup.set(id);
+        return this;
     }
 
     @Override
@@ -89,6 +99,22 @@ public class StateQuery<S extends State> implements Query<S> {
     @Override
     public <E extends Comparable<E>> Query<S> isGreaterThanOrEq(DataField<E> field, E value) {
         return this.predicate(field, value, ComparisonType.GREATER_THAN_OR_EQ);
+    }
+
+    @Override
+    public Query<S> local() {
+        this.local.set(true);
+        return this;
+    }
+
+    @Override
+    public Query<S> remote() {
+        this.local.set(false);
+        return this;
+    }
+
+    public boolean isLocal() {
+        return this.local.get();
     }
 
     public enum ComparisonType {
@@ -219,7 +245,7 @@ public class StateQuery<S extends State> implements Query<S> {
         }
     }
 
-    Stream<S> locateLocal(StateStorage<S> storage) {
+    Stream<S> locateLocal(Stream<S> storage) {
         Stream<S> cached = this.comparisons.stream()
                 .map(Comparison::findStates)
                 .filter(Objects::nonNull)
@@ -228,8 +254,11 @@ public class StateQuery<S extends State> implements Query<S> {
             return cached;
         }
         //REFACTOR: old code below, can be made faster by using keys properly etc
-        return storage.streamLoaded()
-                .filter(s -> this.getComparisons().stream().allMatch(c -> c.test(s)));
+        return storage.filter(s -> this.getComparisons().stream().allMatch(c -> c.test(s)));
+    }
+
+    Stream<S> locateLocal(StateStorage<S> storage) {
+        return locateLocal(storage.streamLoaded());
     }
 
     Stream<S> runSQLQuery(SQLBiFunction<String, Object[], Stream<S>> create) throws SQLException {

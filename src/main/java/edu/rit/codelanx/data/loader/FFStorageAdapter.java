@@ -1,6 +1,7 @@
 package edu.rit.codelanx.data.loader;
 
 import com.codelanx.commons.data.FileDataType;
+import com.codelanx.commons.data.FileSerializable;
 import com.codelanx.commons.data.types.Json;
 import com.codelanx.commons.data.types.XML;
 import edu.rit.codelanx.ConfigKey;
@@ -18,25 +19,30 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FFStorageAdapter implements StorageAdapter {
 
+    private static final boolean DOES_BACKUP = true; //would backup normally, not _quite_ perfect on this yet
     private static final File BACKUP_FOLDER = new File("backup");
     private static final File DATA_FOLDER = new File("data");
-    private static final Pattern FF_DATA_SEARCH = Pattern.compile("(.*)\\d*\\.(json|yml)");
     private final Class<? extends FileDataType> type;
     private final DataSource storage;
     private final Set<Class<? extends State>> loadedFromFile = new HashSet<>();
     private volatile Library library;
     private final AtomicBoolean modified = new AtomicBoolean(false);
+    //this simply keeps our hard references, so they won't be unloaded at runtime
+    private final Map<Class<? extends State>, Set<State>> states = new HashMap<>();
 
     protected FFStorageAdapter(DataSource storage) {
         this.storage = storage;
@@ -89,6 +95,7 @@ public class FFStorageAdapter implements StorageAdapter {
                 throw new IllegalArgumentException("Duplicate Visitor provided");
             }
         }
+        this.modified.set(true);
         return builder.buildObj(this.storage, builder.getType().getNextID());
     }
 
@@ -111,7 +118,7 @@ public class FFStorageAdapter implements StorageAdapter {
             if (container == null) {
                 throw new IllegalStateException(type.getConcreteType() + " is missing @StorageContainer annotation");
             }
-            File ref = new File(container.value() + ext);
+            File ref = new File(DATA_FOLDER, container.value() + ext);
             if (!ref.exists()) {
                 if (type == StateType.LIBRARY) {
                     //create initial library
@@ -121,7 +128,13 @@ public class FFStorageAdapter implements StorageAdapter {
                 }
                 continue; //nothing to load
             }
-            FileDataType data = FileDataType.newInstance(this.type, ref);
+            FileDataType data = FileDataType.newInstance(this.type, ref, (clazz, map) -> {
+                if (clazz.isAssignableFrom(State.class)) {
+                    throw new IllegalStateException("Cannot interpret type: " + clazz);
+                }
+                State.Type st = StateType.fromClass((Class<? extends State>) clazz);
+                return st.getFileConstructor().create(this.storage, map);
+            });
             List<?> read = data.getMutable("data").as(List.class);
             if (read == null || read.stream().anyMatch(o -> !(o instanceof State))) {
                 //TODO: actual stderr here?
@@ -129,15 +142,17 @@ public class FFStorageAdapter implements StorageAdapter {
                 this.errorRecovery(ref, ext);
                 return;
             }
+            //they won't auto-map (anymore), because of the constructor mismatch
             read.stream()
                     .map(o -> (State) o)
-                    .forEach(this.getAdaptee().getRelativeStorage()::addState);
+                    .forEach(this.getStateCacheFor(type.getConcreteType())::add);
             this.loadedFromFile.add(type.getConcreteType());
             if (type == StateType.LIBRARY) {
-                this.library = this.getAdaptee().getRelativeStorage().getStateStorage(Library.class)
-                        .streamLoaded().findAny().orElse(null);
+                this.library = this.getAdaptee().query(Library.class).local()
+                        .results().findAny().orElseGet(() -> Library.newEmptyLibrary(this.storage));
             }
         }
+        this.modified.set(false); //initialized, at this point no modifications
     }
 
     @Override
@@ -162,12 +177,15 @@ public class FFStorageAdapter implements StorageAdapter {
             }
             //fresh file refence
             FileDataType data = FileDataType.newInstance(this.type, "{}");
-            data.set("data", this.storage.ofLoaded(type.getConcreteType()));
+            data.set("data", this.storage.ofLoaded(type.getConcreteType()).collect(Collectors.toList()));
             data.save(ref);
         }
     }
 
     private void errorRecovery(File ref, String ext) throws IOException {
+        if (!DOES_BACKUP) {
+            return;
+        }
         System.err.println("Bad data file provided, backing up and starting fresh");
         if (!ref.isAbsolute()) {
             ref = ref.getAbsoluteFile();
@@ -181,15 +199,10 @@ public class FFStorageAdapter implements StorageAdapter {
             // in response to this error ever happening
             throw new IllegalStateException("wat");
         }
-        long next = Arrays.stream(avail).map(File::getName)
-                .map(s -> {
-                    Matcher m = FF_DATA_SEARCH.matcher(s);
-                    String res = m.matches() && m.group(2).equalsIgnoreCase(ext)
-                            ? m.group(1)
-                            : null;
-                    return name.equals(res) ? res : null;
-                })
-                .filter(Objects::nonNull)
+        long next = Arrays.stream(avail)
+                .map(File::getName)
+                .filter(s -> s.startsWith(name))
+                .map(s -> s.substring(0, name.length()))
                 .count();
         if (next > ConfigKey.MAX_BACKUP_FILES.as(int.class)) {
             throw new IllegalStateException("Ran out of room for backups, aborting!");
@@ -201,20 +214,28 @@ public class FFStorageAdapter implements StorageAdapter {
     public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
         //Handle the query for information
         Class<R> type = query.getType();
-        StateStorage<R> data = this.storage.getRelativeStorage().getStateStorage(type);
-        return query.locateLocal(data);
+        Set<R> back = this.getStateCacheFor(query.getType());
+        if (back.isEmpty()) {
+            return Stream.empty();
+        }
+        R example = back.iterator().next();
+        Long specID = query.idSpecificLookup.get();
+        if (specID > 0) {
+            return (Stream<R>) example.getIDField().findStatesByValue(specID);
+        }
+        return query.locateLocal(this.getStateCacheFor(query.getType()).stream());
     }
 
     @Override
     public <R extends State> R loadState(long id, Class<R> type) {
         //flatfile storage is preloaded, no on-demand loading necessary
-        return this.getAdaptee().getRelativeStorage().getStateStorage(type).getByID(id);
+       /// return this.getAdaptee().getRelativeStorage().getStateStorage(type).getByID(id);
+        return null;
     }
 
     @Override
     public <R extends State, E> Stream<R> loadState(Class<R> type, DataField<E> field, E value) {
-        StateStorage<R> data = this.getAdaptee().getRelativeStorage().getStateStorage(type);
-        return data.streamLoaded()
+        return this.getStateCacheFor(type).stream()
                 .filter(s -> Objects.equals(field.get(s), value));
     }
 
@@ -239,5 +260,10 @@ public class FFStorageAdapter implements StorageAdapter {
     @Override
     public boolean isCached() {
         return true;
+    }
+
+    //gets our simple cache for hard references
+    private <R extends State> Set<R> getStateCacheFor(Class<R> clazz) {
+        return (Set<R>) this.states.computeIfAbsent(clazz, k -> new HashSet<>());
     }
 }

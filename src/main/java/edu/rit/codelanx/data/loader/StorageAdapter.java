@@ -84,11 +84,7 @@ public interface StorageAdapter {
      * @return A {@link Stream Stream<R>} of results matching the specified
      *         {@code query}
      */
-    default public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
-        Class<R> type = query.getType();
-        StateStorage<R> data = this.getAdaptee().getRelativeStorage().getStateStorage(type);
-        return query.locateLocal(data);
-    }
+    public <R extends State> Stream<R> handleQuery(StateQuery<R> query);
 
     /**
      * Loads a state from a remote data source. This method will specifically

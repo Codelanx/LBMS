@@ -119,7 +119,7 @@ public class SQLStorageAdapter implements StorageAdapter {
         State.Type stateType = StateType.fromClass(type);
         return this.db.get().query(rs -> {
             if (rs.next()) {
-                return InputMapper.toState(storage, type, id);
+                return stateType.<R>getSQLConstructor().create(storage, rs);
             }
             return null;
         }, StatementType.FIND_BY_ID.forType(type), id).getResponse();
