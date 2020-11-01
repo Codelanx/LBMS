@@ -72,6 +72,19 @@ public class AdvanceCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
+
+        /*
+        TODO: Fix input so that if person passes no args, this function still gets "","" as args
+        Right now, if someone does "advance;", that is counted different than "advance,,;". We should
+        probably count those as the same thing for continuity's sake.
+        */
+
+        /*
+        TODO: Fix input so that if person passes too many args, this function gets the first 2 args
+        Right now, if someone does "advance,5,6,7;" we get an out of bounds error in TextInterpreter.
+        We should be getting the first 2 arguments passed (5,6) and discarding the rest.
+         */
+
         boolean incorrectArgs = false;
         Map<Integer, String> argMap = new HashMap<>();
         for (int i = 0; i < args.length; i++){
@@ -93,7 +106,7 @@ public class AdvanceCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        //Checking the hours and days passed in to make sure they are within
+        //Checking the hours and days passed in to make sure they are within bounds
         Optional<Integer> days = InputOutput.parseInt(args[0]);
         Optional<Integer> hours = InputOutput.parseInt(args[1]);
         if (!days.isPresent() || days.get() < 0 || days.get() > 7) {
@@ -104,8 +117,12 @@ public class AdvanceCommand extends TextCommand {
             executor.sendMessage(this.buildResponse(this.getName(), "invalid-number-of-hours", args[1]));
             return ResponseFlag.SUCCESS;
         }
-        this.server.getClock().advanceTime(days.get(), hours.orElse(0));
+        advanceClock(days.get(), hours.orElse(0));
         executor.sendMessage(buildResponse(this.getName(),"success;"));
         return ResponseFlag.SUCCESS;
+    }
+
+    public void advanceClock(int days, int hours){
+        this.server.getClock().advanceTime(days, hours);
     }
 }
