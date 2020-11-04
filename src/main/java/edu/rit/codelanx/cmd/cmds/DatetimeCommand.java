@@ -53,8 +53,13 @@ public class DatetimeCommand extends TextCommand {
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
         //Getting the current time from the server's clock
-        executor.sendMessage(buildResponse(this.getName(), DATE_FORMAT.format(server.getClock().getCurrentTime()), TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime())));
+
+        executor.sendMessage(buildResponse(this.getName(), getClockTime()));
 
         return ResponseFlag.SUCCESS;
+    }
+
+    public String getClockTime(){
+        return DATE_FORMAT.format(server.getClock().getCurrentTime()) + "," + TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime());
     }
 }

@@ -48,7 +48,7 @@ public class TestAdvanceCommand {
     @Test
     public void testNoInput() {
         /*
-        Test Explanation: Testing sending no input to the command
+        Test Explanation: Testing sending no input/empty input to the command
         Expectation: All inputs should be able to be handled, clock shouldn't change
          */
         assertSame(ResponseFlag.SUCCESS, adv.onExecute(execMock, "",""));

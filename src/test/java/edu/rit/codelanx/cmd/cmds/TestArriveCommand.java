@@ -59,11 +59,11 @@ public class TestArriveCommand {
     @Test
     public void testNoInput() {
         /*
-        Test Explanation: Testing sending no input to the command
+        Test Explanation: Testing sending no input/empty input to the command
         Expectation: All inputs should be able to be handled
          */
-        Assertions.assertSame(ResponseFlag.SUCCESS, arr.onExecute(execMock, "",""));
-        Assertions.assertSame(ResponseFlag.SUCCESS, arr.onExecute(execMock));
+        Assertions.assertSame(ResponseFlag.SUCCESS, arrSpy.onExecute(execMock, "",""));
+        Assertions.assertSame(ResponseFlag.SUCCESS, arrSpy.onExecute(execMock));
     }
 
     @Test
