@@ -19,6 +19,7 @@ import java.io.PrintStream;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Matchers.any;
 
 public class TestAdvanceCommand {
 

@@ -1,6 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -56,6 +57,7 @@ public class ArriveCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
+
         if (!this.server.getLibraryData().getLibrary().isOpen()){
             executor.sendMessage(buildResponse(this.getName(), "library-is-closed"));
             return ResponseFlag.FAILURE;
@@ -87,9 +89,7 @@ public class ArriveCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
         //pre: we have a valid id, we need a Visitor
-        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, id)
-                .results().findAny().orElse(null);
+        Visitor visitor = getVisitor(id);
         if (visitor == null) {
             executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
             return ResponseFlag.SUCCESS;
@@ -98,9 +98,20 @@ public class ArriveCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        boolean visit = visitor.startVisit(this.server.getLibraryData().getLibrary());
-        executor.sendMessage(buildResponse(this.getName(), visitor.getID(),
-                TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime())));
+        String message = startVisit(visitor);
+        executor.sendMessage(message);
         return ResponseFlag.SUCCESS;
+    }
+
+    public Visitor getVisitor(Long id){
+        return this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, id)
+                .results().findAny().orElse(null);
+    }
+
+    public String startVisit(Visitor visitor){
+        visitor.startVisit(this.server.getLibraryData().getLibrary());
+        return buildResponse(this.getName(), visitor.getID(),
+                TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()));
     }
 }
