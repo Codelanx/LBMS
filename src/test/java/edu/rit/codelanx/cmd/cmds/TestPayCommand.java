@@ -72,8 +72,8 @@ public class TestPayCommand {
         Test Explanation: Testing sending no input/empty input to the command
         Expectation: return SUCCESS response flag, but not actually paying
          */
-        Assertions.assertEquals(ResponseFlag.SUCCESS, cmd.onExecute(this.execMock));
-        Assertions.assertEquals(ResponseFlag.SUCCESS, cmd.onExecute(this.execMock, " "));
+        Assertions.assertEquals(ResponseFlag.SUCCESS, cmd_spy.onExecute(this.execMock));
+        Assertions.assertEquals(ResponseFlag.SUCCESS, cmd_spy.onExecute(this.execMock, " "));
         verify(cmd_spy, never()).getVisitor(any());
         verify(cmd_spy, never()).performPayTransaction(any(), any());
     }
@@ -83,9 +83,9 @@ public class TestPayCommand {
         Test Explanation: send invalid Visitor ID to pay command
         Expectation: return SUCCESS response flag, but not actually paying
          */
-        Assertions.assertEquals(ResponseFlag.SUCCESS, cmd.onExecute(this.execMock, INVALID_VISITOR_ID, VALID_AMOUNT));
+        Assertions.assertEquals(ResponseFlag.SUCCESS, cmd_spy.onExecute(this.execMock, INVALID_VISITOR_ID, VALID_AMOUNT));
         verify(cmd_spy, times(1)).getVisitor(invalid_id);
-        verify(cmd_spy, never()).getVisitor(invalid_id);
+        verify(cmd_spy, never()).performPayTransaction(any(), any());
     }
     @Test
     public void TestHappyPath() {
