@@ -10,6 +10,8 @@ import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
+
+import java.sql.ResultSet;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ public class DepartCommand extends TextCommand {
 
     /**
      * {@inheritDoc}
+     *
      * @return {@inheritDoc}
      */
     @Override
@@ -51,8 +54,8 @@ public class DepartCommand extends TextCommand {
      * Whenever this command is called, it will end the visit of the visitor
      * whose id is specified.
      *
-     * @param executor  the client that is calling the command
-     * @param args visitorID: the visitor whose visit will end
+     * @param executor the client that is calling the command
+     * @param args     visitorID: the visitor whose visit will end
      * @return a responseflag that says whether or not the command was
      * executed correctly
      * @author maa1675  Mark Anderson
@@ -60,30 +63,33 @@ public class DepartCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
-
         Long id = InputOutput.parseLong(args[0]).orElse(null);
         if (id == null) {
             return ResponseFlag.FAILURE;
         }
         //pre: we have a valid id, we need a Visitor
-        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, id)
-                .results().findAny().orElse(null);
+        Visitor visitor = getVisitor(id);
         if (visitor == null || !visitor.isVisiting()) {
-            executor.sendMessage(buildResponse(this.getName(),"invalid-id"));
+            executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
             return ResponseFlag.SUCCESS;
         }
+        executor.sendMessage(endVisit(visitor));
+        return ResponseFlag.SUCCESS;
+    }
 
+    public Visitor getVisitor(Long id) {
+        return this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, id)
+                .results().findAny().orElse(null);
+    }
+
+    public String endVisit(Visitor visitor) {
         Visit visit = visitor.endVisit(this.server.getClock().getCurrentTime());
-
         Duration d = Duration.between(visit.getStart(), visit.getEnd());
-
         String endOutput = TIME_OF_DAY_FORMAT.format(visit.getEnd());
         String durOutput = this.formatDuration(d);
+        return buildResponse(this.getName(), visitor.getID(),
+                endOutput, durOutput);
 
-        executor.sendMessage(this.buildResponse(this.getName(), visitor.getID(),
-                endOutput, durOutput));
-
-        return ResponseFlag.SUCCESS;
     }
 }
