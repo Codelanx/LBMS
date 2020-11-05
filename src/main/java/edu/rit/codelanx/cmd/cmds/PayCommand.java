@@ -20,6 +20,7 @@ import java.math.BigDecimal;
  * visitor ID is the unique 10-digit ID of the visitor.
  * amount is the amount that the visitor is paying towards his or her
  * accumulated fines.
+ *
  * @author cb4501 Connor Bonitati
  */
 public class PayCommand extends TextCommand {
@@ -42,6 +43,7 @@ public class PayCommand extends TextCommand {
 
     /**
      * {@inheritDoc}
+     *
      * @return {@inheritDoc}
      */
     @Override
@@ -53,10 +55,10 @@ public class PayCommand extends TextCommand {
      * Whenever this command is called, it will pay the amount towards the
      * specific visitor's negative balance.
      *
-     * @param executor  the client that is calling the command
-     * @param args      visitorID: unique 10-digit ID of the visitor
-     *                  amount: the amount that the visitor is paying toward
-     *                      their fines
+     * @param executor the client that is calling the command
+     * @param args     visitorID: unique 10-digit ID of the visitor
+     *                 amount: the amount that the visitor is paying toward
+     *                 their fines
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
@@ -71,17 +73,12 @@ public class PayCommand extends TextCommand {
         //checks for arg
         if (visitorID == null) {
             executor.sendMessage(buildResponse(getName(), "invalid-visitor-id"));
-            return ResponseFlag.SUCCESS;
+            return ResponseFlag.FAILURE;
         }
 
 
         //finds the visitor
-        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, visitorID)
-                .results()
-                .findAny()
-                .orElse(null);
-
+        Visitor visitor= getVisitor(visitorID);
         //checks to see is the visitor is valid
         if (visitor == null) {
             executor.sendMessage(buildResponse(getName(), "invalid-visitor-id"));
@@ -91,13 +88,26 @@ public class PayCommand extends TextCommand {
         //checks that the amount enter is not negative and the amount entered is not greater than balance
         if (amount.compareTo(BigDecimal.ZERO) < 0 || visitor.getMoney().compareTo(amount.negate()) > 0) {
             executor.sendMessage(buildResponse(getName(), "invalid-amount",
-                    amount,visitor.getMoney()));
+                    amount, visitor.getMoney()));
             return ResponseFlag.SUCCESS;
         }
         //performs the transaction
-        Transaction.perform(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
-        executor.sendMessage(buildResponse("Success", visitor.getMoney()));
+        String message =performPayTransaction(visitor,amount);
+        executor.sendMessage(message);
         return ResponseFlag.SUCCESS;
     }
 
+    public Visitor getVisitor(long visitorID){
+        return this.server.getLibraryData()
+                .query(Visitor.class)
+                .isEqual(Visitor.Field.ID, visitorID)
+                .results()
+                .findAny()
+                .orElse(null);
+    }
+
+    public String performPayTransaction(Visitor visitor, BigDecimal amount) {
+        Transaction.perform(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
+        return buildResponse("Success", visitor.getMoney());
+    }
 }
