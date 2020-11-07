@@ -15,11 +15,13 @@ import edu.rit.codelanx.data.state.types.Visitor;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.lang.Long.parseLong;
@@ -101,6 +103,12 @@ public class BorrowCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
 
+        //TODO
+        return this.execute(executor, visitorID, bookIDs.stream().mapToLong(l -> l).toArray());
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, long visitorID, long... books) {
+        Set<Long> bookIDs = Arrays.stream(books).boxed().collect(Collectors.toSet());
         //Finding the visitor with the matching ID in the database
         Visitor v = this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, visitorID)
@@ -155,7 +163,6 @@ public class BorrowCommand extends TextCommand {
 
         Instant due = server.getClock().getCurrentTime().plus(Duration.ofDays(Checkout.BORROW_DAYS));
         executor.sendMessage(buildResponse(this.getName(), DATE_FORMAT.format(due)));
-
         return ResponseFlag.SUCCESS;
     }
 }

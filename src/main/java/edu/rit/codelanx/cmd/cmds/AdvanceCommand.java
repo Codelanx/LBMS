@@ -2,7 +2,6 @@ package edu.rit.codelanx.cmd.cmds;
 
 import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -10,11 +9,7 @@ import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 
 /**
@@ -51,7 +46,9 @@ public class AdvanceCommand extends TextCommand {
     }
 
     /**
-     * @link edu.rit.codelanx.cmd.Command#getName()
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     * @see edu.rit.codelanx.cmd.Command#getName()
      */
     @Override
     public String getName() {
@@ -72,19 +69,6 @@ public class AdvanceCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
-
-        /*
-        TODO: Fix input so that if person passes no args, this function still gets "","" as args
-        Right now, if someone does "advance;", that is counted different than "advance,,;". We should
-        probably count those as the same thing for continuity's sake.
-        */
-
-        /*
-        TODO: Fix input so that if person passes too many args, this function gets the first 2 args
-        Right now, if someone does "advance,5,6,7;" we get an out of bounds error in TextInterpreter.
-        We should be getting the first 2 arguments passed (5,6) and discarding the rest.
-         */
-
         boolean incorrectArgs = false;
         Map<Integer, String> argMap = new HashMap<>();
         for (int i = 0; i < args.length; i++){
@@ -106,23 +90,29 @@ public class AdvanceCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        //Checking the hours and days passed in to make sure they are within bounds
-        Optional<Integer> days = InputOutput.parseInt(args[0]);
-        Optional<Integer> hours = InputOutput.parseInt(args[1]);
-        if (!days.isPresent() || days.get() < 0 || days.get() > 7) {
-            executor.sendMessage(this.buildResponse(this.getName(), "invalid-number-of-days", args[0]));
-            return ResponseFlag.SUCCESS;
-        }
-        if (!args[1].isEmpty() && (!hours.isPresent() || hours.get() < 0 || hours.get() > 23)) {
-            executor.sendMessage(this.buildResponse(this.getName(), "invalid-number-of-hours", args[1]));
-            return ResponseFlag.SUCCESS;
-        }
-        advanceClock(days.get(), hours.orElse(0));
-        executor.sendMessage(buildResponse(this.getName(),"success;"));
-        return ResponseFlag.SUCCESS;
+        //Checking the hours and days passed in to make sure they are within
+        int days = InputOutput.parseInt(args[0]).orElse(-1);
+        int hours = InputOutput.parseInt(args[1]).orElse(-1);
+        return this.executeInternal(executor, days, args[0], hours, args[1]);
     }
 
-    public void advanceClock(int days, int hours){
+    public ResponseFlag execute(CommandExecutor executor, int days, int hours) {
+        return this.executeInternal(executor, days, days + "", hours, hours + "");
+    }
+
+    private ResponseFlag executeInternal(CommandExecutor executor,
+                                    int days, String daysArg,
+                                    int hours, String hoursArg) {
+        if (days < 0 || days > 7) {
+            executor.sendMessage(this.buildResponse(this.getName(), "invalid-number-of-days", daysArg));
+            return ResponseFlag.SUCCESS;
+        }
+        if (hours < 0 || hours > 23) {
+            executor.sendMessage(this.buildResponse(this.getName(), "invalid-number-of-hours", hoursArg));
+            return ResponseFlag.SUCCESS;
+        }
         this.server.getClock().advanceTime(days, hours);
+        executor.sendMessage(buildResponse(this.getName(),"success;"));
+        return ResponseFlag.SUCCESS;
     }
 }

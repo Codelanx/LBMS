@@ -11,7 +11,6 @@ import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.data.state.types.Visitor;
 
-import java.text.DateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,8 +70,12 @@ public class BorrowedCommand extends TextCommand {
             return ResponseFlag.FAILURE;
         }
         //pre: we have a valid id, we need a Visitor
+        return this.execute(executor, id);
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, long visitorID) {
         Visitor visitor = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, id)
+                .isEqual(Visitor.Field.ID, visitorID)
                 .results().findAny().orElse(null);
         if (visitor == null) {
             executor.sendMessage(buildResponse(this.getName(), "invalid-id"));

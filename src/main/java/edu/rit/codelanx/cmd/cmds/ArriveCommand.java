@@ -1,7 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.text.TextParam;
-import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -12,7 +11,6 @@ import com.codelanx.commons.util.InputOutput;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Begins a new visit by a registered visitor.
@@ -57,7 +55,7 @@ public class ArriveCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
-
+        //REFACTOR
         if (!this.server.getLibraryData().getLibrary().isOpen()){
             executor.sendMessage(buildResponse(this.getName(), "library-is-closed"));
             return ResponseFlag.FAILURE;
@@ -88,8 +86,14 @@ public class ArriveCommand extends TextCommand {
         if (id == null) {
             return ResponseFlag.FAILURE;
         }
+        return this.execute(executor, id);
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, long visitorID) {
         //pre: we have a valid id, we need a Visitor
-        Visitor visitor = getVisitor(id);
+        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, visitorID)
+                .results().findAny().orElse(null);
         if (visitor == null) {
             executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
             return ResponseFlag.SUCCESS;
@@ -97,19 +101,11 @@ public class ArriveCommand extends TextCommand {
             executor.sendMessage(buildResponse(this.getName(), "duplicate"));
             return ResponseFlag.SUCCESS;
         }
-
-        String message = startVisit(visitor);
-        executor.sendMessage(message);
+        executor.sendMessage(startVisit(visitor));
         return ResponseFlag.SUCCESS;
     }
 
-    public Visitor getVisitor(Long id){
-        return this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, id)
-                .results().findAny().orElse(null);
-    }
-
-    public String startVisit(Visitor visitor){
+    private String startVisit(Visitor visitor) {
         visitor.startVisit(this.server.getLibraryData().getLibrary());
         return buildResponse(this.getName(), visitor.getID(),
                 TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()));
