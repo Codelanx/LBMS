@@ -1,5 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import com.codelanx.commons.util.InputOutput;
+import edu.rit.codelanx.cmd.text.TextInterpreter;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Library;
@@ -14,10 +16,7 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.LongSummaryStatistics;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +68,20 @@ public class ReportCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
+        Optional<Long> days = InputOutput.parseLong(args[0]);
 
+        if (!days.isPresent()) {
+            executor.sendMessage("invalid-argument");
+            return ResponseFlag.SUCCESS;
+        }
+
+        return this.execute(executor, Math.toIntExact(days.get()));
+
+
+
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, int days) {
         //Gets the date
         Instant curDate = this.server.getClock().getCurrentTime();
 
@@ -88,11 +100,11 @@ public class ReportCommand extends TextCommand {
         //Uses summary statistics to get the average time of visits
         LongSummaryStatistics stats =
                 this.server.getLibraryData().query(Visit.class) //Query<Visit>
-                .results() //Stream<Visit>
-                .map(visit -> Duration.between(visit.getStart(),
-                        visit.getEnd())) //Stream<Duration>
-                .mapToLong(Duration::getSeconds)//Stream<Long>
-                .summaryStatistics();
+                        .results() //Stream<Visit>
+                        .map(visit -> Duration.between(visit.getStart(),
+                                visit.getEnd())) //Stream<Duration>
+                        .mapToLong(Duration::getSeconds)//Stream<Long>
+                        .summaryStatistics();
         double average = stats.getAverage(); //average duration of a visit
         long amount = stats.getCount(); //total number of visits
         long total = stats.getSum(); //total amount of time over all visits
@@ -112,9 +124,9 @@ public class ReportCommand extends TextCommand {
 
         Map<String, Set<Transaction>> map =
                 this.server.getLibraryData().query(Transaction.class)
-                .results()
-                .collect(Collectors.groupingBy(Transaction::getReason,
-                        Collectors.toSet()));
+                        .results()
+                        .collect(Collectors.groupingBy(Transaction::getReason,
+                                Collectors.toSet()));
         int amountLateFees =
                 map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();
         int amountPaidFees =
@@ -132,7 +144,6 @@ public class ReportCommand extends TextCommand {
 
 
         return ResponseFlag.SUCCESS;
-
 
     }
 }

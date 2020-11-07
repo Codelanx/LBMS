@@ -1,6 +1,7 @@
 package edu.rit.codelanx.cmd.cmds;
 
 import com.codelanx.commons.util.InputOutput;
+import edu.rit.codelanx.cmd.Command;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Transaction;
 import edu.rit.codelanx.network.io.TextMessage;
@@ -51,31 +52,7 @@ public class PayCommand extends TextCommand {
         return "pay";
     }
 
-    /**
-     * Whenever this command is called, it will pay the amount towards the
-     * specific visitor's negative balance.
-     *
-     * @param executor the client that is calling the command
-     * @param args     visitorID: unique 10-digit ID of the visitor
-     *                 amount: the amount that the visitor is paying toward
-     *                 their fines
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
-     */
-    @Override
-    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
-
-
-        //args
-        BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
-        Long visitorID = InputOutput.parseLong(args[0]).orElse(null);
-
-        //checks for arg
-        if (visitorID == null) {
-            executor.sendMessage(buildResponse(getName(), "invalid-visitor-id"));
-            return ResponseFlag.FAILURE;
-        }
-
+    public ResponseFlag execute(CommandExecutor executor, long visitorID, BigDecimal amount) {
 
         //finds the visitor
         Visitor visitor= getVisitor(visitorID);
@@ -109,5 +86,32 @@ public class PayCommand extends TextCommand {
     public String performPayTransaction(Visitor visitor, BigDecimal amount) {
         Transaction.perform(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
         return buildResponse("Success", visitor.getMoney());
+
+    }
+    /**
+     * Whenever this command is called, it will pay the amount towards the
+     * specific visitor's negative balance.
+     *
+     * @param executor the client that is calling the command
+     * @param args     visitorID: unique 10-digit ID of the visitor
+     *                 amount: the amount that the visitor is paying toward
+     *                 their fines
+     * @return a responseflag that says whether or not the command was
+     * executed correctly
+     */
+    @Override
+    public ResponseFlag onExecute(CommandExecutor executor, String... args) {
+
+
+        //args
+        BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
+        Long visitorID = InputOutput.parseLong(args[0]).orElse(null);
+
+        //checks for arg
+        if (visitorID == null) {
+            executor.sendMessage(buildResponse(getName(), "invalid-visitor-id"));
+            return ResponseFlag.FAILURE;
+        }
+        return this.execute(executor, visitorID, amount);
     }
 }

@@ -16,6 +16,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -50,6 +51,8 @@ public class DepartCommand extends TextCommand {
         return "depart";
     }
 
+
+
     /**
      * Whenever this command is called, it will end the visit of the visitor
      * whose id is specified.
@@ -67,8 +70,21 @@ public class DepartCommand extends TextCommand {
         if (id == null) {
             return ResponseFlag.FAILURE;
         }
+
+        Optional<Long> visitorID = InputOutput.parseLong(args[0]);
+
+        if (!visitorID.isPresent()) {
+            executor.sendMessage("invalid-visitorID");
+            return ResponseFlag.SUCCESS;
+        }
+
+        return this.execute(executor, visitorID.get());
+
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, long visitorID) {
         //pre: we have a valid id, we need a Visitor
-        Visitor visitor = getVisitor(id);
+        Visitor visitor = getVisitor(visitorID);
         if (visitor == null || !visitor.isVisiting()) {
             executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
             return ResponseFlag.SUCCESS;
@@ -90,6 +106,6 @@ public class DepartCommand extends TextCommand {
         String durOutput = this.formatDuration(d);
         return buildResponse(this.getName(), visitor.getID(),
                 endOutput, durOutput);
-
     }
+
 }

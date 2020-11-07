@@ -7,17 +7,15 @@ import edu.rit.codelanx.cmd.text.TextCommand;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Checkout;
+import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 /**
  * Returns a book borrowed by a library visitor
@@ -65,6 +63,8 @@ public class ReturnCommand extends TextCommand {
     }
 
 
+
+
     /**
      *  Whenever this command is called, it will return a borrowed book back to the library
      *  using a visitors id
@@ -80,40 +80,58 @@ public class ReturnCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
-        Optional<Visitor> optVisitor = InputOutput.parseLong(args[0])
-                .flatMap(id -> {
-                    return this.server.getLibraryData().query(Visitor.class)
-                            .isEqual(Visitor.Field.ID, id)
-                            .results().findAny();
-                });
-        if (!optVisitor.isPresent()) {
+
+        Optional<Long> optID = InputOutput.parseLong(args[0]);
+
+
+        if (!optID.isPresent()) {
             executor.sendMessage(this.buildResponse(this.getName(), "invalid-visitor-id"));
             return ResponseFlag.SUCCESS;
         }
+
+        Set<Long> ids = new LinkedHashSet<>();
+        for (int i = 1; i < args.length; i++) {
+            Optional<Long> parsed = InputOutput.parseLong(args[1]);
+            parsed.ifPresent(ids::add);
+            if (!parsed.isPresent()) {
+                executor.sendMessage("invalid-bookID");
+                return ResponseFlag.SUCCESS;
+            }
+        }
+
+
+        return this.execute(executor, optID.get(), ids.stream().mapToLong(l -> l).toArray());
+
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, long visitorID, long... bookIDs) {
+
+        Optional<Visitor> optVisitor = this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, visitorID)
+                .results().findAny();
+
+        if (!optVisitor.isPresent()) {
+            executor.sendMessage("invalid-visitorID");
+            return ResponseFlag.SUCCESS;
+        }
+
         Visitor visitor = optVisitor.get();
         //parse the remainder of the arguments into book ids
         List<String> failed = new LinkedList<>();
-        Set<Long> ids = new LinkedHashSet<>();
-        for (int i = 1; i < args.length; i++) {
-            Optional<Long> parsed = InputOutput.parseLong(args[i]);
-            parsed.ifPresent(ids::add);
-            if (!parsed.isPresent()) {
-                failed.add(args[i]);
-            }
-        }
-        Set<Book> books = null;
-        if (failed.isEmpty()) {
-            //now, make sure the ids that we parsed are valid books
-            books = this.server.getLibraryData().query(Book.class)
-                    .isAny(Book.Field.ID, ids)
-                    .results()
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-            if (books.size() != ids.size()) {
-                //don't have time for fast disjoint sets, so...
-                books.stream().map(Book::getID).forEach(ids::remove);
-                //ids is now a set of invalid ids
-                ids.stream().map(Object::toString).forEach(failed::add);
-            }
+
+
+
+        //now, make sure the ids that we parsed are valid books
+        Set<Long> ids = LongStream.of(bookIDs).boxed().collect(Collectors.toSet());
+        Set<Book> books = this.server.getLibraryData().query(Book.class)
+                .isAny(Book.Field.ID, LongStream.of(bookIDs).boxed().toArray(Long[]::new))
+                .results()
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        if (books.size() != bookIDs.length) {
+            //don't have time for fast disjoint sets, so...
+            books.stream().map(Book::getID).forEach(ids::remove);
+            //ids is now a set of invalid ids
+            ids.stream().map(Object::toString).forEach(failed::add);
         }
         List<Checkout> checkouts = null;
         if (failed.isEmpty()) {

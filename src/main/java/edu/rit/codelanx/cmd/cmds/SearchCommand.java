@@ -72,13 +72,18 @@ public class SearchCommand extends TextCommand {
      *                 authors: comma-separated list of authors of the book
      *                 isbn: International Standard Book NUmber for the book
      *                 publisher: name of the book's publisher
-     *                 sortorder: way to sort the results of the search
+     *                 sort order: way to sort the results of the search
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
-        String[] authors = TextInterpreter.splitInput(args[1]);
+        return  this.execute(executor, args[0], args[2], args[3], args[4], TextInterpreter.splitInput(args[1]));
+
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, String title, String isbn,
+                                String publisher, String sortOrder, String... authors) {
         if (Arrays.stream(authors).anyMatch(String::isEmpty)) {
             authors = AUTHOR_WILDCARD;
         }
@@ -110,20 +115,20 @@ public class SearchCommand extends TextCommand {
         Query<Book> query = this.server.getBookStore().query(Book.class);
         //REFACTOR: DRY these blocks of code
         //Going through the query fields and adding them if they are there
-        if (!args[0].isEmpty()) {
-            query = query.isEqual(Book.Field.TITLE, args[0]);
+        if (!title.isEmpty()) {
+            query = query.isEqual(Book.Field.TITLE, title);
         }
-        if (!args[2].isEmpty()) {
-            query = query.isEqual(Book.Field.ISBN, args[2]);
+        if (!isbn.isEmpty()) {
+            query = query.isEqual(Book.Field.ISBN, isbn);
         }
-        if (!args[3].isEmpty()) {
-            query = query.isEqual(Book.Field.PUBLISHER, args[3]);
+        if (!publisher.isEmpty()) {
+            query = query.isEqual(Book.Field.PUBLISHER, publisher);
         }
         if (idFilter != null) {
             query = query.isAny(Book.Field.ID, idFilter);
         }
         Stream<Book> res = query.results();
-        switch (args[4].toLowerCase()) { //sort-order
+        switch (sortOrder.toLowerCase()) { //sort-order
             case "":
             case "title":
                 res = res.sorted(Comparator.comparing(Book::getTitle));

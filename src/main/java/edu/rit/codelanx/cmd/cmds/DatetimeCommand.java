@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.Command;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -40,6 +41,8 @@ public class DatetimeCommand extends TextCommand {
         return "datetime";
     }
 
+
+
     /**
      * Whenever this command is called, it will display the current time and
      * date that the sim is currently in.
@@ -52,10 +55,14 @@ public class DatetimeCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
+
+        return this.execute(executor);
+    }
+
+    public ResponseFlag execute(CommandExecutor executor) {
+
         //Getting the current time from the server's clock
-
         executor.sendMessage(buildResponse(this.getName(), getClockTime()));
-
         return ResponseFlag.SUCCESS;
     }
 

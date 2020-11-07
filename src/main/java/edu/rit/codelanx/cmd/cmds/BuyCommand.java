@@ -106,15 +106,20 @@ public class BuyCommand extends TextCommand {
         }
 
 
+        return this.execute(executor, quantity, bookIDs.stream().mapToLong(l -> l).toArray());
+
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, int copies, long... bookIDs) {
         List<Book> bookList = new ArrayList<>();
         for (Long id : bookIDs) {
             Optional<Book> bookSearch =
                     server.getLibraryData().query(Book.class)
-                    .isEqual(Book.Field.ID, id)
-                    .results().findAny();
+                            .isEqual(Book.Field.ID, id)
+                            .results().findAny();
             if (bookSearch.isPresent()) {
                 Book b = bookSearch.get();
-                b.addCopy(quantity);
+                b.addCopy(copies);
                 bookList.add(b);
             } else {
                 Optional<Book> newBook =
@@ -122,7 +127,7 @@ public class BuyCommand extends TextCommand {
                 if (newBook.isPresent()) {
                     Book b = newBook.get();
                     StateBuilder<Book> bookStateBuilder = new ProxiedStateBuilder<>(b);
-                    bookStateBuilder.setValue(Book.Field.TOTAL_COPIES, quantity);
+                    bookStateBuilder.setValue(Book.Field.TOTAL_COPIES, copies);
                     bookStateBuilder.setValue(Book.Field.CHECKED_OUT, 0);
                     b = this.server.getLibraryData().insert(bookStateBuilder);
                     bookList.add(b);
@@ -152,5 +157,6 @@ public class BuyCommand extends TextCommand {
                 .forEach(executor::sendMessage);
 
         return ResponseFlag.SUCCESS;
+
     }
 }

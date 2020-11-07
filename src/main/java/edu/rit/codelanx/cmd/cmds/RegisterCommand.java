@@ -1,5 +1,6 @@
 package edu.rit.codelanx.cmd.cmds;
 
+import edu.rit.codelanx.cmd.Command;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
@@ -49,6 +50,8 @@ public class RegisterCommand extends TextCommand {
         return "register";
     }
 
+
+
     /**
      * Whenever this command is called, it will create a new visitor based on
      * the given data.
@@ -63,16 +66,20 @@ public class RegisterCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
+        return this.execute(executor, args[0], args[1], args[2], args[3]);
+    }
+
+    public ResponseFlag execute(CommandExecutor executor, String fName, String lName, String address, String phoneNum) {
         //We use the builder pattern to create a new object in the data storage
 
         //We can assume all input is good - bounds are correct and no conversions to be done
 
         // Compares the inputted arguments to those already existing
         Visitor current = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.FIRST, args[0])
-                .isEqual(Visitor.Field.LAST, args[1])
-                .isEqual(Visitor.Field.ADDRESS, args[2])
-                .isEqual(Visitor.Field.PHONE, args[3])
+                .isEqual(Visitor.Field.FIRST, fName)
+                .isEqual(Visitor.Field.LAST, lName)
+                .isEqual(Visitor.Field.ADDRESS, address)
+                .isEqual(Visitor.Field.PHONE, phoneNum)
                 .results().findAny().orElse(null);
         if (current != null) {
             //We already have a visitor with a matching first, last, address, AND phone number
@@ -84,10 +91,10 @@ public class RegisterCommand extends TextCommand {
 
         // Creates a new Visitor id from the arguments
         Visitor newVisitor = Visitor.create()
-                .setValue(Visitor.Field.FIRST, args[0])
-                .setValue(Visitor.Field.LAST, args[1])
-                .setValue(Visitor.Field.ADDRESS, args[2])
-                .setValue(Visitor.Field.PHONE, args[3])
+                .setValue(Visitor.Field.FIRST, fName)
+                .setValue(Visitor.Field.LAST, lName)
+                .setValue(Visitor.Field.ADDRESS, address)
+                .setValue(Visitor.Field.PHONE, phoneNum)
                 .setValue(Visitor.Field.REGISTRATION_DATE, registeredAt)
                 .setValue(Visitor.Field.MONEY, BigDecimal.ZERO)
                 .build(this.server.getLibraryData());
