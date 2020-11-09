@@ -105,7 +105,7 @@ public class ArriveCommand extends TextCommand {
         return ResponseFlag.SUCCESS;
     }
 
-    private String startVisit(Visitor visitor) {
+    protected String startVisit(Visitor visitor) {
         visitor.startVisit(this.server.getLibraryData().getLibrary());
         return buildResponse(this.getName(), visitor.getID(),
                 TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()));

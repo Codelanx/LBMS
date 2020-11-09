@@ -93,6 +93,7 @@ public class BuyCommand extends TextCommand {
         if (quantity == 0) {
             executor.sendMessage(buildResponse(this.getName(),"success",
                     quantity));
+            return ResponseFlag.SUCCESS;
         }
 
         Set<Long> bookIDs = new HashSet<Long>();

@@ -75,21 +75,35 @@ public class RegisterCommand extends TextCommand {
         //We can assume all input is good - bounds are correct and no conversions to be done
 
         // Compares the inputted arguments to those already existing
-        Visitor current = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.FIRST, fName)
-                .isEqual(Visitor.Field.LAST, lName)
-                .isEqual(Visitor.Field.ADDRESS, address)
-                .isEqual(Visitor.Field.PHONE, phoneNum)
-                .results().findAny().orElse(null);
+        Visitor current = findMatchingVisitor(fName, lName, address, phoneNum);
         if (current != null) {
             //We already have a visitor with a matching first, last, address, AND phone number
             executor.sendMessage(this.buildResponse(this.getName(), "duplicate"));
             return ResponseFlag.SUCCESS;
         }
 
-        Instant registeredAt = this.server.getClock().getCurrentTime();
+        Instant registeredAt = getRegistrationTime();
 
         // Creates a new Visitor id from the arguments
+        Visitor newVisitor = createVisitor(fName, lName, address, phoneNum, registeredAt, executor);
+        executor.sendMessage(this.buildResponse(this.getName(), newVisitor.getID(), DATE_FORMAT.format(registeredAt)));
+        return ResponseFlag.SUCCESS;
+    }
+
+    protected Visitor findMatchingVisitor(String fName, String lName, String address, String phoneNum){
+        return this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.FIRST, fName)
+                .isEqual(Visitor.Field.LAST, lName)
+                .isEqual(Visitor.Field.ADDRESS, address)
+                .isEqual(Visitor.Field.PHONE, phoneNum)
+                .results().findAny().orElse(null);
+    }
+
+    protected Instant getRegistrationTime(){
+        return this.server.getClock().getCurrentTime();
+    }
+
+    protected Visitor createVisitor(String fName, String lName, String address, String phoneNum, Instant registeredAt, CommandExecutor executor){
         Visitor newVisitor = Visitor.create()
                 .setValue(Visitor.Field.FIRST, fName)
                 .setValue(Visitor.Field.LAST, lName)
@@ -98,9 +112,7 @@ public class RegisterCommand extends TextCommand {
                 .setValue(Visitor.Field.REGISTRATION_DATE, registeredAt)
                 .setValue(Visitor.Field.MONEY, BigDecimal.ZERO)
                 .build(this.server.getLibraryData());
-
         executor.renderState(newVisitor);
-        executor.sendMessage(this.buildResponse(this.getName(), newVisitor.getID(), DATE_FORMAT.format(registeredAt)));
-        return ResponseFlag.SUCCESS;
+        return newVisitor;
     }
 }
