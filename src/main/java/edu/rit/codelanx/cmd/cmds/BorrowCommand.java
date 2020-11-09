@@ -2,6 +2,7 @@ package edu.rit.codelanx.cmd.cmds;
 
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Checkout;
+import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -100,32 +101,22 @@ public class BorrowCommand extends TextCommand {
                 bookIDs.add(parseLong(b));
             }
         } catch (NumberFormatException e) {
-            return ResponseFlag.FAILURE;
+            return ResponseFlag.SUCCESS;
         }
 
-        //TODO
-        return this.execute(executor, visitorID, bookIDs.stream().mapToLong(l -> l).toArray());
-    }
-
-    public ResponseFlag execute(CommandExecutor executor, long visitorID, long... books) {
-        Set<Long> bookIDs = Arrays.stream(books).boxed().collect(Collectors.toSet());
-        //Finding the visitor with the matching ID in the database
-        Visitor v = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, visitorID)
-                .results().findAny().orElse(null);
+        Visitor v = getVisitor(visitorID);
         if (v == null) {
             executor.sendMessage(buildResponse(this.getName(), "invalid-visitor-id"));
             return ResponseFlag.SUCCESS;
         }
 
         //Query for checkout
-        long checkedOutBooks = server.getLibraryData().query(Checkout.class)
-                .isEqual(Checkout.Field.VISITOR, v)
-                .results().count();
+        long checkedOutBooks = getCheckedOut(v);
 
         //Checking they don't or won't have too many books
         if (checkedOutBooks >= BOOK_LIMIT || checkedOutBooks + bookIDs.size() > BOOK_LIMIT) {
             executor.sendMessage(buildResponse(this.getName(), "book-limit-exceeded"));
+            return ResponseFlag.SUCCESS;
         }
 
         //Checking that the visitor's account balance is in the positive
@@ -136,13 +127,11 @@ public class BorrowCommand extends TextCommand {
 
         //Search the database for the books in bookIDs, if any of them
         // aren't correct, don't allow them to check any of them out
-        List<Book> found = this.server.getLibraryData().query(Book.class)
-                .isAny(Book.Field.ID, bookIDs)
-                .results()
-                .collect(Collectors.toList());
-        if (found.size() != bookIDs.size()) {
+        List<Book> foundBooks = getBooks(bookIDs);
+
+        if (foundBooks.size() != bookIDs.size()) {
             //we had a mismatch
-            found.stream().map(Book::getID).forEach(bookIDs::remove);
+            foundBooks.stream().map(Book::getID).forEach(bookIDs::remove);
             //bookIDs now contains only invalid ids
             List<String> out = new LinkedList<>();
             bookIDs.forEach(id -> out.add(id + ""));
@@ -152,17 +141,45 @@ public class BorrowCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        for (Book book : found){
+        for (Book book : foundBooks){
             if (book.getAvailableCopies() == 0){
                 executor.sendMessage(buildResponse(this.getName(), "no-copies-available", book.getTitle()));
                 return ResponseFlag.SUCCESS;
             }
         }
 
-        found.forEach(b -> b.checkout(v, this.server.getClock()));
+        checkout(foundBooks, v);
 
-        Instant due = server.getClock().getCurrentTime().plus(Duration.ofDays(Checkout.BORROW_DAYS));
+        Instant due = getDueDate();
         executor.sendMessage(buildResponse(this.getName(), DATE_FORMAT.format(due)));
+
         return ResponseFlag.SUCCESS;
+    }
+
+    protected Visitor getVisitor(Long id){
+        return this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, id)
+                .results().findAny().orElse(null);
+    }
+
+    protected List<Book> getBooks(Set<Long> ids){
+        return this.server.getLibraryData().query(Book.class)
+                .isAny(Book.Field.ID, ids)
+                .results()
+                .collect(Collectors.toList());
+    }
+
+    protected long getCheckedOut(Visitor v){
+        return server.getLibraryData().query(Checkout.class)
+                .isEqual(Checkout.Field.VISITOR, v)
+                .results().count();
+    }
+
+    protected void checkout(List<Book> books, Visitor v){
+        books.forEach(b -> b.checkout(v, this.server.getClock()));
+    }
+
+    protected Instant getDueDate(){
+        return server.getClock().getCurrentTime().plus(Duration.ofDays(Checkout.BORROW_DAYS));
     }
 }
