@@ -4,6 +4,7 @@ import com.codelanx.commons.util.InputOutput;
 import edu.rit.codelanx.cmd.text.TextParam;
 import edu.rit.codelanx.data.state.types.Book;
 import edu.rit.codelanx.data.state.types.Checkout;
+import edu.rit.codelanx.data.state.types.Visit;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.CommandExecutor;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  * <p>
  * Request Format: borrowed,visitor ID
  * visitor ID is the unique 10-digit ID of the visitor.
+ *
  * @author maa1675  Mark Anderson
  */
 public class BorrowedCommand extends TextCommand {
@@ -39,6 +41,7 @@ public class BorrowedCommand extends TextCommand {
 
     /**
      * {@inheritDoc}
+     *
      * @return {@inheritDoc}
      */
     @Override
@@ -50,8 +53,8 @@ public class BorrowedCommand extends TextCommand {
      * Whenever this command is called, it will query the database for books
      * being currently borrowed by a visitor.
      *
-     * @param executor  the client that is calling the command
-     * @param args visitorID: the id of the visitor to check
+     * @param executor the client that is calling the command
+     * @param args     visitorID: the id of the visitor to check
      * @return a responseflag that says whether or not the command was
      * executed correctly
      */
@@ -74,9 +77,9 @@ public class BorrowedCommand extends TextCommand {
     }
 
     public ResponseFlag execute(CommandExecutor executor, long visitorID) {
-        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, visitorID)
-                .results().findAny().orElse(null);
+
+        //query for visitor
+        Visitor visitor = getVisitor(visitorID);
         if (visitor == null) {
             executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
             return ResponseFlag.SUCCESS;
@@ -84,24 +87,41 @@ public class BorrowedCommand extends TextCommand {
 
         String responseString = this.getName();
 
-        List<Checkout> books = server.getLibraryData().query(Checkout.class)
-                .isEqual(Checkout.Field.VISITOR, visitor)
-                .isEqual(Checkout.Field.RETURNED, false)
-                .results()
-                .collect(Collectors.toList());
+        //if the visitor exist, query for list of books that borrowed by that visitor
+        List<Checkout> books = getBorrowedBooks(visitor);
 
-        if (books.size() == 0){
-            executor.sendMessage(buildResponse(responseString,"0"));
+        if (books.size() == 0) {
+            executor.sendMessage(buildResponse(responseString, "0"));
             return ResponseFlag.SUCCESS;
         } else {
             responseString += "," + books.size() + "\n";
-            for (Checkout c : books) {
-                Book b = c.getBook();
-                responseString += (buildResponse(b.getID(), b.getISBN(), b.getTitle(), DATE_FORMAT.format(c.getBorrowedAt())) + "\n");
-            }
+            getBookResponse(books, responseString);
+
         }
         executor.sendMessage(responseString);
 
         return ResponseFlag.SUCCESS;
+    }
+
+    public Visitor getVisitor(Long visitorID) {
+        return this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, visitorID)
+                .results().findAny().orElse(null);
+    }
+
+    public List<Checkout> getBorrowedBooks(Visitor visitor) {
+        return server.getLibraryData().query(Checkout.class)
+                .isEqual(Checkout.Field.VISITOR, visitor)
+                .isEqual(Checkout.Field.RETURNED, false)
+                .results()
+                .collect(Collectors.toList());
+    }
+
+    public String getBookResponse(List<Checkout> books, String responseString) {
+        for (Checkout c : books) {
+            Book b = c.getBook();
+            responseString += (buildResponse(b.getID(), b.getISBN(), b.getTitle(), DATE_FORMAT.format(c.getBorrowedAt())) + "\n");
+        }
+        return responseString;
     }
 }
