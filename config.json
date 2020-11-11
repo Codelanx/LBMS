@@ -1,4 +1,5 @@
 {
+    "ui-type": "gui",
     "storage-type": "json",
     "max-backup-files": 100,
     "sql": {
