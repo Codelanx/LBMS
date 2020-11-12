@@ -68,6 +68,7 @@ public class ReportCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
 
+        // TODO: Days can be obmitted, you just use all the data collected since the start of the sim
         Optional<Long> days = InputOutput.parseLong(args[0]);
 
         if (!days.isPresent()) {
@@ -86,47 +87,23 @@ public class ReportCommand extends TextCommand {
         Instant curDate = this.server.getClock().getCurrentTime();
 
         //Finds all the books
-        long books = this.server.getLibraryData().query(Book.class)
-                .results()
-                .count();
-
+        long books = getBookCount();
 
         // Gathers the number of visitors registered
-        long numVisitors = this.server.getLibraryData().query(Visitor.class)
-                .results()
-                .count();
+        long numVisitors = getNewVisitorCount();
 
 
         //Uses summary statistics to get the average time of visits
-        LongSummaryStatistics stats =
-                this.server.getLibraryData().query(Visit.class) //Query<Visit>
-                        .results() //Stream<Visit>
-                        .map(visit -> Duration.between(visit.getStart(),
-                                visit.getEnd())) //Stream<Duration>
-                        .mapToLong(Duration::getSeconds)//Stream<Long>
-                        .summaryStatistics();
-        double average = stats.getAverage(); //average duration of a visit
-        long amount = stats.getCount(); //total number of visits
-        long total = stats.getSum(); //total amount of time over all visits
-        // combined
-
-
-        Duration avg = Duration.ofSeconds((long) average);
+        double average = getAverageVisitLength(); //average duration of a visit
+        Duration avg = Duration.ofSeconds((long)average);
         String avgOutput = this.formatDuration(avg);
 
 
         // Counts the number of books purchased
-        long numPurchased = this.server.getLibraryData().query(Book.class)
-                .results()
-                .map(Book::getTotalCopies)
-                .reduce(0, Integer::sum);
+        long numPurchased = getBooksPurchasedAmount();
 
+        Map<String, Set<Transaction>> map = getTransactions();
 
-        Map<String, Set<Transaction>> map =
-                this.server.getLibraryData().query(Transaction.class)
-                        .results()
-                        .collect(Collectors.groupingBy(Transaction::getReason,
-                                Collectors.toSet()));
         int amountLateFees =
                 map.getOrDefault(Transaction.Reason.CHARGING_LATE_FEE.getReason(), Collections.emptySet()).size();
         int amountPaidFees =
@@ -145,5 +122,40 @@ public class ReportCommand extends TextCommand {
 
         return ResponseFlag.SUCCESS;
 
+    }
+
+    protected Long getBookCount(){
+        return this.server.getLibraryData().query(Book.class)
+                .results()
+                .count();
+    }
+
+    protected Long getNewVisitorCount(){
+        return this.server.getLibraryData().query(Visitor.class)
+                .results()
+                .count();
+    }
+
+    protected Double getAverageVisitLength(){
+        return this.server.getLibraryData().query(Visit.class) //Query<Visit>
+                        .results() //Stream<Visit>
+                        .map(visit -> Duration.between(visit.getStart(),
+                                visit.getEnd())) //Stream<Duration>
+                        .mapToLong(Duration::getSeconds)//Stream<Long>
+                        .summaryStatistics().getAverage();
+    }
+
+    protected long getBooksPurchasedAmount(){
+        return this.server.getLibraryData().query(Book.class)
+                .results()
+                .map(Book::getTotalCopies)
+                .reduce(0, Integer::sum);
+    }
+
+    protected Map<String, Set<Transaction>> getTransactions(){
+        return this.server.getLibraryData()
+                .query(Transaction.class)
+                .results()
+                .collect(Collectors.groupingBy(Transaction::getReason, Collectors.toSet()));
     }
 }

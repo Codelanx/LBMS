@@ -108,7 +108,6 @@ public class BuyCommand extends TextCommand {
 
 
         return this.execute(executor, quantity, bookIDs.stream().mapToLong(l -> l).toArray());
-
     }
 
     public ResponseFlag execute(CommandExecutor executor, int copies, long... bookIDs) {
