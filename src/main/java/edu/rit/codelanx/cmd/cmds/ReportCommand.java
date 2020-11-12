@@ -77,9 +77,6 @@ public class ReportCommand extends TextCommand {
         }
 
         return this.execute(executor, Math.toIntExact(days.get()));
-
-
-
     }
 
     public ResponseFlag execute(CommandExecutor executor, int days) {

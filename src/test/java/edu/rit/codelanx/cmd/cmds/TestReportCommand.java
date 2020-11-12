@@ -33,10 +33,27 @@ public class TestReportCommand {
     public void init() {
         MockitoAnnotations.initMocks(this);
         clockMock = Mockito.mock(Clock.class);
-        Mockito.when(servMock.getClock()).thenReturn(clockMock);
+
         this.rep = new ReportCommand(this.servMock);
         repSpy = Mockito.spy(rep);
+
+        Mockito.when(servMock.getClock()).thenReturn(clockMock);
         Mockito.doReturn(Instant.now()).when(clockMock).getCurrentTime();
+        Mockito.doReturn(3L).when(repSpy).getBookCount();
+        Mockito.doReturn(2L).when(repSpy).getNewVisitorCount();
+        Mockito.doReturn(1L).when(repSpy).getBooksPurchasedAmount();
+        Mockito.doReturn(3600.00).when(repSpy).getAverageVisitLength();
+        Mockito.doReturn(Collections.<String, Set<Transaction>>emptyMap()).when(repSpy).getTransactions();
+    }
+
+    @Test
+    public void incorrectDays(){
+        /*
+        Test Explanation: Testing report when passed a non-number amount of days
+        Expectation: All inputs should be able to be handled, no report should be generated
+         */
+        Assertions.assertEquals(ResponseFlag.SUCCESS, repSpy.onExecute(this.execMock, "A"));
+        Mockito.verify(execMock).sendMessage("report,invalid-argument");
     }
 
     @Test
@@ -45,11 +62,6 @@ public class TestReportCommand {
         Test Explanation: Testing report when called correctly
         Expectation: All inputs should be able to be handled, reports should be generated
          */
-        Mockito.doReturn(3L).when(repSpy).getBookCount();
-        Mockito.doReturn(2L).when(repSpy).getNewVisitorCount();
-        Mockito.doReturn(1L).when(repSpy).getBooksPurchasedAmount();
-        Mockito.doReturn(3600.00).when(repSpy).getAverageVisitLength();
-        Mockito.doReturn(Collections.<String, Set<Transaction>>emptyMap()).when(repSpy).getTransactions();
         Assertions.assertEquals(ResponseFlag.SUCCESS, repSpy.onExecute(this.execMock, "1"));
         Mockito.verify(execMock).sendMessage("report"
                 + "Date Generated: " + Matchers.any()
