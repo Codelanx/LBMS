@@ -26,7 +26,7 @@ public class TestAdvanceCommand {
     private final String VALID_HOURS = "7";
     private final String INVALID_HOURS = "24";
     private final String VALID_DAYS = "5";
-    private final String INVALID_DAYS = "7";
+    private final String INVALID_DAYS = "8";
 
     @Mock
     private Server<TextMessage> servMock;

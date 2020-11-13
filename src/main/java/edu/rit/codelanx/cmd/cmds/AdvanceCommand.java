@@ -69,30 +69,9 @@ public class AdvanceCommand extends TextCommand {
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
-        boolean incorrectArgs = false;
-        Map<Integer, String> argMap = new HashMap<>();
-        for (int i = 0; i < args.length; i++){
-            if (args[i].isEmpty()) {
-                argMap.put(i, this.params[i].getLabel());
-                if (i == 0){
-                    incorrectArgs = true;
-                }
-            }
-        }
-
-        if (incorrectArgs){
-            String response = "";
-            for (Map.Entry<Integer,String> entry : argMap.entrySet()){
-                response += this.params[entry.getKey()];
-            }
-            executor.sendMessage(this.buildResponse(this.getName(),
-                    "missing-parameters",response));
-            return ResponseFlag.SUCCESS;
-        }
-
         //Checking the hours and days passed in to make sure they are within
         int days = InputOutput.parseInt(args[0]).orElse(-1);
-        int hours = InputOutput.parseInt(args[1]).orElse(-1);
+        int hours = args[1].isEmpty() ? 0 : InputOutput.parseInt(args[1]).orElse(-1);
         return this.executeInternal(executor, days, args[0], hours, args[1]);
     }
 
@@ -112,7 +91,7 @@ public class AdvanceCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
         this.server.getClock().advanceTime(days, hours);
-        executor.sendMessage(buildResponse(this.getName(),"success;"));
+        executor.sendMessage(buildResponse(this.getName(), "success"));
         return ResponseFlag.SUCCESS;
     }
 }
