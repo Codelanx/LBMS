@@ -81,7 +81,7 @@ public class BorrowedCommand extends TextCommand {
         //query for visitor
         Visitor visitor = getVisitor(visitorID);
         if (visitor == null) {
-            executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
+            executor.sendMessage(buildResponse(this.getName(), "invalid-visitor-id"));
             return ResponseFlag.SUCCESS;
         }
 
