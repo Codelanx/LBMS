@@ -48,10 +48,9 @@ public class TestArriveCommand {
         Mockito.when(servMock.getLibraryData()).thenReturn(libDSMock);
         Mockito.when(libDSMock.getLibrary()).thenReturn(libMock);
         Mockito.when(libMock.isOpen()).thenReturn(true);
-        // TODO: Fix Arrive refactor or fix test
-        /*Mockito.doReturn(visitorMock).when(arrSpy).getVisitor(5L);
+        Mockito.doReturn(visitorMock).when(arrSpy).getVisitor(5L);
         Mockito.doReturn(null).when(arrSpy).getVisitor(not(eq(5L)));
-        Mockito.doReturn("").when(arrSpy).startVisit(any());*/
+        Mockito.doReturn("").when(arrSpy).startVisit(any());
 
         Mockito.when(visitorMock.getID()).thenReturn(5L);Mockito.when(visitorMock.isVisiting()).thenReturn(false);
         Mockito.when(visitorMock.getID()).thenReturn(5L);
@@ -63,8 +62,8 @@ public class TestArriveCommand {
         Test Explanation: Testing sending no input/empty input to the command
         Expectation: All inputs should be able to be handled
          */
-        Assertions.assertSame(ResponseFlag.SUCCESS, arrSpy.onExecute(execMock, "",""));
-        Assertions.assertSame(ResponseFlag.SUCCESS, arrSpy.onExecute(execMock));
+        Assertions.assertSame(ResponseFlag.SUCCESS, arrSpy.onExecute(execMock, ""));
+        Mockito.verify(execMock).sendMessage("arrive,missing-parameters,visitor-id;");
     }
 
     @Test
@@ -75,6 +74,7 @@ public class TestArriveCommand {
          */
         Mockito.when(visitorMock.isVisiting()).thenReturn(false);
         Assertions.assertSame(ResponseFlag.SUCCESS, this.arrSpy.onExecute(this.execMock, INVALID_VISITOR_ID, "2"));
+        Mockito.verify(execMock).sendMessage("arrive,invalid-id;");
         Assertions.assertSame(ResponseFlag.SUCCESS, this.arrSpy.onExecute(this.execMock, VALID_VISITOR_ID, "7"));
         Mockito.verify(arrSpy, Mockito.times(1)).startVisit(any());
     }
@@ -90,8 +90,7 @@ public class TestArriveCommand {
         Assertions.assertSame(ResponseFlag.FAILURE, this.arrSpy.onExecute(this.execMock, "$@!#$%"));
         Assertions.assertSame(ResponseFlag.FAILURE, this.arrSpy.onExecute(this.execMock, "5A"));
         Mockito.verify(arrSpy, Mockito.times(0)).startVisit(any());
-        // TODO: Fix Arrive refactor or fix test
-        //Mockito.verify(arrSpy, Mockito.times(0)).getVisitor(anyLong());
+        Mockito.verify(arrSpy, Mockito.times(0)).getVisitor(anyLong());
     }
 
     @Test
@@ -103,5 +102,6 @@ public class TestArriveCommand {
         Mockito.when(visitorMock.isVisiting()).thenReturn(true);
         Assertions.assertSame(ResponseFlag.SUCCESS, this.arrSpy.onExecute(this.execMock, VALID_VISITOR_ID));
         Mockito.verify(arrSpy, Mockito.times(0)).startVisit(any());
+        Mockito.verify(execMock).sendMessage("arrive,duplicate;");
     }
 }

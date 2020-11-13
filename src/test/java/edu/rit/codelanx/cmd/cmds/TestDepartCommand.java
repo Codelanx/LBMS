@@ -62,7 +62,7 @@ public class TestDepartCommand {
         Mockito.when(visitorMock.getID()).thenReturn(id);
         Mockito.when(visitorMock.isVisiting()).thenReturn(true);
         Mockito.doReturn(null).when(cmd_spy).getVisitor(not(eq(id)));
-        Mockito.doReturn("").when(cmd_spy).endVisit(any());
+        Mockito.doReturn("depart," + id + ",06:09:06,07:10:07").when(cmd_spy).endVisit(any());
 
 
     }
@@ -73,10 +73,9 @@ public class TestDepartCommand {
         Test Explanation: Testing sending no input/empty input to the command
         Expectation: return SUCCESS response flag, but departing behaviour doesn't occur
          */
-        Assertions.assertEquals(ResponseFlag.SUCCESS, cmd.onExecute(this.execMock));
         Assertions.assertEquals(ResponseFlag.SUCCESS, cmd.onExecute(this.execMock, " "));
-        verify(cmd_spy, never()).getVisitor(any());
-
+        Mockito.verify(cmd_spy, never()).getVisitor(any());
+        Mockito.verify(execMock).sendMessage("depart,missing-parameters,visitor-id");
     }
 
     @Test
@@ -88,7 +87,7 @@ public class TestDepartCommand {
         Assertions.assertSame(ResponseFlag.FAILURE, cmd.onExecute(this.execMock, "henlo"));
         Assertions.assertSame(ResponseFlag.FAILURE, cmd.onExecute(this.execMock, "13.5"));
         Assertions.assertSame(ResponseFlag.FAILURE, cmd.onExecute(this.execMock, "@%"));
-        verify(cmd_spy, never()).getVisitor(any());
+        Mockito.verify(cmd_spy, never()).getVisitor(any());
     }
 
     @Test
@@ -98,8 +97,9 @@ public class TestDepartCommand {
         Expectation: return SUCCESS response flag
          */
         Assertions.assertSame(ResponseFlag.SUCCESS, cmd_spy.onExecute(this.execMock, VALID_VISITOR_ID));
-        verify(cmd_spy, times(1)).getVisitor(id);
-        verify(cmd_spy, times(1)).endVisit(visitorMock);
+        Mockito.verify(cmd_spy, times(1)).getVisitor(id);
+        Mockito.verify(cmd_spy, times(1)).endVisit(visitorMock);
+        Mockito.verify(execMock).sendMessage("depart," + id + ",06:09:06,07:10:07");
     }
     @Test
     public void departInvalidVisitor() {
@@ -108,8 +108,9 @@ public class TestDepartCommand {
         Expectation: return SUCCESS response flag, but departing behaviour doesn't occur
          */
         Assertions.assertSame(ResponseFlag.SUCCESS, cmd_spy.onExecute(this.execMock, INVALID_VISITOR_ID));
-        verify(cmd_spy, times(1)).getVisitor(invalid_id);
-        verify(cmd_spy, never()).endVisit(any());
+        Mockito.verify(cmd_spy, times(1)).getVisitor(invalid_id);
+        Mockito.verify(cmd_spy, never()).endVisit(any());
+        Mockito.verify(execMock).sendMessage("depart,invalid-id;");
     }
 
     @Test
@@ -120,8 +121,9 @@ public class TestDepartCommand {
          */
         Mockito.when(visitorMock.isVisiting()).thenReturn(false);
         Assertions.assertSame(ResponseFlag.SUCCESS, cmd_spy.onExecute(this.execMock, VALID_VISITOR_ID));
-        verify(cmd_spy, times(1)).getVisitor(any());
-        verify(cmd_spy, never()).endVisit(any());
+        Mockito.verify(cmd_spy, times(1)).getVisitor(any());
+        Mockito.verify(cmd_spy, never()).endVisit(any());
+        Mockito.verify(execMock).sendMessage("depart,invalid-id;");
     }
 
 }

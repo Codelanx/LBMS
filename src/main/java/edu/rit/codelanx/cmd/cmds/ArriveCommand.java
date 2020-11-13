@@ -91,9 +91,7 @@ public class ArriveCommand extends TextCommand {
 
     public ResponseFlag execute(CommandExecutor executor, long visitorID) {
         //pre: we have a valid id, we need a Visitor
-        Visitor visitor = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, visitorID)
-                .results().findAny().orElse(null);
+        Visitor visitor = getVisitor(visitorID);
         if (visitor == null) {
             executor.sendMessage(buildResponse(this.getName(), "invalid-id"));
             return ResponseFlag.SUCCESS;
@@ -109,5 +107,11 @@ public class ArriveCommand extends TextCommand {
         visitor.startVisit(this.server.getLibraryData().getLibrary());
         return buildResponse(this.getName(), visitor.getID(),
                 TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()));
+    }
+
+    protected Visitor getVisitor(long visitorID){
+        return this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, visitorID)
+                .results().findAny().orElse(null);
     }
 }

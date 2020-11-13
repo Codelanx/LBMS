@@ -18,7 +18,11 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -68,10 +72,10 @@ public class TestBorrowCommand {
         Expectation: All inputs should be able to be handled, no books will be checked out
          */
         assertSame(ResponseFlag.SUCCESS, borSpy.onExecute(execMock, "",""));
-        assertSame(ResponseFlag.SUCCESS, borSpy.onExecute(execMock));
         Mockito.verify(borSpy, Mockito.never()).getBooks(anySet());
         Mockito.verify(borSpy, Mockito.never()).getCheckedOut(any());
         Mockito.verify(borSpy, Mockito.never()).checkout(any(), any());
+        Mockito.verify(execMock).sendMessage("borrow,missing-parameters,visitor-id,id;");
     }
 
     @Test
@@ -84,6 +88,7 @@ public class TestBorrowCommand {
         assertSame(ResponseFlag.SUCCESS, borSpy.onExecute(execMock, "1", "1"));
         assertSame(ResponseFlag.SUCCESS, borSpy.onExecute(execMock, "1", "1", "2", "3", "4", "5", "6"));
         Mockito.verify(borSpy, Mockito.never()).checkout(any(), any());
+        Mockito.verify(execMock, Mockito.times(2)).sendMessage("borrow,book-limit-exceeded;");
     }
 
     @Test
@@ -98,6 +103,7 @@ public class TestBorrowCommand {
         Mockito.doReturn(emptyBookList).when(borSpy).getBooks(any());
         assertSame(ResponseFlag.SUCCESS, borSpy.onExecute(execMock, "1", "656345"));
         Mockito.verify(borSpy, Mockito.never()).checkout(any(), any());
+        Mockito.verify(execMock).sendMessage("borrow,invalid-book-id,656345;");
     }
 
     @Test
@@ -111,6 +117,7 @@ public class TestBorrowCommand {
         assertSame(ResponseFlag.SUCCESS, borSpy.onExecute(execMock, "1", "1"));
         Mockito.verify(borSpy, Mockito.never()).getBooks(any());
         Mockito.verify(borSpy, Mockito.never()).checkout(any(), any());
+        Mockito.verify(execMock).sendMessage("borrow,outstanding-fine,-1;");
     }
 
     @Test
@@ -128,5 +135,9 @@ public class TestBorrowCommand {
         Mockito.doReturn(time).when(borSpy).getDueDate();
         assertSame(ResponseFlag.SUCCESS, borSpy.onExecute(execMock, "1", "1"));
         Mockito.verify(borSpy, Mockito.times(1)).checkout(any(), any());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDateTime now = LocalDateTime.now();
+        String formatted = dtf.format(now);
+        Mockito.verify(execMock).sendMessage("borrow," + formatted + ";");
     }
 }

@@ -52,7 +52,7 @@ public class TestAdvanceCommand {
         Expectation: All inputs should be able to be handled, clock shouldn't change
          */
         assertSame(ResponseFlag.SUCCESS, adv.onExecute(execMock, "",""));
-        assertSame(ResponseFlag.SUCCESS, adv.onExecute(execMock));
+        Mockito.verify(execMock).sendMessage("advance,missing-parameters,number-of-days[number-of-hours];");
     }
 
     @Test
@@ -63,6 +63,7 @@ public class TestAdvanceCommand {
         */
         assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, INVALID_DAYS, INVALID_HOURS));
         assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, INVALID_DAYS, VALID_HOURS));
+        Mockito.verify(execMock, Mockito.times(2)).sendMessage("advance,invalid-number-of-days," + INVALID_DAYS + ";");
     }
 
     @Test
@@ -72,27 +73,27 @@ public class TestAdvanceCommand {
         Expectation: All inputs should be able to be handled, clock should change if days are valid
         */
         assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, VALID_DAYS, INVALID_HOURS));
+        Mockito.verify(execMock).sendMessage("advance,invalid-number-of-hours," + INVALID_HOURS + ";");
     }
 
     @Test
     public void happyPathDays() {
         /*
-        Test Explanation: Testing sending the correct amount of days, hours don't matter
+        Test Explanation: Testing sending the correct amount of days
         Expectation: All inputs should be able to be handled, clock should change
         */
         assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, VALID_DAYS, ""));
         assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, VALID_DAYS, VALID_HOURS));
-        assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, VALID_DAYS, INVALID_HOURS));
+        Mockito.verify(execMock, Mockito.times(2)).sendMessage("advance,success;");
     }
 
     @Test
     public void happyPathHours() {
         /*
-        Test Explanation: Testing sending the correct amount of hours, days don't matter
+        Test Explanation: Testing sending the correct amount of hours
         Expectation: All inputs should be able to be handled, clock should change
         */
-        assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, "", VALID_HOURS));
         assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, VALID_DAYS, VALID_HOURS));
-        assertSame(ResponseFlag.SUCCESS, this.adv.onExecute(this.execMock, INVALID_DAYS, VALID_HOURS));
+        Mockito.verify(execMock).sendMessage("advance,success;");
     }
 }

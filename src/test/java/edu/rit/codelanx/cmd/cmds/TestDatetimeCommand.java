@@ -11,6 +11,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class TestDatetimeCommand {
 
     @Mock
@@ -20,14 +23,16 @@ public class TestDatetimeCommand {
 
     private DatetimeCommand dtSpy;
     private DatetimeCommand dt;
+    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd,HH:mm:ss");
+    private LocalDateTime now = LocalDateTime.now();
+    private String formattedTime = dtf.format(now);
 
     @BeforeEach
     public void init(){
         MockitoAnnotations.initMocks(this);
         this.dt = new DatetimeCommand(this.servMock);
         this.dtSpy = Mockito.spy(dt);
-
-        Mockito.doReturn("").when(dtSpy).getClockTime();
+        Mockito.doReturn(formattedTime).when(dtSpy).getClockTime();
     }
 
     @Test
@@ -38,6 +43,7 @@ public class TestDatetimeCommand {
         */
         Assertions.assertSame(ResponseFlag.SUCCESS, dtSpy.onExecute(execMock, ""));
         Mockito.verify(dtSpy, Mockito.times(1)).getClockTime();
+        Mockito.verify(execMock).sendMessage("datetime," + formattedTime + ";");
     }
 
     @Test
@@ -48,5 +54,6 @@ public class TestDatetimeCommand {
         */
         Assertions.assertSame(ResponseFlag.SUCCESS, dtSpy.onExecute(execMock));
         Mockito.verify(dtSpy, Mockito.times(1)).getClockTime();
+        Mockito.verify(execMock).sendMessage("datetime," + formattedTime + ";");
     }
 }

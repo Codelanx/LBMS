@@ -98,50 +98,36 @@ public class ReturnCommand extends TextCommand {
                 return ResponseFlag.SUCCESS;
             }
         }
-
-
         return this.execute(executor, optID.get(), ids.stream().mapToLong(l -> l).toArray());
-
     }
 
     public ResponseFlag execute(CommandExecutor executor, long visitorID, long... bookIDs) {
 
-        Optional<Visitor> optVisitor = this.server.getLibraryData().query(Visitor.class)
-                .isEqual(Visitor.Field.ID, visitorID)
-                .results().findAny();
+        Visitor visitor = queryVisitor(visitorID);
 
-        if (!optVisitor.isPresent()) {
+        if (visitor == null) {
             executor.sendMessage("invalid-visitorID");
             return ResponseFlag.SUCCESS;
         }
 
-        Visitor visitor = optVisitor.get();
         //parse the remainder of the arguments into book ids
         List<String> failed = new LinkedList<>();
 
-
-
         //now, make sure the ids that we parsed are valid books
         Set<Long> ids = LongStream.of(bookIDs).boxed().collect(Collectors.toSet());
-        Set<Book> books = this.server.getLibraryData().query(Book.class)
-                .isAny(Book.Field.ID, LongStream.of(bookIDs).boxed().toArray(Long[]::new))
-                .results()
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<Book> books = queryBooks(bookIDs);
+
         if (books.size() != bookIDs.length) {
             //don't have time for fast disjoint sets, so...
             books.stream().map(Book::getID).forEach(ids::remove);
             //ids is now a set of invalid ids
             ids.stream().map(Object::toString).forEach(failed::add);
         }
+
         List<Checkout> checkouts = null;
         if (failed.isEmpty()) {
             //Make sure the books are actually checked out
-            checkouts = this.server.getLibraryData().query(Checkout.class)
-                    .isEqual(Checkout.Field.VISITOR, visitor)
-                    .isAny(Checkout.Field.BOOK, books)
-                    .isEqual(Checkout.Field.RETURNED, false)
-                    .results()
-                    .collect(Collectors.toList());
+            checkouts = queryCheckouts(visitor, books);
             if (checkouts.size() != books.size()) {
                 //again, invalid books because they weren't checks out
                 checkouts.stream().map(Checkout::getBook).forEach(books::remove);
@@ -176,5 +162,27 @@ public class ReturnCommand extends TextCommand {
         fined.add(2, String.format("$%.2f", sum.doubleValue()));
         executor.sendMessage(this.buildResponse(fined));
         return ResponseFlag.SUCCESS;
+    }
+
+    protected Visitor queryVisitor(long visitorID){
+        return this.server.getLibraryData().query(Visitor.class)
+                .isEqual(Visitor.Field.ID, visitorID)
+                .results().findAny().orElse(null);
+    }
+
+    protected Set<Book> queryBooks(long... bookIDs){
+        return this.server.getLibraryData().query(Book.class)
+                .isAny(Book.Field.ID, LongStream.of(bookIDs).boxed().toArray(Long[]::new))
+                .results()
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    protected List<Checkout> queryCheckouts(Visitor visitor, Set<Book> books){
+        return this.server.getLibraryData().query(Checkout.class)
+                .isEqual(Checkout.Field.VISITOR, visitor)
+                .isAny(Checkout.Field.BOOK, books)
+                .isEqual(Checkout.Field.RETURNED, false)
+                .results()
+                .collect(Collectors.toList());
     }
 }
