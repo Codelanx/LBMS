@@ -72,7 +72,7 @@ public class ReportCommand extends TextCommand {
         Optional<Long> days = InputOutput.parseLong(args[0]);
 
         if (!days.isPresent()) {
-            executor.sendMessage("invalid-argument");
+            executor.sendMessage("report,invalid-argument");
             return ResponseFlag.SUCCESS;
         }
 
