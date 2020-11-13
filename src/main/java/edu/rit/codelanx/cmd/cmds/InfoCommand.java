@@ -158,7 +158,7 @@ public class InfoCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        outputInfo(bookList, executor);
+        executor.sendMessage(outputInfo(bookList));
         return ResponseFlag.SUCCESS;
     }
 
@@ -187,8 +187,8 @@ public class InfoCommand extends TextCommand {
     }
 
 
-    public void outputInfo(List<Book> bookList, CommandExecutor executor) {
-        bookList.stream()
+    public String outputInfo(List<Book> bookList) {
+        return bookList.stream()
                 .map(book -> {
                     List<String> authorsForBook =
                             book.getAuthors().map(Author::getName).collect(Collectors.toList());
@@ -197,7 +197,7 @@ public class InfoCommand extends TextCommand {
                     return this.buildResponse(book.getAvailableCopies(), book.getISBN(), book.getTitle(),
                             authorOutput, book.getPublisher(), DATE_FORMAT.format(book.getPublishDate()),
                             book.getPageCount() + TextCommand.TOKEN_DELIMITER + (LBMS.PREPRODUCTION_DEBUG ? "ID: " + book.getID() : ""));
-                }).forEach(executor::sendMessage);
+                }).toString();
     }
 
     protected Stream<Book> findBookByAuthor(Set<Long> filterIDs, Query<Book> query, Set<Long> idFilter) {

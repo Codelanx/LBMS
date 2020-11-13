@@ -72,6 +72,7 @@ public class TestInfoCommand {
         Mockito.doReturn(null).when(cmd_spy).findAuthors(not(eq(validAuthors)));
 
         //query db for set<long> ids based on author list
+        Mockito.doReturn(filterIDs).when(cmd_spy).getIDs(any());
         //Mockito.when(cmd_spy.getIDs(authorList)).thenReturn(filterIDs);
         Mockito.doReturn(null).when(cmd_spy).getIDs(not(eq(authorList)));
 
@@ -79,11 +80,11 @@ public class TestInfoCommand {
         Mockito.when(cmd_spy.bookQuery()).thenReturn(query);
 
         //find books by author
-        Mockito.when(cmd_spy.findBookByAuthor(filterIDs, query, filterIDs)).thenReturn(res);
+        //Mockito.when(cmd_spy.findBookByAuthor(filterIDs, query, filterIDs)).thenReturn(res);
         Mockito.doReturn(null).when(cmd_spy).getIDs(not(eq(authorList)));
 
         //res-> List<Book>
-        Mockito.doReturn(" ").when(cmd_spy).outputInfo(any(), any());
+        Mockito.doReturn(" ").when(cmd_spy).outputInfo(any());
 
         Mockito.when(visitorMock.isVisiting()).thenReturn(true);
 
@@ -94,6 +95,6 @@ public class TestInfoCommand {
         assertSame(ResponseFlag.SUCCESS, cmd_spy.execute(execMock, "bruh"
                 , "212232", "publisher", "title", validAuthors));
         Mockito.verify(cmd_spy, Mockito.times(1)).findAuthors(validAuthors);
-        Mockito.verify(cmd_spy, Mockito.times(1)).outputInfo(any(), any());
+        Mockito.verify(cmd_spy, Mockito.times(1)).outputInfo(any());
     }
 }
