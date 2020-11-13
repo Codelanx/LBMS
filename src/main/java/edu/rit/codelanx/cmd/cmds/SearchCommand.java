@@ -89,19 +89,10 @@ public class SearchCommand extends TextCommand {
         }
         Set<Long> filterIDs = null;
         if (authors != AUTHOR_WILDCARD) {
-            List<Author> found = this.server.getBookStore().query(Author.class)
-                    .isAny(Author.Field.NAME, authors)
-                    .results()
-                    .collect(Collectors.toList());
+            List<Author> found = findAuthors(authors);
             if (!found.isEmpty()) {
                 //no results can possibly be found otherwise
-                filterIDs = this.server.getBookStore()
-                        .query(AuthorListing.class)
-                        .isAny(AuthorListing.Field.AUTHOR, found)
-                        .results()
-                        .map(AuthorListing::getBook)
-                        .map(Book::getID)
-                        .collect(Collectors.toSet());
+                filterIDs = getFilterIDs(found);
                 if (filterIDs.isEmpty()) {
                     executor.sendMessage(this.buildResponse(this.getName(), 0));
                     return ResponseFlag.SUCCESS;
@@ -146,6 +137,26 @@ public class SearchCommand extends TextCommand {
         if (bookList.isEmpty()) {
             return ResponseFlag.SUCCESS;
         }
+        output(executor, bookList);
+        return ResponseFlag.SUCCESS;
+    }
+
+    protected List<Author> findAuthors(String... authors){
+        return this.server.getBookStore().query(Author.class)
+                .isAny(Author.Field.NAME, authors)
+                .results()
+                .collect(Collectors.toList());
+    }
+    protected Set<Long> getFilterIDs(List<Author> found){
+        return this.server.getBookStore()
+                .query(AuthorListing.class)
+                .isAny(AuthorListing.Field.AUTHOR, found)
+                .results()
+                .map(AuthorListing::getBook)
+                .map(Book::getID)
+                .collect(Collectors.toSet());
+    }
+    protected void output(CommandExecutor executor, List<Book> bookList){
         bookList.stream()
                 .map(book -> {
                     List<String> authorsForBook = book.getAuthors().map(Author::getName).collect(Collectors.toList());
@@ -154,6 +165,5 @@ public class SearchCommand extends TextCommand {
                             authorOutput, DATE_FORMAT.format(book.getPublishDate()));
                 })
                 .forEach(executor::sendMessage);
-        return ResponseFlag.SUCCESS;
     }
 }

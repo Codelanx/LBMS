@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  */
 public class InfoCommand extends TextCommand {
 
-    private static final String[] AUTHOR_WILDCARD = new String[] {""};
+    private static final String[] AUTHOR_WILDCARD = new String[]{""};
 
     /**
      * Constructor for the InfoCommand class
@@ -65,6 +65,7 @@ public class InfoCommand extends TextCommand {
 
     /**
      * {@inheritDoc}
+     *
      * @return {@inheritDoc}
      */
     @Override
@@ -94,31 +95,29 @@ public class InfoCommand extends TextCommand {
 
     public ResponseFlag execute(CommandExecutor executor, String title, String isbn,
                                 String publisher, String sortOrder, String... authors) {
+        //if the String author is empty=> string list is empty " "
         if (Arrays.stream(authors).anyMatch(String::isEmpty)) {
             authors = AUTHOR_WILDCARD;
         }
-        Set<Long> filterIDs = null;
+
+        Set<Long> filterIDs = null;  //list of filter ids
+        //if author list is not empty
         if (authors != AUTHOR_WILDCARD) {
-            List<Author> found = this.server.getLibraryData().query(Author.class)
-                    .isAny(Author.Field.NAME, authors)
-                    .results()
-                    .collect(Collectors.toList());
+
+            //query list of author in the database
+            List<Author> found = findAuthors(authors);
+
+            //if list of author does exists in the database
             if (!found.isEmpty()) {
                 //no results can possibly be found otherwise
-                filterIDs = this.server.getLibraryData()
-                        .query(AuthorListing.class)
-                        .isAny(AuthorListing.Field.AUTHOR, found)
-                        .results()
-                        .map(AuthorListing::getBook)
-                        .map(Book::getID)
-                        .collect(Collectors.toSet());
+                filterIDs = getIDs(found);
             }
         }
         Set<Long> idFilter = filterIDs;
         //at this point, if filterIDs is null, no authors were searched
         //if filterIDs is empty, no listings were found for the authors
         //otherwise, our books are restricted to the contents of filterIDs
-        Query<Book> query = this.server.getLibraryData().query(Book.class);
+        Query<Book> query = bookQuery();
         //REFACTOR: DRY these blocks of code
         //Going through the query fields and adding them if they are there
         if (!title.isEmpty()) {
@@ -132,9 +131,7 @@ public class InfoCommand extends TextCommand {
         }
         Stream<Book> res;
         if (filterIDs != null) { //if filtering by authors...
-            res = filterIDs.isEmpty()
-                    ? Stream.empty() //no possible results now
-                    : query.results().filter(b -> !idFilter.contains(b.getID()));
+            res = findBookByAuthor(filterIDs, query, idFilter);
         } else {
             res = query.results();
         }
@@ -151,7 +148,7 @@ public class InfoCommand extends TextCommand {
                         .sorted(Comparator.comparing(Book::getAvailableCopies));
                 break;
             default:
-                executor.sendMessage(buildResponse(this.getName(),"invalid-sort-order"));
+                executor.sendMessage(buildResponse(this.getName(), "invalid-sort-order"));
                 return ResponseFlag.SUCCESS;
         }
 
@@ -160,6 +157,37 @@ public class InfoCommand extends TextCommand {
         if (bookList.isEmpty()) {
             return ResponseFlag.SUCCESS;
         }
+
+        outputInfo(bookList, executor);
+        return ResponseFlag.SUCCESS;
+    }
+
+
+    public List<Author> findAuthors(String... authors) {
+        return this.server.getLibraryData().query(Author.class)
+                .isAny(Author.Field.NAME, authors)
+                .results()
+                .collect(Collectors.toList());
+    }
+
+    public Set<Long> getIDs(List<Author> found) {
+        return this.server.getLibraryData()
+                .query(AuthorListing.class)
+                .isAny(AuthorListing.Field.AUTHOR, found)
+                .results()
+                .map(AuthorListing::getBook)
+                .map(Book::getID)
+                .collect(Collectors.toSet());
+    }
+
+    protected Query<Book> bookQuery() {
+        return this.server
+                .getLibraryData()
+                .query(Book.class);
+    }
+
+
+    public void outputInfo(List<Book> bookList, CommandExecutor executor) {
         bookList.stream()
                 .map(book -> {
                     List<String> authorsForBook =
@@ -169,9 +197,15 @@ public class InfoCommand extends TextCommand {
                     return this.buildResponse(book.getAvailableCopies(), book.getISBN(), book.getTitle(),
                             authorOutput, book.getPublisher(), DATE_FORMAT.format(book.getPublishDate()),
                             book.getPageCount() + TextCommand.TOKEN_DELIMITER + (LBMS.PREPRODUCTION_DEBUG ? "ID: " + book.getID() : ""));
-                })
-                .forEach(executor::sendMessage);
-        return ResponseFlag.SUCCESS;
+                }).forEach(executor::sendMessage);
     }
+
+    protected Stream<Book> findBookByAuthor(Set<Long> filterIDs, Query<Book> query, Set<Long> idFilter) {
+        return filterIDs.isEmpty()
+                ? Stream.empty() //no possible results now
+                : query.results()
+                .filter(b -> !idFilter.contains(b.getID()));
+    }
+
 
 }
