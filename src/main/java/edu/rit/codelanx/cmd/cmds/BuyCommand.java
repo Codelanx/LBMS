@@ -78,7 +78,7 @@ public class BuyCommand extends TextCommand {
         //Checking that the amount of args passed is correct
         if (args.length < 2) {
             executor.sendMessage(buildResponse(this.getName(),"missing" +
-                    "-parameters", "visitorID"));
+                    "-parameters", "quantity"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -105,43 +105,33 @@ public class BuyCommand extends TextCommand {
         } catch (NumberFormatException e) {
             return ResponseFlag.FAILURE;
         }
-
-
         return this.execute(executor, quantity, bookIDs.stream().mapToLong(l -> l).toArray());
     }
 
     public ResponseFlag execute(CommandExecutor executor, int copies, long... bookIDs) {
         List<Book> bookList = new ArrayList<>();
         for (Long id : bookIDs) {
-            Optional<Book> bookSearch =
-                    server.getLibraryData().query(Book.class)
-                            .isEqual(Book.Field.ID, id)
-                            .results().findAny();
-            if (bookSearch.isPresent()) {
-                Book b = bookSearch.get();
-                b.addCopy(copies);
-                bookList.add(b);
+            Book bookSearch = queryLibrary(id);
+            if (bookSearch != null) {
+                bookSearch.addCopy(copies);
+                bookList.add(bookSearch);
             } else {
-                Optional<Book> newBook =
-                        server.getBookStore().query(Book.class).isEqual(Book.Field.ID, id).results().findAny();
-                if (newBook.isPresent()) {
-                    Book b = newBook.get();
-                    StateBuilder<Book> bookStateBuilder = new ProxiedStateBuilder<>(b);
-                    bookStateBuilder.setValue(Book.Field.TOTAL_COPIES, copies);
-                    bookStateBuilder.setValue(Book.Field.CHECKED_OUT, 0);
-                    b = this.server.getLibraryData().insert(bookStateBuilder);
-                    bookList.add(b);
+                Book newBook = queryBookstore(id);
+                if (newBook != null) {
+                    newBook = bookstoreToLibrary(newBook, copies);
+                    bookList.add(newBook);
                 } else {
                     return ResponseFlag.FAILURE;
                 }
             }
         }
 
-        executor.sendMessage(this.buildResponse(this.getName(),
-                bookList.size()));
+        executor.sendMessage(this.buildResponse(this.getName(), bookList.size()));
+
         if (bookList.isEmpty()) {
             return ResponseFlag.SUCCESS;
         }
+
         executor.sendMessage("Results (" + bookList.size() + "):");
         bookList.stream()
                 .map(book -> {
@@ -158,5 +148,22 @@ public class BuyCommand extends TextCommand {
 
         return ResponseFlag.SUCCESS;
 
+    }
+
+    protected Book queryLibrary(Long id){
+        return server.getLibraryData().query(Book.class)
+                .isEqual(Book.Field.ID, id)
+                .results().findAny().orElse(null);
+    }
+
+    protected Book queryBookstore(Long id){
+        return server.getBookStore().query(Book.class).isEqual(Book.Field.ID, id).results().findAny().orElse(null);
+    }
+
+    protected Book bookstoreToLibrary(Book newBook, int copies){
+        StateBuilder<Book> bookStateBuilder = new ProxiedStateBuilder<>(newBook);
+        bookStateBuilder.setValue(Book.Field.TOTAL_COPIES, copies);
+        bookStateBuilder.setValue(Book.Field.CHECKED_OUT, 0);
+        return this.server.getLibraryData().insert(bookStateBuilder);
     }
 }
