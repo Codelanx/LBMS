@@ -85,7 +85,8 @@ public class ReturnCommand extends TextCommand {
 
 
         if (!optID.isPresent()) {
-            executor.sendMessage(this.buildResponse(this.getName(), "return,invalid-visitor-id;"));
+            executor.sendMessage(this.buildResponse(getName(),"missing-parameters," +
+                    "visitor,id"));
             return ResponseFlag.SUCCESS;
         }
 
@@ -106,7 +107,7 @@ public class ReturnCommand extends TextCommand {
         Visitor visitor = queryVisitor(visitorID);
 
         if (visitor == null) {
-            executor.sendMessage("return,invalid-visitor-id;");
+            executor.sendMessage(this.buildResponse(getName(),"invalid-visitor-id"));
             return ResponseFlag.SUCCESS;
         }
 
