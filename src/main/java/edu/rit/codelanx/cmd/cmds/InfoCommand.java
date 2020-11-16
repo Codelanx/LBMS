@@ -113,28 +113,10 @@ public class InfoCommand extends TextCommand {
                 filterIDs = getIDs(found);
             }
         }
+
         Set<Long> idFilter = filterIDs;
-        //at this point, if filterIDs is null, no authors were searched
-        //if filterIDs is empty, no listings were found for the authors
-        //otherwise, our books are restricted to the contents of filterIDs
-        Query<Book> query = bookQuery();
-        //REFACTOR: DRY these blocks of code
-        //Going through the query fields and adding them if they are there
-        if (!title.isEmpty()) {
-            query = query.isEqual(Book.Field.TITLE, title);
-        }
-        if (!isbn.isEmpty()) {
-            query = query.isEqual(Book.Field.ISBN, isbn);
-        }
-        if (!publisher.isEmpty()) {
-            query = query.isEqual(Book.Field.PUBLISHER, publisher);
-        }
-        Stream<Book> res;
-        if (filterIDs != null) { //if filtering by authors...
-            res = findBookByAuthor(filterIDs, query, idFilter);
-        } else {
-            res = query.results();
-        }
+        Stream<Book> res = getBookStream(title,isbn,publisher,filterIDs,idFilter);
+
         switch (sortOrder.toLowerCase()) { //sort-order
             case "":
             case "title":
@@ -163,14 +145,14 @@ public class InfoCommand extends TextCommand {
     }
 
 
-    public List<Author> findAuthors(String... authors) {
+    protected List<Author> findAuthors(String... authors) {
         return this.server.getLibraryData().query(Author.class)
                 .isAny(Author.Field.NAME, authors)
                 .results()
                 .collect(Collectors.toList());
     }
 
-    public Set<Long> getIDs(List<Author> found) {
+    protected Set<Long> getIDs(List<Author> found) {
         return this.server.getLibraryData()
                 .query(AuthorListing.class)
                 .isAny(AuthorListing.Field.AUTHOR, found)
@@ -187,7 +169,7 @@ public class InfoCommand extends TextCommand {
     }
 
 
-    public String outputInfo(List<Book> bookList) {
+    protected String outputInfo(List<Book> bookList) {
         return bookList.stream()
                 .map(book -> {
                     List<String> authorsForBook =
@@ -207,5 +189,25 @@ public class InfoCommand extends TextCommand {
                 .filter(b -> !idFilter.contains(b.getID()));
     }
 
-
+    protected Stream<Book> getBookStream(String title, String isbn, String publisher, Set<Long> filterIDs, Set<Long> idFilter){
+        Query<Book> query = bookQuery();
+        //REFACTOR: DRY these blocks of code
+        //Going through the query fields and adding them if they are there
+        if (!title.isEmpty()) {
+            query = query.isEqual(Book.Field.TITLE, title);
+        }
+        if (!isbn.isEmpty()) {
+            query = query.isEqual(Book.Field.ISBN, isbn);
+        }
+        if (!publisher.isEmpty()) {
+            query = query.isEqual(Book.Field.PUBLISHER, publisher);
+        }
+        Stream<Book> res;
+        if (filterIDs != null) { //if filtering by authors...
+            res = findBookByAuthor(filterIDs, query, idFilter);
+        } else {
+            res = query.results();
+        }
+        return res;
+    }
 }

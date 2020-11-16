@@ -69,6 +69,7 @@ public class Library extends BasicState {
     protected DataField<? super Object>[] getFieldsUnsafe() {
         return Field.VALUES;
     }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
