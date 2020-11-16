@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -140,7 +141,7 @@ public class InfoCommand extends TextCommand {
             return ResponseFlag.SUCCESS;
         }
 
-        executor.sendMessage(outputInfo(bookList));
+        outputInfo(bookList).forEach(executor::sendMessage);
         return ResponseFlag.SUCCESS;
     }
 
@@ -169,17 +170,14 @@ public class InfoCommand extends TextCommand {
     }
 
 
-    protected String outputInfo(List<Book> bookList) {
-        return bookList.stream()
-                .map(book -> {
-                    List<String> authorsForBook =
-                            book.getAuthors().map(Author::getName).collect(Collectors.toList());
-                    String authorOutput =
-                            this.buildListResponse(authorsForBook.toString());
+    protected Stream<String> outputInfo(List<Book> bookList) {
+        return bookList.stream().map(book -> {
+                    List<String> authorsForBook = book.getAuthors().map(Author::getName).collect(Collectors.toList());
+                    String authorOutput = this.buildListResponse(authorsForBook.toString());
                     return this.buildResponse(book.getAvailableCopies(), book.getISBN(), book.getTitle(),
                             authorOutput, book.getPublisher(), DATE_FORMAT.format(book.getPublishDate()),
                             book.getPageCount() + TextCommand.TOKEN_DELIMITER + (LBMS.PREPRODUCTION_DEBUG ? "ID: " + book.getID() : ""));
-                }).toString();
+        });
     }
 
     protected Stream<Book> findBookByAuthor(Set<Long> filterIDs, Query<Book> query, Set<Long> idFilter) {

@@ -55,7 +55,7 @@ public class ArriveCommand extends TextCommand {
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
                                   String... args) {
-        //REFACTOR
+
         if (!this.server.getLibraryData().getLibrary().isOpen()){
             executor.sendMessage(buildResponse(this.getName(), "library-is-closed"));
             return ResponseFlag.FAILURE;
