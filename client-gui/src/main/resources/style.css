@@ -1,0 +1,11 @@
+.text-input.error {
+    -fx-text-box-border: red;
+    -fx-focus-color: red;
+}
+
+.text.error {
+    -fx-color-label-visible: red;
+    -fx-font-color: red;
+    -fx-font-style: italic;
+    -fx-text-alignment: right;
+}

@@ -11,5 +11,9 @@
             "port": 3306,
             "database": "lbms"
         }
+    },
+    "library": {
+        "open-time-seconds": 28800,
+        "close-time-seconds": 68400
     }
 }

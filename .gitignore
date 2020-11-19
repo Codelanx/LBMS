@@ -2,3 +2,7 @@
 target/
 *.iml
 *.jar
+/backup/
+/data/
+/config.json
+*-reduced-pom.xml
