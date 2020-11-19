@@ -28,54 +28,84 @@ public class MemoryStorageAdapter implements StorageAdapter {
     protected <R extends State> Map<Long, R> getData(Class<R> type) {
         return (Map<Long, R>) data.computeIfAbsent(type, k -> new HashMap<>());
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Library getLibrary() {
         return this.lib;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> R insert(StateBuilder<R> builder) {
         R back = builder.buildObj(this.storage, builder.getType().getNextID());
         this.getData(builder.getType().getConcreteType()).put(back.getID(), back);
         return back;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void loadAll() throws IOException {
         //no-op
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void saveAll() throws IOException {
         //no-op
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public DataSource getAdaptee() {
         return this.storage;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> R loadState(long id, Class<R> type) {
         return this.getData(type).get(id);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State, E> Stream<R> loadState(Class<R> type, DataField<E> field, E value) {
         return (Stream<R>) field.findStatesByValue(value); //TODO: Make sure this doesn't loop
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E> void notifyUpdate(State state, DataField<E> field, E value) {
         //no-op
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void remove(State state) {
         this.getData(state.getClass()).remove(state.getID());
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public boolean isCached() {
         return true;

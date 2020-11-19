@@ -95,7 +95,10 @@ public class FFStorageAdapter implements StorageAdapter {
         this.getAdaptee().getRelativeStorage().addState(back);
         return back;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void loadAll() throws IOException {
         if (this.library != null) {
@@ -143,7 +146,10 @@ public class FFStorageAdapter implements StorageAdapter {
             }
         }
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void saveAll() throws IOException {
         if (!this.modified.get()) {
@@ -200,7 +206,10 @@ public class FFStorageAdapter implements StorageAdapter {
         }
         Files.move(ref.toPath(), new File(BACKUP_FOLDER, name + next + ext).toPath());
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> Stream<R> handleQuery(StateQuery<R> query) {
         //Handle the query for information
@@ -208,20 +217,29 @@ public class FFStorageAdapter implements StorageAdapter {
         StateStorage<R> data = this.storage.getRelativeStorage().getStateStorage(type);
         return query.locateLocal(data);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State> R loadState(long id, Class<R> type) {
         //flatfile storage is preloaded, no on-demand loading necessary
         return this.getAdaptee().getRelativeStorage().getStateStorage(type).getByID(id);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <R extends State, E> Stream<R> loadState(Class<R> type, DataField<E> field, E value) {
         StateStorage<R> data = this.getAdaptee().getRelativeStorage().getStateStorage(type);
         return data.streamLoaded()
                 .filter(s -> Objects.equals(field.get(s), value));
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E> void notifyUpdate(State state, DataField<E> field, E value) {
         this.modified.set(true);
@@ -229,6 +247,7 @@ public class FFStorageAdapter implements StorageAdapter {
 
     /**
      * {@inheritDoc}
+     * @return {@inheritDoc}
      */
     @Override
     public void remove(State state) {

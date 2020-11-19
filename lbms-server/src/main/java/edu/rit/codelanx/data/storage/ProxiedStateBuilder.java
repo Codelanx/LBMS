@@ -20,6 +20,10 @@ public class ProxiedStateBuilder<T extends State> extends StateBuilder<T> {
         this.other = other;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E> E getValue(DataField<E> field) {
         E override = super.getValue(field);
@@ -27,7 +31,10 @@ public class ProxiedStateBuilder<T extends State> extends StateBuilder<T> {
                 ? field.get(this.other)
                 : override;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     protected T buildObj(DataSource storage, long id) {
         if (storage == this.other.getLoader()) {
