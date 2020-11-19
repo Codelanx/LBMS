@@ -46,12 +46,11 @@ public class ArriveCommand extends TextCommand {
     }
 
     /**
-     * Whenever this command is called, it will begin a new visit.
-     *
-     * @param executor the client that is calling the command
-     * @param args     visitorID: the unique 10-digit ID of the visitor
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: visitorID
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
@@ -90,6 +89,14 @@ public class ArriveCommand extends TextCommand {
         return this.execute(executor, id);
     }
 
+    /**
+     * Whenever this command is called, it will begin a new visit.
+     *
+     * @param executor the client that is calling the command
+     * @param visitorID the unique 10-digit ID of the visitor
+     * @return a {@link ResponseFlag} that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, long visitorID) {
         //pre: we have a valid id, we need a Visitor
         Visitor visitor = getVisitor(visitorID);
@@ -104,12 +111,22 @@ public class ArriveCommand extends TextCommand {
         return ResponseFlag.SUCCESS;
     }
 
+    /**
+     * startVisit is a helper method for execute that starts a visit with a visitor
+     * @param visitor the visitor to start the visit for
+     * @return the response string to be output
+     */
     protected String startVisit(Visitor visitor) {
         visitor.startVisit(this.server.getLibraryData().getLibrary());
         return buildResponse(this.getName(), visitor.getID(),
                 TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime()));
     }
 
+    /**
+     * getVisitor is a helper method for {@link #onExecute}  that gets a visitor from our database
+     * @param visitorID the {@link Visitor} to get from the database
+     * @return the {@link Visitor} that was found, or null if none found
+     */
     protected Visitor getVisitor(long visitorID){
         return this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, visitorID)

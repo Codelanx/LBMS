@@ -49,13 +49,11 @@ public class BorrowedCommand extends TextCommand {
     }
 
     /**
-     * Whenever this command is called, it will query the database for books
-     * being currently borrowed by a visitor.
-     *
-     * @param executor the client that is calling the command
-     * @param args     visitorID: the id of the visitor to check
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: visitorID
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
@@ -75,6 +73,15 @@ public class BorrowedCommand extends TextCommand {
         return this.execute(executor, id);
     }
 
+    /**
+     * Whenever this command is called, it will query the database for books
+     * being currently borrowed by a visitor.
+     *
+     * @param executor the client that is calling the command
+     * @param visitorID: the id of the visitor to check
+     * @return a {@link ResponseFlag} that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, long visitorID) {
 
         //query for visitor
@@ -102,13 +109,23 @@ public class BorrowedCommand extends TextCommand {
         return ResponseFlag.SUCCESS;
     }
 
-    public Visitor getVisitor(Long visitorID) {
+    /**
+     * getVisitor is a helper method for {@link #onExecute}  that gets a visitor from our database
+     * @param visitorID the {@link Visitor} to get from the database
+     * @return the {@link Visitor} that was found, or null if none found
+     */
+    protected Visitor getVisitor(Long visitorID) {
         return this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, visitorID)
                 .results().findAny().orElse(null);
     }
 
-    public List<Checkout> getBorrowedBooks(Visitor visitor) {
+    /**
+     * getBorrowedBooks is a helper method for {@link #onExecute} that gets a list of checkouts for a visitor
+     * @param visitor the {@link Visitor} to get the books for
+     * @return the {@link Checkout Checkouts} that was found
+     */
+    protected List<Checkout> getBorrowedBooks(Visitor visitor) {
         return server.getLibraryData().query(Checkout.class)
                 .isEqual(Checkout.Field.VISITOR, visitor)
                 .isEqual(Checkout.Field.RETURNED, false)
@@ -116,7 +133,13 @@ public class BorrowedCommand extends TextCommand {
                 .collect(Collectors.toList());
     }
 
-    public String getBookResponse(List<Checkout> books, String responseString) {
+    /**
+     * getBookResponse is a helper method for {@link #onExecute} that adds checkout information to a response string
+     * @param books the {@link Checkout Checkouts} to print out
+     * @param responseString the current response being built upon
+     * @return the modified response string
+     */
+    protected String getBookResponse(List<Checkout> books, String responseString) {
         for (Checkout c : books) {
             Book b = c.getBook();
             responseString += (buildResponse(b.getID(), b.getISBN(), b.getTitle(), DATE_FORMAT.format(c.getBorrowedAt())) + "\n");

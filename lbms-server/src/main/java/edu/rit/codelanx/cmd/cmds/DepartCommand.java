@@ -47,17 +47,12 @@ public class DepartCommand extends TextCommand {
         return "depart";
     }
 
-
-
     /**
-     * Whenever this command is called, it will end the visit of the visitor
-     * whose id is specified.
-     *
-     * @param executor the client that is calling the command
-     * @param args     visitorID: the visitor whose visit will end
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
-     * @author maa1675  Mark Anderson
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: visitorID
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
@@ -78,6 +73,16 @@ public class DepartCommand extends TextCommand {
 
     }
 
+    /**
+     * Whenever this command is called, it will end the visit of the visitor
+     * whose id is specified.
+     *
+     * @param executor the client that is calling the command
+     * @param visitorID: the visitor whose visit will end
+     * @return a responseflag that says whether or not the command was
+     * executed correctly
+     * @author maa1675  Mark Anderson
+     */
     public ResponseFlag execute(CommandExecutor executor, long visitorID) {
         //pre: we have a valid id, we need a Visitor
         Visitor visitor = getVisitor(visitorID);
@@ -89,13 +94,23 @@ public class DepartCommand extends TextCommand {
         return ResponseFlag.SUCCESS;
     }
 
-    public Visitor getVisitor(Long id) {
+    /**
+     * getVisitor is a helper method for {@link #onExecute}  that gets a visitor from our database
+     * @param id the {@link Visitor} to get from the database
+     * @return the {@link Visitor} that was found, or null if none found
+     */
+    protected Visitor getVisitor(Long id) {
         return this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
     }
 
-    public String endVisit(Visitor visitor) {
+    /**
+     * endVisit is a helper method for {@link #onExecute} that ends the current visit for the visitor
+     * @param visitor the {@link Visitor} to end the visit of
+     * @return a string holding the output for the command
+     */
+    protected String endVisit(Visitor visitor) {
         Visit visit = visitor.endVisit(this.server.getClock().getCurrentTime());
         Duration d = Duration.between(visit.getStart(), visit.getEnd());
         String endOutput = TIME_OF_DAY_FORMAT.format(visit.getEnd());

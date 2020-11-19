@@ -54,16 +54,12 @@ public class AdvanceCommand extends TextCommand {
     }
 
     /**
-     * Whenever this command is called, it will simulate ahead to the chosen
-     * date.
-     *
-     * @param executor the client that is calling the command
-     * @param args     numberofdays: number of days to move the library's
-     *                 calendar forward, must be between 0 and 7 days.
-     *                 numberofhours: number of hours to move the library's
-     *                 calendar forward, must be between 0 and 23 hours.
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: days
+     *                  args[1]: hours
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
@@ -73,6 +69,15 @@ public class AdvanceCommand extends TextCommand {
         return this.executeInternal(executor, days, args[0], hours, args[1]);
     }
 
+    /**
+     * Whenever this command is called, it will simulate ahead to the chosen
+     * date.
+     *
+     * @param executor the client that is calling the command
+     * @param days number of days to move the library's calendar forward, must be between 0 and 7 days.
+     * @param hours number of hours to move the library's calendar forward, must be between 0 and 23 hours.
+     * @return a {@link ResponseFlag} that says whether or not the command was executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, int days, int hours) {
         return this.executeInternal(executor, days, days + "", hours, hours + "");
     }

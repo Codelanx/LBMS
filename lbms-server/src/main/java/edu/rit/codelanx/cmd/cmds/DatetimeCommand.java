@@ -3,6 +3,7 @@ package edu.rit.codelanx.cmd.cmds;
 import edu.rit.codelanx.cmd.CommandExecutor;
 import edu.rit.codelanx.cmd.ResponseFlag;
 import edu.rit.codelanx.cmd.text.TextParam;
+import edu.rit.codelanx.data.state.types.Visitor;
 import edu.rit.codelanx.network.io.TextMessage;
 import edu.rit.codelanx.network.server.Server;
 import edu.rit.codelanx.cmd.text.TextCommand;
@@ -40,16 +41,12 @@ public class DatetimeCommand extends TextCommand {
         return "datetime";
     }
 
-
-
     /**
-     * Whenever this command is called, it will display the current time and
-     * date that the sim is currently in.
-     *
-     * @param executor  the client that is calling the command
-     * @param args none
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: visitorID
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor,
@@ -58,14 +55,25 @@ public class DatetimeCommand extends TextCommand {
         return this.execute(executor);
     }
 
+    /**
+     * Whenever this command is called, it will display the current time and
+     * date that the sim is currently in.
+     *
+     * @param executor  the client that is calling the command
+     * @return a {@link ResponseFlag} that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor) {
-
         //Getting the current time from the server's clock
         executor.sendMessage(buildResponse(this.getName(), getClockTime()));
         return ResponseFlag.SUCCESS;
     }
 
-    public String getClockTime(){
+    /**
+     * getClockTime is a helper method for {@link #onExecute} that gets a formatted clock time and date
+     * @return the current time and date as a string
+     */
+    protected String getClockTime(){
         return DATE_FORMAT.format(server.getClock().getCurrentTime()) + "," + TIME_OF_DAY_FORMAT.format(server.getClock().getCurrentTime());
     }
 }

@@ -12,7 +12,6 @@ import edu.rit.codelanx.data.state.types.Visitor;
 
 import java.math.BigDecimal;
 
-
 /**
  * Pays all or part of an outstanding fine.
  * <p>
@@ -51,6 +50,16 @@ public class PayCommand extends TextCommand {
         return "pay";
     }
 
+    /**
+     * Whenever this command is called, it will pay the amount towards the
+     * specific visitor's negative balance.
+     *
+     * @param executor the client that is calling the command
+     * @param visitorID: unique 10-digit ID of the visitor
+     * @param amount: the amount that the visitor is paying toward their fines
+     * @return a responseflag that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, long visitorID, BigDecimal amount) {
 
         //finds the visitor
@@ -73,7 +82,12 @@ public class PayCommand extends TextCommand {
         return ResponseFlag.SUCCESS;
     }
 
-    public Visitor getVisitor(long visitorID){
+    /**
+     * getVisitor is a helper method for {@link #onExecute}  that gets a visitor from our database
+     * @param visitorID the {@link Visitor} to get from the database
+     * @return the {@link Visitor} that was found, or null if none found
+     */
+    protected Visitor getVisitor(long visitorID){
         return this.server.getLibraryData()
                 .query(Visitor.class)
                 .isEqual(Visitor.Field.ID, visitorID)
@@ -82,26 +96,27 @@ public class PayCommand extends TextCommand {
                 .orElse(null);
     }
 
-    public String performPayTransaction(Visitor visitor, BigDecimal amount) {
+    /**
+     * performPayTransaction is a helper method for {@link #onExecute} that executes the perform method of Transaction
+     * @param visitor the {@link Visitor} to pay the account towards
+     * @param amount the amount to pay towards the visitor's account
+     * @return a string representing the output for paycommand
+     */
+    protected String performPayTransaction(Visitor visitor, BigDecimal amount) {
         Transaction.perform(visitor, amount, Transaction.Reason.PAYING_LATE_FEE);
         return buildResponse("Success", visitor.getMoney());
 
     }
+
     /**
-     * Whenever this command is called, it will pay the amount towards the
-     * specific visitor's negative balance.
-     *
-     * @param executor the client that is calling the command
-     * @param args     visitorID: unique 10-digit ID of the visitor
-     *                 amount: the amount that the visitor is paying toward
-     *                 their fines
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: visitorID
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
-
-
         //args
         BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
         Long visitorID = InputOutput.parseLong(args[0]).orElse(null);

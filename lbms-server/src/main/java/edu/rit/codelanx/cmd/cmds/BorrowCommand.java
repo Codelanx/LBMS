@@ -152,12 +152,22 @@ public class BorrowCommand extends TextCommand {
         return ResponseFlag.SUCCESS;
     }
 
+    /**
+     * getVisitor is a helper method for {@link #onExecute} that gets a visitor from the database
+     * @param id the id of the visitor to retrieve
+     * @return the {@link Visitor} that was found, or null if none found
+     */
     protected Visitor getVisitor(Long id){
         return this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, id)
                 .results().findAny().orElse(null);
     }
 
+    /**
+     * getVisitor is a helper method for {@link #onExecute} that gets a list of books from the database
+     * @param ids the ids of the books to retrieve
+     * @return the {@link Book Books} that were found
+     */
     protected List<Book> getBooks(Set<Long> ids){
         return this.server.getLibraryData().query(Book.class)
                 .isAny(Book.Field.ID, ids)
@@ -165,16 +175,30 @@ public class BorrowCommand extends TextCommand {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * getCheckedOut is a helper method for {@link #onExecute} that gets the number of checkouts of a visitor
+     * @param v the {@link Visitor} to search checkouts for
+     * @return the amount of checkouts the visitor has
+     */
     protected long getCheckedOut(Visitor v){
         return server.getLibraryData().query(Checkout.class)
                 .isEqual(Checkout.Field.VISITOR, v)
                 .results().count();
     }
 
+    /**
+     * checkout is a helper method for {@link #onExecute} that checks out books for a visitor
+     * @param books the {@link Book Books} to be checked out
+     * @param v the {@link Visitor} to check them out to
+     */
     protected void checkout(List<Book> books, Visitor v){
         books.forEach(b -> b.checkout(v, this.server.getClock()));
     }
 
+    /**
+     * checkout is a helper method for {@link #onExecute} that finds when the return date of the books should be
+     * @return an {@link Instant} that represents when the books are due
+     */
     protected Instant getDueDate(){
         return server.getClock().getCurrentTime().plus(Duration.ofDays(Checkout.BORROW_DAYS));
     }

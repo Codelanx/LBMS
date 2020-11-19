@@ -61,21 +61,13 @@ public class ReturnCommand extends TextCommand {
         return "return";
     }
 
-
-
-
     /**
-     *  Whenever this command is called, it will return a borrowed book back to the library
-     *  using a visitors id
-     *
-     * @param executor the client that is calling the command
-     * @param args      visitor ID: the unique 10-digit ID of the visitor
-     *                  id: the ID of the book borrowed
-     *                  ids: the comma-separated list of the IDs od additional books to return
-     *                  args[0] - Visitor ID
-     *                  args[1+] - Book IDs to be returned
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: visitorID
+     *                  args[1+]: bookIDs
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
@@ -101,6 +93,16 @@ public class ReturnCommand extends TextCommand {
         return this.execute(executor, optID.get(), ids.stream().mapToLong(l -> l).toArray());
     }
 
+    /**
+     *  Whenever this command is called, it will return a borrowed book back to the library
+     *  using a visitors id
+     *
+     * @param executor the client that is calling the command
+     * @param visitorID: the unique 10-digit ID of the visitor
+     * @param bookIDs: the comma-separated list of the IDs of books to return
+     * @return a {@link ResponseFlag} that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, long visitorID, long... bookIDs) {
 
         Visitor visitor = queryVisitor(visitorID);
@@ -164,12 +166,22 @@ public class ReturnCommand extends TextCommand {
         return ResponseFlag.SUCCESS;
     }
 
+    /**
+     * queryVisitor is a helper method for {@link #onExecute} that gets a visitor from our database
+     * @param visitorID the {@link Visitor} to get from the database
+     * @return the {@link Visitor} that was found, or null if none found
+     */
     protected Visitor queryVisitor(long visitorID){
         return this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.ID, visitorID)
                 .results().findAny().orElse(null);
     }
 
+    /**
+     * queryBooks is a helper method for {@link #onExecute} that gets books from our database
+     * @param bookIDs the books to get from the database
+     * @return the set of {@link Book Books} found by the query
+     */
     protected Set<Book> queryBooks(long... bookIDs){
         return this.server.getLibraryData().query(Book.class)
                 .isAny(Book.Field.ID, LongStream.of(bookIDs).boxed().toArray(Long[]::new))
@@ -177,6 +189,12 @@ public class ReturnCommand extends TextCommand {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    /**
+     * queryCheckouts is a helper method for {@link #onExecute}  that gets the books that have been checked out by the visitor
+     * @param visitor the visitor to query checkouts for
+     * @param books the books to check the query against
+     * @return the set of {@link Book Books} found by the query
+     */
     protected List<Checkout> queryCheckouts(Visitor visitor, Set<Book> books){
         return this.server.getLibraryData().query(Checkout.class)
                 .isEqual(Checkout.Field.VISITOR, visitor)

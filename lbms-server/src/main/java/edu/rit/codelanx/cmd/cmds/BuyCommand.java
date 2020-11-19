@@ -60,16 +60,12 @@ public class BuyCommand extends TextCommand {
     }
 
     /**
-     * Whenever this command is called, it will purchase some of the books
-     * returned from the last search and add them to the library's database
-     * of books
-     *
-     * @param executor the client that is calling the command
-     * @param args     quantity: number of copies of each book to purchase
-     *                 id(s): 1 or more book IDs to be purchased (separated
-     *                 by commas).
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: copies
+     *                  args[1+]: bookIDs
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
@@ -98,6 +94,17 @@ public class BuyCommand extends TextCommand {
         return this.execute(executor, quantity, bookIDs.stream().mapToLong(l -> l).toArray());
     }
 
+    /**
+     * Whenever this command is called, it will purchase some of the books
+     * returned from the last search and add them to the library's database
+     * of books
+     *
+     * @param executor the client that is calling the command
+     * @param copies: number of copies of each book to purchase
+     * @param bookIDs: 1 or more book IDs to be purchased (separated by commas).
+     * @return a {@link ResponseFlag} that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, int copies, long... bookIDs) {
         List<Book> bookList = new ArrayList<>();
         for (Long id : bookIDs) {
@@ -143,16 +150,32 @@ public class BuyCommand extends TextCommand {
 
     }
 
+    /**
+     * queryLibrary is a helper method for {@link #onExecute} that gets a book from the library
+     * @param id the id of the book to get
+     * @return the {@link Book} found by the search, otherwise null
+     */
     protected Book queryLibrary(Long id){
         return server.getLibraryData().query(Book.class)
                 .isEqual(Book.Field.ID, id)
                 .results().findAny().orElse(null);
     }
 
+    /**
+     * queryBookStore is a helper method for {@link #onExecute} that gets a book from the bookstore
+     * @param id the id of the book to get
+     * @return the {@link Book} found by the search, otherwise null
+     */
     protected Book queryBookstore(Long id){
         return server.getBookStore().query(Book.class).isEqual(Book.Field.ID, id).results().findAny().orElse(null);
     }
 
+    /**
+     * bookstoreToLibrary is a helper method for {@link #onExecute} that transfers a book from the bookstore to the library
+     * @param newBook the {@link Book} to be copied over
+     * @param copies the amount of copies to copy over
+     * @return the {@link Book} that was created
+     */
     protected Book bookstoreToLibrary(Book newBook, int copies){
         StateBuilder<Book> bookStateBuilder = new ProxiedStateBuilder<>(newBook);
         bookStateBuilder.setValue(Book.Field.TOTAL_COPIES, copies);

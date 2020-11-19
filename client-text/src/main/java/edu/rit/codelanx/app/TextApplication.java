@@ -5,6 +5,9 @@ import edu.rit.codelanx.network.client.text.TextClient;
 
 import java.io.IOException;
 
+/**
+ * TextApplication is the text-based version of LBMS that is runnable from the command line without GUI elements
+ */
 public class TextApplication extends LBMS {
 
     public static void main(String... args) {

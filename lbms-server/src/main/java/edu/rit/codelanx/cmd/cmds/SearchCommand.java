@@ -64,17 +64,15 @@ public class SearchCommand extends TextCommand {
     }
 
     /**
-     * Whenever this command is called, it will search books that can be
-     * purchased by the library (and added to its collection).
-     *
-     * @param executor the client that is calling the command
-     * @param args     title: title of the book
-     *                 authors: comma-separated list of authors of the book
-     *                 isbn: International Standard Book NUmber for the book
-     *                 publisher: name of the book's publisher
-     *                 sort order: way to sort the results of the search
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: title
+     *                  args[1]: authors
+     *                  args[2]: isbn
+     *                  args[3]: publisher
+     *                  args[4]: sortOrder
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
@@ -82,6 +80,19 @@ public class SearchCommand extends TextCommand {
 
     }
 
+    /**
+     * Whenever this command is called, it will search books that can be
+     * purchased by the library (and added to its collection).
+     *
+     * @param executor the client that is calling the command
+     * @param title: title of the book
+     * @param authors: comma-separated list of authors of the book
+     * @param isbn: International Standard Book NUmber for the book
+     * @param publisher: name of the book's publisher
+     * @param sortOrder: way to sort the results of the search
+     * @return a responseflag that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, String title, String isbn,
                                 String publisher, String sortOrder, String... authors) {
         if (Arrays.stream(authors).anyMatch(String::isEmpty)) {
@@ -141,12 +152,23 @@ public class SearchCommand extends TextCommand {
         return ResponseFlag.SUCCESS;
     }
 
+    /**
+     * findAuthors is a helper method for {@link #onExecute} that finds the authors in the database
+     * @param authors the authors to search for as strings
+     * @return a list of the {@link Author Authors} found in the search
+     */
     protected List<Author> findAuthors(String... authors){
         return this.server.getBookStore().query(Author.class)
                 .isAny(Author.Field.NAME, authors)
                 .results()
                 .collect(Collectors.toList());
     }
+
+    /**
+     * getFilterIDs is a helper method for {@link #onExecute} that finds book ids based on the author
+     * @param found the authors to search for
+     * @return a list of the book ids found in the search
+     */
     protected Set<Long> getFilterIDs(List<Author> found){
         return this.server.getBookStore()
                 .query(AuthorListing.class)
@@ -156,6 +178,12 @@ public class SearchCommand extends TextCommand {
                 .map(Book::getID)
                 .collect(Collectors.toSet());
     }
+
+    /**
+     * output is a helper method for {@link #onExecute} that compiles the output for searchcommand and sends it to the executor
+     * @param executor the executor that called the command
+     * @param bookList the books to list in the output
+     */
     protected void output(CommandExecutor executor, List<Book> bookList){
         bookList.stream()
                 .map(book -> {

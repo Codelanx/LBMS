@@ -49,25 +49,33 @@ public class RegisterCommand extends TextCommand {
         return "register";
     }
 
-
-
     /**
-     * Whenever this command is called, it will create a new visitor based on
-     * the given data.
-     *
-     * @param executor  the client that is calling the command
-     * @param args first name: the first name of the visitor.
-     *                  last name: the last name of the visitor.
-     *                  address: the address of the visitor.
-     *                  phone-number: the phone number of the visitor.
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: first name
+     *                  args[1]: last name
+     *                  args[2]: address
+     *                  args[3]: phone number
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
         return this.execute(executor, args[0], args[1], args[2], args[3]);
     }
 
+    /**
+     * Whenever this command is called, it will create a new visitor based on
+     * the given data.
+     *
+     * @param executor  the client that is calling the command
+     * @param fName: the first name of the visitor.
+     * @param lName: the last name of the visitor.
+     * @param address: the address of the visitor.
+     * @param phoneNum: the phone number of the visitor.
+     * @return a responseflag that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, String fName, String lName, String address, String phoneNum) {
         //We use the builder pattern to create a new object in the data storage
 
@@ -84,11 +92,19 @@ public class RegisterCommand extends TextCommand {
         Instant registeredAt = getRegistrationTime();
 
         // Creates a new Visitor id from the arguments
-        Visitor newVisitor = createVisitor(fName, lName, address, phoneNum, registeredAt, executor);
+        Visitor newVisitor = createVisitor(fName, lName, address, phoneNum, registeredAt);
         executor.sendMessage(this.buildResponse(this.getName(), newVisitor.getID(), DATE_FORMAT.format(registeredAt)));
         return ResponseFlag.SUCCESS;
     }
 
+    /**
+     * findMatchingVisitor is a helper method for {@link #onExecute} that gets a visitor that matches the fields input
+     * @param fName the first name to filter by
+     * @param lName the last name to filter by
+     * @param address the address to filter by
+     * @param phoneNum the phone number to filter by
+     * @return the {@link Visitor} that matches, or else null
+     */
     protected Visitor findMatchingVisitor(String fName, String lName, String address, String phoneNum){
         return this.server.getLibraryData().query(Visitor.class)
                 .isEqual(Visitor.Field.FIRST, fName)
@@ -98,11 +114,24 @@ public class RegisterCommand extends TextCommand {
                 .results().findAny().orElse(null);
     }
 
+    /**
+     * getRegistrationTime is a helper method that gets the current time of the server
+     * @return the current time of the server as an instant
+     */
     protected Instant getRegistrationTime(){
         return this.server.getClock().getCurrentTime();
     }
 
-    protected Visitor createVisitor(String fName, String lName, String address, String phoneNum, Instant registeredAt, CommandExecutor executor){
+    /**
+     * createVisitor is a helper method for {@link #onExecute} that creates a visitor to be placed in the database
+     * @param fName the first name of the visitor
+     * @param lName the last name of the visitor
+     * @param address the address of the visitor
+     * @param phoneNum the phone number of the visitor
+     * @param registeredAt the time the visitor was registered at
+     * @return the {@link Visitor} that was created
+     */
+    protected Visitor createVisitor(String fName, String lName, String address, String phoneNum, Instant registeredAt){
         return Visitor.create()
                 .setValue(Visitor.Field.FIRST, fName)
                 .setValue(Visitor.Field.LAST, lName)

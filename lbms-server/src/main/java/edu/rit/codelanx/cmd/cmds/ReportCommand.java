@@ -55,13 +55,11 @@ public class ReportCommand extends TextCommand {
     }
 
     /**
-     * Whenever this command is called, it will return a report about the
-     * usage of the library over a set period of time.
-     *
-     * @param executor the client that is calling the command
-     * @param args     days: the number of days that the report should cover
-     * @return a responseflag that says whether or not the command was
-     * executed correctly
+     * {@inheritDoc}
+     * @param executor  {@inheritDoc}
+     * @param args      {@inheritDoc}
+     *                  args[0]: days
+     * @return {@inheritDoc}
      */
     @Override
     public ResponseFlag onExecute(CommandExecutor executor, String... args) {
@@ -77,6 +75,15 @@ public class ReportCommand extends TextCommand {
         return this.execute(executor, Math.toIntExact(days.get()));
     }
 
+    /**
+     * Whenever this command is called, it will return a report about the
+     * usage of the library over a set period of time.
+     *
+     * @param executor the client that is calling the command
+     * @param days: the number of days that the report should cover
+     * @return a responseflag that says whether or not the command was
+     * executed correctly
+     */
     public ResponseFlag execute(CommandExecutor executor, int days) {
         //Gets the date
         Instant curDate = this.server.getClock().getCurrentTime();
@@ -119,18 +126,30 @@ public class ReportCommand extends TextCommand {
 
     }
 
+    /**
+     * getBookCount is a helper method for {@link #onExecute} that gets the amount of books in the library
+     * @return the amount of books as a long
+     */
     protected Long getBookCount(){
         return this.server.getLibraryData().query(Book.class)
                 .results()
                 .count();
     }
 
+    /**
+     * getNewVisitorCount is a helper method for {@link #onExecute} that gets the amount of new visitors registered
+     * @return the amount of visitors
+     */
     protected Long getNewVisitorCount(){
         return this.server.getLibraryData().query(Visitor.class)
                 .results()
                 .count();
     }
 
+    /**
+     * getAverageVisitLength is a helper method for {@link #onExecute} that gets the average of the length of the visits
+     * @return the average visit length as a double
+     */
     protected Double getAverageVisitLength(){
         return this.server.getLibraryData().query(Visit.class) //Query<Visit>
                         .results() //Stream<Visit>
@@ -140,6 +159,10 @@ public class ReportCommand extends TextCommand {
                         .summaryStatistics().getAverage();
     }
 
+    /**
+     * getBooksPurchasedAmount is a helper method for {@link #onExecute} that gets the amount of books purchased
+     * @return the amount of books as a long
+     */
     protected long getBooksPurchasedAmount(){
         return this.server.getLibraryData().query(Book.class)
                 .results()
@@ -147,6 +170,10 @@ public class ReportCommand extends TextCommand {
                 .reduce(0, Integer::sum);
     }
 
+    /**
+     * getTransactions is a helper method for {@link #onExecute} that gets the transactions that are in the database
+     * @return the transactions as a map of the reason and the transaction object
+     */
     protected Map<String, Set<Transaction>> getTransactions(){
         return this.server.getLibraryData()
                 .query(Transaction.class)

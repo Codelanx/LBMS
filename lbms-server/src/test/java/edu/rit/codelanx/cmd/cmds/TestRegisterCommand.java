@@ -50,7 +50,7 @@ public class TestRegisterCommand {
         Mockito.doReturn(visitorMock).when(regSpy).findMatchingVisitor(any(), any(), any(), any());
         Assertions.assertSame(ResponseFlag.SUCCESS, regSpy.onExecute(execMock, FIRST_NAME, LAST_NAME, ADDRESS, PHONE));
         Mockito.verify(regSpy, Mockito.never()).getRegistrationTime();
-        Mockito.verify(regSpy, Mockito.never()).createVisitor(any(), any(), any(), any(), any(), any());
+        Mockito.verify(regSpy, Mockito.never()).createVisitor(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -61,10 +61,10 @@ public class TestRegisterCommand {
          */
         Mockito.doReturn(null).when(regSpy).findMatchingVisitor(any(), any(), any(), any());
         Mockito.doReturn(Instant.now()).when(regSpy).getRegistrationTime();
-        Mockito.doReturn(visitorMock).when(regSpy).createVisitor(any(), any(), any(), any(), any(), any());
+        Mockito.doReturn(visitorMock).when(regSpy).createVisitor(any(), any(), any(), any(), any());
         Assertions.assertSame(ResponseFlag.SUCCESS, regSpy.onExecute(execMock, FIRST_NAME, LAST_NAME, ADDRESS, PHONE));
         Mockito.verify(regSpy, Mockito.times(1)).getRegistrationTime();
-        Mockito.verify(regSpy, Mockito.times(1)).createVisitor(any(), any(), any(), any(), any(), any());
+        Mockito.verify(regSpy, Mockito.times(1)).createVisitor(any(), any(), any(), any(), any());
     }
 }
 
