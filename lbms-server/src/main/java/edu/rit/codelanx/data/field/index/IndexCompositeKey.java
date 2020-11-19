@@ -9,7 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-//TODO: R2 implementation, fix for the hackaround in the queries
+/**
+ * a {@link DataField} represent the Index Composite Key
+ *
+ * @param <T> of specified type
+ * @author sja9291  Spencer Alderman
+ */
 public class IndexCompositeKey<T> extends FieldIndex<T> {
 
     private final List<IndexCompositeKey<?>> linkedKeys = new ArrayList<>();
@@ -24,43 +29,22 @@ public class IndexCompositeKey<T> extends FieldIndex<T> {
      * {@inheritDoc}
      * param other {@inheritDoc}
      */
-    /*@Override
-    public void compose(DataField<?>... others) {
-        for (DataField<?> field : others) {
-            if (field == this) continue;
-            if (!field.isComposite()) {
-                throw new IllegalArgumentException("Cannot build a composite key with a non-composite partner: " + field.getName());
-            }
-            IndexCompositeKey<?> o = (IndexCompositeKey<?>) field;
-            this.linkedKeys.add(o);
-            o.linkedKeys.add(this);
-        }
-        if (!other.isComposite()) {
-            throw new IllegalArgumentException("Cannot build a composite key with a non-composite partner: " + other.getName());
-        }
-        IndexCompositeKey<?> o = (IndexCompositeKey<?>) other;
-        this.linkedKeys.add(o);
-        o.linkedKeys.add(this);
-    }
-
-    public static void applyFor(DataField<?>... fields) {
-        for (DataField<?> field : fields) {
-            if (!field.isComposite()) {
-                throw new IllegalArgumentException("Cannot build a composite key with a non-composite partner: " + field.getName());
-            }
-        }
-    }*/
-
     @Override
     public void initialize(State state, T value) {
         super.initialize(state, value);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public FieldIndicies getIndexType() {
         return null;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public T set(State state, T value) {
         Query<? extends State> query = state.getLoader().query(state.getType().getConcreteType());
@@ -75,7 +59,10 @@ public class IndexCompositeKey<T> extends FieldIndex<T> {
         }
         return super.set(state, value);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public T mutate(State state, UnaryOperator<T> updater) {
         Query<? extends State> query = state.getLoader().query(state.getType().getConcreteType());

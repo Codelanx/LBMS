@@ -26,13 +26,19 @@ public class IndexKey<T> extends FieldIndex<T> {
     public IndexKey(DataField<T> parent) {
         super(parent);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void initialize(State state, T value) {
         super.initialize(state, value);
         this.getStates((T) value).add(state);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Stream<? extends State> findStatesByValue(T key) {
         return Optional.ofNullable(this.states.get(key)).map(Set::stream).orElse(Stream.empty());
@@ -41,7 +47,10 @@ public class IndexKey<T> extends FieldIndex<T> {
     private Set<State> getStates(T value) {
         return this.states.computeIfAbsent(value, k -> new HashSet<>());
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public T set(State state, T value) {
         T old = super.set(state, value);
@@ -52,7 +61,10 @@ public class IndexKey<T> extends FieldIndex<T> {
         this.getStates(value).add(state);
         return old;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public void forget(State state) {
         this.states.compute(this.get(state), (k, old) -> {

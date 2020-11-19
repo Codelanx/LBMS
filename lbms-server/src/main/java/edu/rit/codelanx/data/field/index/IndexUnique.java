@@ -36,7 +36,6 @@ public class IndexUnique<T> extends FieldIndex<T> {
      */
     @Override
     public Stream<? extends State> findStatesByValue(T key) {
-        //In JDK 9+, Optional#stream would be pretty nice here, hence the warning below
         return Optional.ofNullable(this.uniqueMap.get(key)).map(Stream::of).orElseGet(Stream::empty);
     }
 

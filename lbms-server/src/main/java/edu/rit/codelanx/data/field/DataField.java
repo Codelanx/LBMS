@@ -147,6 +147,13 @@ public interface DataField<T> {
         return false;
     }
 
+
+    /**
+     *
+     * @param type
+     * @param <R>
+     * @return
+     */
     public static <R> Builder<R> builder(Class<R> type) {
         return new Builder<>(type);
     }

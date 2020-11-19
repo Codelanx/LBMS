@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+
 public class DataFieldLoader<T> implements DataField<T> {
 
     protected final Map<State, T> values = new WeakHashMap<>();
