@@ -31,7 +31,10 @@ public class StateQuery<S extends State> implements Query<S> {
         this.storage = storage;
         this.type = type;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public Stream<S> results() {
         Stream<S> s = this.storage.getAdapter().handleQuery(this);
@@ -53,39 +56,60 @@ public class StateQuery<S extends State> implements Query<S> {
     public List<Comparison<?>> getComparisons() {
         return Collections.unmodifiableList(this.comparisons);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E> Query<S> filterBy(DataField<E> field, Predicate<E> test) {
         this.postFixes.add(state -> test.test(field.get(state)));
         return this;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E> Query<S> isEqual(DataField<E> field, E value) {
         return this.predicate(field, value, ComparisonType.EQUALITY);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E> Query<S> isAny(DataField<E> field, Iterable<E> values) {
         this.comparisons.add(new MultiComparison<>(field, values));
         return this;
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E extends Comparable<E>> Query<S> isLessThan(DataField<E> field, E value) {
         return this.predicate(field, value, ComparisonType.LESS_THAN);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E extends Comparable<E>> Query<S> isGreaterThan(DataField<E> field, E value) {
         return this.predicate(field, value, ComparisonType.GREATER_THAN);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E extends Comparable<E>> Query<S> isLessThanOrEq(DataField<E> field, E value) {
         return this.predicate(field, value, ComparisonType.LESS_THAN_OR_EQ);
     }
-
+    /**
+     * {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public <E extends Comparable<E>> Query<S> isGreaterThanOrEq(DataField<E> field, E value) {
         return this.predicate(field, value, ComparisonType.GREATER_THAN_OR_EQ);

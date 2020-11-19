@@ -24,6 +24,10 @@ public abstract class StateBuilder<T extends State> {
         this.fields = fields;
     }
 
+    /**
+     * get the state type
+     * @return type of {@link State}
+     */
     public State.Type getType() {
         return this.type;
     }
@@ -32,7 +36,6 @@ public abstract class StateBuilder<T extends State> {
     public <E> E getValue(DataField<E> field) {
         return (E) this.values.get(field);
     }
-
     public <E> StateBuilder<T> setValue(DataField<E> field, E value) {
         this.values.put(field, value);
         return this;
@@ -50,6 +53,10 @@ public abstract class StateBuilder<T extends State> {
         return storage.insert(this);
     }
 
+    /**
+     * checks if the state is valid or not
+     * @return true if valid. otherwise, false
+     */
     public boolean isValid() {
         return Arrays.stream(this.fields)
                 .filter(f -> f != this.idField)
