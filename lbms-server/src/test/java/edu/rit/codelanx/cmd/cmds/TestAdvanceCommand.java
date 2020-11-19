@@ -38,15 +38,6 @@ public class TestAdvanceCommand {
         this.adv = new AdvanceCommand(this.servMock);
     }
 
-    @Test
-    public void testNoInput() {
-        /*
-        Test Explanation: Testing sending no input/empty input to the command
-        Expectation: All inputs should be able to be handled, clock shouldn't change
-         */
-        //assertSame(ResponseFlag.SUCCESS, adv.onExecute(execMock, "",""));
-        //Mockito.verify(execMock).sendMessage("advance,missing-parameters,number-of-days,number-of-hours;");
-    }
 
     @Test
     public void wrongDays() {

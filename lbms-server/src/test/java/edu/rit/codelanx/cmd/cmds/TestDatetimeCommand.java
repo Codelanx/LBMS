@@ -35,16 +35,6 @@ public class TestDatetimeCommand {
         Mockito.doReturn(formattedTime).when(dtSpy).getClockTime();
     }
 
-    @Test
-    public void tooMuchInput() {
-        /*
-        Test Explanation: Call datetime,anyArgument;
-        Expectation: Should ignore other argument and send ResponseFlag.Success
-        */
-        //Assertions.assertSame(ResponseFlag.SUCCESS, dtSpy.onExecute(execMock, ""));
-        //Mockito.verify(dtSpy, Mockito.times(1)).getClockTime();
-        //Mockito.verify(execMock).sendMessage("datetime," + formattedTime + ";");
-    }
 
     @Test
     public void happyPathDays() {

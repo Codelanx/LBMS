@@ -40,18 +40,6 @@ public class TestReturnCommand {
 
     }
 
-    @Test
-    public void testNoInput() {
-        /*
-        Test Explanation: Testing report when passed empty values
-        Expectation: All inputs should be able to be handled, no book should
-        be returned
-         */
-        //Assertions.assertSame(ResponseFlag.SUCCESS,
-        //        retSpy.onExecute(this.execMock, "", ""));
-        //Mockito.verify(execMock).sendMessage("return,missing-parameters," +
-        //        "visitor,id;");
-    }
 
     @Test
     public void invalidVisitorID() {

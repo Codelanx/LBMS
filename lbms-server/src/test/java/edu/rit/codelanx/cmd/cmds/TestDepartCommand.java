@@ -58,16 +58,6 @@ public class TestDepartCommand {
 
     }
 
-    @Test
-    public void testNoInput() {
-         /*
-        Test Explanation: Testing sending no input/empty input to the command
-        Expectation: return SUCCESS response flag, but departing behaviour doesn't occur
-         */
-        //Assertions.assertEquals(ResponseFlag.SUCCESS, cmd.onExecute(this.execMock, " "));
-        //Mockito.verify(cmd_spy, never()).getVisitor(any());
-        //Mockito.verify(execMock).sendMessage("depart,missing-parameters,visitor-id");
-    }
 
     @Test
     public void testWrongIDType() {

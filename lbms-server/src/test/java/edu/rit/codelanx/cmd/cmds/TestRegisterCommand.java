@@ -40,21 +40,6 @@ public class TestRegisterCommand {
         this.regSpy = Mockito.spy(reg);
     }
 
-    @Test
-    public void testNoInput() {
-        /*
-        Test Explanation: Testing sending no input/empty input to the command
-        Expectation: All inputs should be able to be handled, no new visitor should be registered
-         */
-        //Mockito.doReturn(visitorMock).when(regSpy).findMatchingVisitor(any(), any(), any(), any());
-        //Assertions.assertSame(ResponseFlag.SUCCESS, regSpy.onExecute(execMock, "", "", "", ""));
-        //Assertions.assertSame(ResponseFlag.SUCCESS, regSpy.onExecute(execMock));
-        //Assertions.assertSame(ResponseFlag.SUCCESS, regSpy.onExecute(execMock, FIRST_NAME, "", "", ""));
-        //Assertions.assertSame(ResponseFlag.SUCCESS, regSpy.onExecute(execMock, FIRST_NAME, LAST_NAME, "", ""));
-        //Assertions.assertSame(ResponseFlag.SUCCESS, regSpy.onExecute(execMock, FIRST_NAME, LAST_NAME, ADDRESS, ""));
-        //Mockito.verify(regSpy, Mockito.never()).getRegistrationTime();
-        //Mockito.verify(regSpy, Mockito.never()).createVisitor(any(), any(), any(), any(), any(), any());
-    }
 
     @Test
     public void testDuplicate() {
