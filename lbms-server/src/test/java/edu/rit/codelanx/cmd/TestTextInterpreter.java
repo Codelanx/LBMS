@@ -1,6 +1,8 @@
 package edu.rit.codelanx.cmd;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.stream.IntStream;
 
@@ -118,7 +120,7 @@ public class TestTextInterpreter {
     }
 
     @Test
-    public void TestNoInputPay() {
+    public void testNoInputPay() {
            /*
         Test Explanation: Testing sending no input/empty input to the command
         Expectation: return SUCCESS response flag, but not actually paying
@@ -157,7 +159,14 @@ public class TestTextInterpreter {
         //        "visitor,id;");
     }
 
-
-
-
+    @Test
+    public void tooMuchInputDatetime() {
+        /*
+        Test Explanation: Call datetime,anyArgument;
+        Expectation: Should ignore other argument and send ResponseFlag.Success
+        */
+        //Assertions.assertSame(ResponseFlag.SUCCESS, dtSpy.onExecute(execMock, ""));
+        //Mockito.verify(dtSpy, Mockito.times(1)).getClockTime();
+        //Mockito.verify(execMock).sendMessage("datetime," + formattedTime + ";");
+    }
 }
