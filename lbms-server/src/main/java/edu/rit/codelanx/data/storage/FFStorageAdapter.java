@@ -147,6 +147,7 @@ public class FFStorageAdapter implements StorageAdapter {
     }
     /**
      * {@inheritDoc}
+     * @return {@inheritDoc}
      */
     @Override
     public void saveAll() throws IOException {
@@ -234,8 +235,13 @@ public class FFStorageAdapter implements StorageAdapter {
         return data.streamLoaded()
                 .filter(s -> Objects.equals(field.get(s), value));
     }
+
     /**
      * {@inheritDoc}
+     * @param state {@inheritDoc}
+     * @param field {@inheritDoc}
+     * @param value {@inheritDoc}
+     * @param <E> {@inheritDoc}
      */
     @Override
     public <E> void notifyUpdate(State state, DataField<E> field, E value) {
@@ -244,6 +250,7 @@ public class FFStorageAdapter implements StorageAdapter {
 
     /**
      * {@inheritDoc}
+     * @param {@inheritDoc}
      */
     @Override
     public void remove(State state) {
