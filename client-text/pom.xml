@@ -40,7 +40,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>edu.rit.edu.rit.codelanx.edu.rit.codelanx.app</mainClass>
+                            <mainClass>edu.rit.codelanx.app.TextApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

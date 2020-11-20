@@ -21,4 +21,8 @@ public class GuiApplication extends Application {
         LBMS.run(new GuiClient(primaryStage), this.server);
     }
 
+    public static void main(String... args) {
+        launch(args);
+    }
+
 }
