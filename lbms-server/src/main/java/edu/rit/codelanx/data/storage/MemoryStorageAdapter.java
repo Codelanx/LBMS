@@ -48,7 +48,6 @@ public class MemoryStorageAdapter implements StorageAdapter {
     }
     /**
      * {@inheritDoc}
-     * @return {@inheritDoc}
      */
     @Override
     public void loadAll() throws IOException {
@@ -56,7 +55,6 @@ public class MemoryStorageAdapter implements StorageAdapter {
     }
     /**
      * {@inheritDoc}
-     * @return {@inheritDoc}
      */
     @Override
     public void saveAll() throws IOException {
@@ -88,7 +86,6 @@ public class MemoryStorageAdapter implements StorageAdapter {
     }
     /**
      * {@inheritDoc}
-     * @return {@inheritDoc}
      */
     @Override
     public <E> void notifyUpdate(State state, DataField<E> field, E value) {
@@ -96,7 +93,6 @@ public class MemoryStorageAdapter implements StorageAdapter {
     }
     /**
      * {@inheritDoc}
-     * @return {@inheritDoc}
      */
     @Override
     public void remove(State state) {

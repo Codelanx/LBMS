@@ -28,7 +28,6 @@ public class IndexKey<T> extends FieldIndex<T> {
     }
     /**
      * {@inheritDoc}
-     * @return {@inheritDoc}
      */
     @Override
     public void initialize(State state, T value) {
@@ -63,7 +62,6 @@ public class IndexKey<T> extends FieldIndex<T> {
     }
     /**
      * {@inheritDoc}
-     * @return {@inheritDoc}
      */
     @Override
     public void forget(State state) {
